@@ -8,20 +8,20 @@ const contactCards = [
   {
     icon: <Mail size={22} />,
     label: "Email",
-    value: "prashantyadav5735@gmail.com",
-    href: "mailto:prashantyadav5735@gmail.com",
+    value: "prashants0325@gmail.com",
+    href: "mailto:prashants0325@gmail.com",
   },
   {
     icon: <Phone size={22} />,
     label: "Phone",
-    value: "+91 88828 97545",
-    href: "tel:+918882897545",
+    value: "+91 9170787018",
+    href: "tel:+919170787018",
   },
   {
     icon: <Linkedin size={22} />,
     label: "LinkedIn",
     value: "Prashant Yadav",
-    href: "https://linkedin.com/in/prashant-yadav",
+    href: "https://linkedin.com/in/onycx",
     external: true,
   },
   {
@@ -133,7 +133,7 @@ export default function ContactSection() {
           <div className="text-center">
             <a
               ref={ctaRef}
-              href="mailto:prashantyadav5735@gmail.com"
+              href="mailto:prashants0325@gmail.com"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               className="inline-flex items-center gap-2 px-10 py-5 rounded-full font-bold text-white text-lg transition-all duration-300 hover:shadow-[0_0_50px_rgba(245,158,66,0.35)] active:scale-[0.98]"

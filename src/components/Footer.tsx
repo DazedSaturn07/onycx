@@ -44,8 +44,8 @@ export default function Footer() {
         <div className="flex justify-center gap-4 mb-8">
           {[
             { icon: <Github size={18} />, href: "https://github.com/DazedSaturn07", label: "GitHub" },
-            { icon: <Linkedin size={18} />, href: "https://linkedin.com/in/prashant-yadav", label: "LinkedIn" },
-            { icon: <Mail size={18} />, href: "mailto:prashantyadav5735@gmail.com", label: "Email" },
+            { icon: <Linkedin size={18} />, href: "https://linkedin.com/in/onycx", label: "LinkedIn" },
+            { icon: <Mail size={18} />, href: "mailto:prashants0325@gmail.com", label: "Email" },
           ].map((social) => (
             <a
               key={social.label}

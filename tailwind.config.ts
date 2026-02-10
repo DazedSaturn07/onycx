@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: "#FF8C42",
         bg: {
           DEFAULT: "#0b0f14",
           surface: "#111820",
@@ -23,7 +24,8 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         display: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
-        serif: ["var(--font-dm-serif)", "Georgia", "serif"],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
+        headline: ["var(--font-syne)", "system-ui", "sans-serif"],
       },
       animation: {
         float: "float 6s ease-in-out infinite",

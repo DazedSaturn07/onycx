@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, DM_Serif_Display } from "next/font/google";
+import { Inter, Space_Grotesk, Playfair_Display, Syne } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,11 +15,18 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "600", "700"],
 });
 
-const dmSerif = DM_Serif_Display({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-dm-serif",
+  variable: "--font-playfair",
   display: "swap",
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -62,7 +69,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${dmSerif.variable} font-sans antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} ${syne.variable} font-sans antialiased`}
       >
         {/* Skip to content for accessibility */}
         <a href="#main-content" className="skip-to-content">

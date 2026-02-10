@@ -1,185 +1,448 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { GraduationCap, Briefcase, Code, Layers, MapPin, Calendar } from "lucide-react";
+import {
+  GraduationCap,
+  MapPin,
+  Calendar,
+  Zap,
+  Code2,
+  Layers,
+  BrainCircuit,
+} from "lucide-react";
 import Image from "next/image";
 import RevealOnScroll from "./RevealOnScroll";
+import { BentoCard, BentoGrid } from "./ui/bento-grid";
 
+/* ── Stats Data ── */
 const stats = [
-  { icon: <Briefcase size={20} />, number: 4, suffix: "+", label: "Years Learning" },
-  { icon: <Layers size={20} />, number: 15, suffix: "+", label: "Projects Built" },
-  { icon: <Code size={20} />, number: 10, suffix: "+", label: "Technologies" },
+  { number: 4, suffix: "+", label: "Years Learning" },
+  { number: 15, suffix: "+", label: "Projects Built" },
+  { number: 10, suffix: "+", label: "Technologies" },
 ];
 
-/** Animated counter that counts up from 0 when in view */
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+/* ── Core Strengths ── */
+const strengths = [
+  {
+    icon: Code2,
+    title: "Full-Stack Dev",
+    desc: "End-to-end web applications with modern frameworks & cutting-edge tech stacks",
+    accentColor: "rgba(255,140,66,0.12)",
+    glowColor: "rgba(255,140,66,0.08)",
+  },
+  {
+    icon: BrainCircuit,
+    title: "Machine Learning",
+    desc: "Intelligent data pipelines, predictive models & deep learning architectures",
+    accentColor: "rgba(34,211,238,0.12)",
+    glowColor: "rgba(34,211,238,0.08)",
+  },
+  {
+    icon: Layers,
+    title: "System Design",
+    desc: "Scalable architecture, clean code principles & robust infrastructure patterns",
+    accentColor: "rgba(139,92,246,0.12)",
+    glowColor: "rgba(139,92,246,0.08)",
+  },
+  {
+    icon: Zap,
+    title: "Performance",
+    desc: "Optimized UX with sub-second interactions & lightning-fast load times",
+    accentColor: "rgba(52,211,153,0.12)",
+    glowColor: "rgba(52,211,153,0.08)",
+  },
+];
+
+/* ── Animated Counter ── */
+function AnimatedCounter({
+  target,
+  suffix = "",
+}: {
+  target: number;
+  suffix?: string;
+}) {
   const [count, setCount] = useState(0);
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.5 });
 
   useEffect(() => {
     if (!inView) return;
-    let start = 0;
-    const duration = 1500;
+    const duration = 1600;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      start = Math.floor(eased * target);
-      setCount(start);
+      setCount(Math.floor(eased * target));
       if (progress < 1) requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
   }, [inView, target]);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
 }
 
 /**
- * AboutSection — Bento grid layout with profile image, bio,
- * education timeline, and animated stat counters.
+ * AboutSection — Premium MagicUI BentoGrid layout with oversized Syne headlines,
+ * dramatic gradient text, profile card, bio, strengths, stats, and education —
+ * all designed to wow recruiters at first glance.
  */
 export default function AboutSection() {
-  const profileRef = useRef<HTMLDivElement>(null);
-
   return (
-    <section id="about" className="py-24 md:py-36 px-4 md:px-8" aria-label="About">
-      <div className="max-w-6xl mx-auto">
+    <section
+      id="about"
+      className="relative py-36 md:py-52 px-4 md:px-8 overflow-hidden"
+      aria-label="About"
+    >
+      {/* ── Ambient background glows ── */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute top-[5%] -left-[200px] w-[900px] h-[900px] rounded-full opacity-[0.05]"
+          style={{
+            background: "radial-gradient(circle, #FF8C42, transparent 70%)",
+            filter: "blur(140px)",
+          }}
+        />
+        <div
+          className="absolute bottom-[10%] -right-[200px] w-[800px] h-[800px] rounded-full opacity-[0.04]"
+          style={{
+            background: "radial-gradient(circle, #22d3ee, transparent 70%)",
+            filter: "blur(160px)",
+          }}
+        />
+        <div
+          className="absolute top-[45%] left-[35%] w-[700px] h-[700px] rounded-full opacity-[0.03]"
+          style={{
+            background: "radial-gradient(circle, #8b5cf6, transparent 70%)",
+            filter: "blur(120px)",
+          }}
+        />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto">
+        {/* ── Section Label ── */}
         <RevealOnScroll>
-          <h2 className="font-display font-bold text-section gradient-text-static text-center mb-4">
-            About Me
+          <div className="flex items-center gap-5 mb-14">
+            <span className="inline-block text-xs font-bold tracking-[0.4em] uppercase text-accent-orange/70">
+              About
+            </span>
+            <div className="h-[1px] w-20 bg-gradient-to-r from-accent-orange/50 to-transparent" />
+          </div>
+        </RevealOnScroll>
+
+        {/* ── Massive Headline — Syne at gigantic size ── */}
+        <RevealOnScroll delay={0.1}>
+          <h2
+            className="font-headline font-extrabold leading-[0.92] tracking-[-0.04em] mb-8 max-w-6xl"
+            style={{
+              fontSize: "clamp(3rem, 9vw, 7.5rem)",
+            }}
+          >
+            <span className="text-white">I build </span>
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #FF8C42 0%, #F59E42 40%, #22d3ee 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              digital
+            </span>
+            <br className="hidden md:block" />
+            <span
+              style={{
+                background:
+                  "linear-gradient(135deg, #22d3ee 0%, #8b5cf6 50%, #FF8C42 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              experiences
+            </span>
+            <span className="text-white/20">&nbsp;that</span>
+            <br className="hidden lg:block" />
+            <span className="text-white"> make an </span>
+            <span className="text-white/20">impact.</span>
           </h2>
-          <p className="text-white/40 text-center mb-16 max-w-xl mx-auto">
-            Engineer. Builder. Thinker.
+        </RevealOnScroll>
+
+        {/* ── Subtitle ── */}
+        <RevealOnScroll delay={0.2}>
+          <p className="text-white/40 text-xl md:text-2xl lg:text-3xl max-w-4xl mb-24 md:mb-32 leading-relaxed font-light tracking-[-0.01em]">
+            Computer Science graduate turning complex problems into elegant,
+            production-ready applications with modern technologies.
           </p>
         </RevealOnScroll>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
-          {/* Profile Card — spans 5 cols */}
-          <RevealOnScroll className="md:col-span-5" delay={0.1}>
-            <div
-              ref={profileRef}
-              className="glass-heavy p-6 md:p-8 h-full flex flex-col items-center justify-center text-center group"
-            >
-              {/* Profile Image with gradient ring */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 rounded-full overflow-hidden">
+        {/* ╔════════════════════════════════════════════════════════════════╗
+            ║  BENTO GRID — MagicUI style                                    ║
+            ╚════════════════════════════════════════════════════════════════╝ */}
+        <RevealOnScroll delay={0.1}>
+          <BentoGrid className="auto-rows-auto md:auto-rows-[22rem] md:grid-cols-3 gap-5 md:gap-6 mb-24 md:mb-32">
+            {/* ── Card 1: Profile — large, spans 1 col ── */}
+            <BentoCard
+              name="Prashant Kumar Yadav"
+              className="md:col-span-1 md:row-span-2"
+              background={
                 <div
-                  className="absolute inset-0 rounded-full animate-pulse-glow"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                   style={{
-                    background: "conic-gradient(from 0deg, #F59E42, #FF8C42, #22d3ee, #8b5cf6, #F59E42)",
-                    padding: "3px",
+                    background:
+                      "radial-gradient(ellipse at 30% 20%, rgba(255,140,66,0.08), transparent 60%)",
                   }}
-                >
-                  <div className="w-full h-full rounded-full overflow-hidden bg-bg">
+                />
+              }
+            >
+              <div className="relative z-10 flex flex-col items-center lg:items-start gap-6 p-8 md:p-10 h-full justify-center">
+                {/* Profile Image */}
+                <div className="relative">
+                  <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden">
                     <Image
                       src="/face.png"
                       alt="Prashant Kumar Yadav"
-                      width={160}
-                      height={160}
+                      width={176}
+                      height={176}
                       className="w-full h-full object-cover"
                       priority
                     />
                   </div>
+                  <div
+                    className="absolute -inset-6 rounded-2xl opacity-20 blur-3xl -z-10 group-hover:opacity-30 transition-opacity duration-700"
+                    style={{
+                      background:
+                        "conic-gradient(from 180deg, #F59E42, #FF8C42, #22d3ee, #8b5cf6, #F59E42)",
+                    }}
+                  />
+                </div>
+
+                {/* Name & Title */}
+                <div className="text-center lg:text-left">
+                  <h3 className="font-headline font-bold text-2xl md:text-3xl text-white mb-2 tracking-[-0.02em]">
+                    Prashant Kumar Yadav
+                  </h3>
+                  <p
+                    className="font-semibold text-lg md:text-xl mb-3"
+                    style={{
+                      background: "linear-gradient(90deg, #FF8C42, #F59E42)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    Full-Stack Developer &amp; ML Engineer
+                  </p>
+                  <div className="flex items-center gap-2 text-white/35 text-sm justify-center lg:justify-start">
+                    <MapPin size={16} />
+                    <span className="font-medium">India</span>
+                  </div>
+                </div>
+
+                {/* Tech pills */}
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {["Next.js", "React", "Python", "TypeScript", "ML"].map(
+                    (tech) => (
+                      <span
+                        key={tech}
+                        className="text-[11px] px-3.5 py-1.5 rounded-full text-white/55 font-semibold border border-white/[0.08] tracking-wide"
+                        style={{ background: "rgba(255,255,255,0.04)" }}
+                      >
+                        {tech}
+                      </span>
+                    )
+                  )}
                 </div>
               </div>
-              <h3 className="font-display font-bold text-xl text-white mb-1">
-                Prashant Kumar Yadav
-              </h3>
-              <p className="text-accent-orange font-medium text-sm mb-3">
-                Full-Stack Developer & ML Engineer
-              </p>
-              <div className="flex items-center gap-2 text-white/40 text-sm">
-                <MapPin size={14} />
-                <span>India</span>
+            </BentoCard>
+
+            {/* ── Card 2: Bio Story — spans 2 cols ── */}
+            <BentoCard
+              name="My Story"
+              className="md:col-span-2 md:row-span-2"
+              background={
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 70% 30%, rgba(34,211,238,0.05), transparent 60%)",
+                  }}
+                />
+              }
+            >
+              <div className="relative z-10 flex flex-col justify-center h-full p-8 md:p-12">
+                <span className="font-headline font-bold text-sm tracking-[0.25em] uppercase text-white/25 mb-8">
+                  My Story
+                </span>
+                <div className="space-y-7">
+                  <p className="text-white/50 text-lg md:text-xl lg:text-[1.45rem] leading-[1.85] font-light">
+                    I specialize in full-stack web development, machine
+                    learning, and data analytics. I&apos;m passionate about creating{" "}
+                    <span className="text-white font-semibold">
+                      performant, user-centric applications
+                    </span>{" "}
+                    with clean architecture and modern tech stacks.
+                  </p>
+                  <p className="text-white/50 text-lg md:text-xl lg:text-[1.45rem] leading-[1.85] font-light">
+                    I thrive on building production-ready applications that
+                    solve real problems — from{" "}
+                    <span className="text-white font-semibold">
+                      e-commerce platforms
+                    </span>{" "}
+                    with secure payment processing to{" "}
+                    <span className="text-white font-semibold">
+                      AI-powered data cleaning tools
+                    </span>
+                    . My approach combines strong engineering fundamentals with
+                    a keen eye for{" "}
+                    <span className="text-white font-semibold">
+                      user experience and scalable system design
+                    </span>
+                    .
+                  </p>
+                </div>
               </div>
-            </div>
-          </RevealOnScroll>
+            </BentoCard>
 
-          {/* Bio Card — spans 7 cols */}
-          <RevealOnScroll className="md:col-span-7" delay={0.2}>
-            <div className="glass p-6 md:p-8 h-full">
-              <h3 className="font-display font-semibold text-lg text-white mb-4">
-                My Story
-              </h3>
-              <p className="text-white/55 leading-relaxed mb-5">
-                Computer Science graduate specializing in full-stack web development,
-                machine learning, and data analytics. I&apos;m passionate about creating
-                performant, user-centric applications with clean architecture and
-                modern tech stacks.
-              </p>
-              <p className="text-white/55 leading-relaxed">
-                I thrive on building production-ready applications that solve real
-                problems — from e-commerce platforms with secure payment processing
-                to AI-powered data cleaning tools. My approach combines strong
-                engineering fundamentals with a keen eye for user experience and
-                scalable system design.
-              </p>
-            </div>
-          </RevealOnScroll>
+            {/* ── Cards 3-6: Strengths — each spans 1 col ── */}
+            {strengths.map((s) => (
+              <BentoCard
+                key={s.title}
+                name={s.title}
+                className="md:col-span-1"
+                background={
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: `radial-gradient(circle at 50% 50%, ${s.glowColor}, transparent 70%)`,
+                    }}
+                  />
+                }
+              >
+                <div className="relative z-10 p-7 md:p-8 flex flex-col justify-end h-full">
+                  <div
+                    className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5"
+                    style={{ background: s.accentColor }}
+                  >
+                    <s.icon size={26} className="text-white/90" />
+                  </div>
+                  <h4 className="font-headline font-bold text-white text-xl md:text-2xl mb-2 tracking-[-0.01em]">
+                    {s.title}
+                  </h4>
+                  <p className="text-white/40 text-sm md:text-base leading-relaxed">
+                    {s.desc}
+                  </p>
+                </div>
+              </BentoCard>
+            ))}
 
-          {/* Education Card — spans 7 cols */}
-          <RevealOnScroll className="md:col-span-7" delay={0.3}>
-            <div className="glass p-6 md:p-8 h-full">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-xl shrink-0" style={{ background: "rgba(255,140,66,0.1)" }}>
-                  <GraduationCap size={24} className="text-accent-orange" />
+            {/* ── Card 7: Education — spans 2 cols ── */}
+            <BentoCard
+              name="Education"
+              className="md:col-span-2"
+              background={
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 20% 50%, rgba(255,140,66,0.05), transparent 60%)",
+                  }}
+                />
+              }
+            >
+              <div className="relative z-10 flex items-start gap-6 p-8 md:p-10 h-full">
+                <div
+                  className="p-4 rounded-2xl shrink-0"
+                  style={{ background: "rgba(255,140,66,0.1)" }}
+                >
+                  <GraduationCap size={28} className="text-accent-orange" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-display font-bold text-lg text-white mb-1">
+                  <h3 className="font-headline font-bold text-2xl md:text-3xl text-white mb-2 tracking-[-0.01em]">
                     Chandigarh University
                   </h3>
-                  <p className="text-accent-warm font-medium text-sm mb-2">
-                    B.E. Computer Science & Technology
+                  <p
+                    className="font-semibold text-base md:text-lg mb-3"
+                    style={{
+                      background: "linear-gradient(90deg, #F59E42, #FF8C42)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    B.E. Computer Science &amp; Technology
                   </p>
-                  <div className="flex items-center gap-2 text-white/40 text-xs mb-4">
-                    <Calendar size={12} />
-                    <span>August 2021 — June 2025</span>
+                  <div className="flex items-center gap-2.5 text-white/35 text-sm mb-5">
+                    <Calendar size={14} />
+                    <span className="font-medium">August 2021 — June 2025</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {["OOP", "DSA", "OS", "DBMS", "Networks", "IoT"].map((course) => (
-                      <span
-                        key={course}
-                        className="text-[11px] px-3 py-1 rounded-full text-white/50 font-medium"
-                        style={{
-                          background: "rgba(255,255,255,0.04)",
-                          border: "1px solid rgba(255,255,255,0.06)",
-                        }}
-                      >
-                        {course}
-                      </span>
-                    ))}
+                    {["OOP", "DSA", "OS", "DBMS", "Networks", "IoT"].map(
+                      (course) => (
+                        <span
+                          key={course}
+                          className="text-[11px] px-3.5 py-1.5 rounded-full text-white/45 font-semibold border border-white/[0.07] tracking-wide"
+                          style={{ background: "rgba(255,255,255,0.03)" }}
+                        >
+                          {course}
+                        </span>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-          </RevealOnScroll>
+            </BentoCard>
 
-          {/* Stats — spans 5 cols, grid of 3 */}
-          <RevealOnScroll className="md:col-span-5" delay={0.4}>
-            <div className="grid grid-cols-3 gap-3 h-full">
-              {stats.map((stat) => (
+            {/* ── Card 8: Stats — spans 1 col ── */}
+            <BentoCard
+              name="Stats"
+              className="md:col-span-1"
+              background={
                 <div
-                  key={stat.label}
-                  className="glass p-4 text-center flex flex-col items-center justify-center hover:translate-y-[-3px] transition-transform duration-300 group"
-                >
-                  <div className="text-accent-orange mb-2 group-hover:scale-110 transition-transform">
-                    {stat.icon}
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 50%, rgba(255,140,66,0.07), transparent 70%)",
+                  }}
+                />
+              }
+            >
+              <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 gap-6">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <div
+                      className="font-headline font-extrabold"
+                      style={{
+                        fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+                        lineHeight: "1",
+                        background:
+                          "linear-gradient(135deg, #FFFFFF 0%, #FF8C42 50%, #F59E42 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      <AnimatedCounter
+                        target={stat.number}
+                        suffix={stat.suffix}
+                      />
+                    </div>
+                    <div className="text-white/35 text-[10px] md:text-xs font-bold tracking-[0.18em] uppercase font-headline mt-1">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-2xl font-display font-bold text-accent-warm">
-                    <AnimatedCounter target={stat.number} suffix={stat.suffix} />
-                  </div>
-                  <div className="text-[10px] text-white/40 mt-1 leading-tight">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </RevealOnScroll>
-        </div>
+                ))}
+              </div>
+            </BentoCard>
+          </BentoGrid>
+        </RevealOnScroll>
       </div>
     </section>
   );
