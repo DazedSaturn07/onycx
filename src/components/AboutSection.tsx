@@ -10,6 +10,8 @@ import {
   Code2,
   Layers,
   BrainCircuit,
+  BarChart3,
+  Palette,
 } from "lucide-react";
 import Image from "next/image";
 import RevealOnScroll from "./RevealOnScroll";
@@ -25,30 +27,30 @@ const stats = [
 /* ── Core Strengths ── */
 const strengths = [
   {
-    icon: Code2,
-    title: "Full-Stack Dev",
-    desc: "End-to-end web applications with modern frameworks & cutting-edge tech stacks",
+    icon: BarChart3,
+    title: "Data Analytics",
+    desc: "End-to-end data pipelines, ETL workflows, statistical analysis & Power BI dashboards",
     accentColor: "rgba(255,140,66,0.12)",
     glowColor: "rgba(255,140,66,0.08)",
   },
   {
     icon: BrainCircuit,
     title: "Machine Learning",
-    desc: "Intelligent data pipelines, predictive models & deep learning architectures",
+    desc: "Predictive models, deep learning, anomaly detection & intelligent data cleaning",
     accentColor: "rgba(34,211,238,0.12)",
     glowColor: "rgba(34,211,238,0.08)",
   },
   {
-    icon: Layers,
-    title: "System Design",
-    desc: "Scalable architecture, clean code principles & robust infrastructure patterns",
+    icon: Palette,
+    title: "Vibe Coding",
+    desc: "Crafting beautiful, modern web experiences with AI-assisted development & creative flair",
     accentColor: "rgba(139,92,246,0.12)",
     glowColor: "rgba(139,92,246,0.08)",
   },
   {
-    icon: Zap,
-    title: "Performance",
-    desc: "Optimized UX with sub-second interactions & lightning-fast load times",
+    icon: Layers,
+    title: "Data Visualization",
+    desc: "Transforming complex datasets into clear, compelling visual stories that drive decisions",
     accentColor: "rgba(52,211,153,0.12)",
     glowColor: "rgba(52,211,153,0.08)",
   },
@@ -144,7 +146,7 @@ export default function AboutSection() {
               fontSize: "clamp(3rem, 9vw, 7.5rem)",
             }}
           >
-            <span className="text-white">I build </span>
+            <span className="text-white">I turn </span>
             <span
               style={{
                 background:
@@ -154,7 +156,7 @@ export default function AboutSection() {
                 backgroundClip: "text",
               }}
             >
-              digital
+              data into
             </span>
             <br className="hidden md:block" />
             <span
@@ -166,11 +168,11 @@ export default function AboutSection() {
                 backgroundClip: "text",
               }}
             >
-              experiences
+              decisions
             </span>
             <span className="text-white/20">&nbsp;that</span>
             <br className="hidden lg:block" />
-            <span className="text-white"> make an </span>
+            <span className="text-white"> drive </span>
             <span className="text-white/20">impact.</span>
           </h2>
         </RevealOnScroll>
@@ -178,8 +180,8 @@ export default function AboutSection() {
         {/* ── Subtitle ── */}
         <RevealOnScroll delay={0.2}>
           <p className="text-white/40 text-xl md:text-2xl lg:text-3xl max-w-4xl mb-24 md:mb-32 leading-relaxed font-light tracking-[-0.01em]">
-            Computer Science graduate turning complex problems into elegant,
-            production-ready applications with modern technologies.
+            Computer Science graduate turning raw data into actionable
+            insights with analytics, ML, and modern tools.
           </p>
         </RevealOnScroll>
 
@@ -205,12 +207,12 @@ export default function AboutSection() {
               <div className="relative z-10 flex flex-col items-center lg:items-start gap-6 p-8 md:p-10 h-full justify-center">
                 {/* Profile Image */}
                 <div className="relative">
-                  <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden">
+                  <div className="relative w-44 h-44 md:w-56 md:h-56 rounded-2xl overflow-hidden">
                     <Image
                       src="/face.png"
                       alt="Prashant Kumar Yadav"
-                      width={176}
-                      height={176}
+                      width={224}
+                      height={224}
                       className="w-full h-full object-cover"
                       priority
                     />
@@ -238,7 +240,7 @@ export default function AboutSection() {
                       backgroundClip: "text",
                     }}
                   >
-                    Full-Stack Developer &amp; ML Engineer
+                    Data Analyst &amp; Vibe Coder
                   </p>
                   <div className="flex items-center gap-2 text-white/35 text-sm justify-center lg:justify-start">
                     <MapPin size={16} />
@@ -248,7 +250,7 @@ export default function AboutSection() {
 
                 {/* Tech pills */}
                 <div className="flex flex-wrap gap-2 mt-1">
-                  {["Next.js", "React", "Python", "TypeScript", "ML"].map(
+                  {["Python", "Power BI", "SQL", "Pandas", "ML"].map(
                     (tech) => (
                       <span
                         key={tech}
@@ -283,29 +285,28 @@ export default function AboutSection() {
                 </span>
                 <div className="space-y-7">
                   <p className="text-white/50 text-lg md:text-xl lg:text-[1.45rem] leading-[1.85] font-light">
-                    I specialize in full-stack web development, machine
-                    learning, and data analytics. I&apos;m passionate about creating{" "}
+                    I specialize in data analytics, machine
+                    learning, and AI-driven automation. I&apos;m passionate about transforming{" "}
                     <span className="text-white font-semibold">
-                      performant, user-centric applications
+                      raw data into actionable business insights
                     </span>{" "}
-                    with clean architecture and modern tech stacks.
+                    with clean pipelines, statistical analysis, and compelling visualizations.
                   </p>
                   <p className="text-white/50 text-lg md:text-xl lg:text-[1.45rem] leading-[1.85] font-light">
-                    I thrive on building production-ready applications that
+                    I thrive on building end-to-end data solutions that
                     solve real problems — from{" "}
                     <span className="text-white font-semibold">
-                      e-commerce platforms
+                      interactive Power BI dashboards
                     </span>{" "}
-                    with secure payment processing to{" "}
+                    for stakeholder decision-making to{" "}
                     <span className="text-white font-semibold">
                       AI-powered data cleaning tools
                     </span>
-                    . My approach combines strong engineering fundamentals with
-                    a keen eye for{" "}
+                    . As a vibe coder, I also love crafting{" "}
                     <span className="text-white font-semibold">
-                      user experience and scalable system design
+                      beautiful, modern web experiences
                     </span>
-                    .
+                    {" "}with creative flair and AI-assisted development.
                   </p>
                 </div>
               </div>

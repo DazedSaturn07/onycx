@@ -30,30 +30,32 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Prashant Kumar Yadav — Full-Stack Developer & ML Engineer",
+  title: "Prashant Kumar Yadav — Data Analyst & Vibe Coder",
   description:
-    "Building intelligent, scalable web solutions. Full-Stack Developer and ML Engineer specializing in Next.js, TypeScript, Python, and Machine Learning.",
+    "Transforming raw data into actionable insights. Data Analyst and Vibe Coder specializing in Python, SQL, Power BI, Machine Learning, and AI-driven automation.",
   keywords: [
-    "Full-Stack Developer",
-    "ML Engineer",
-    "Next.js",
-    "TypeScript",
+    "Data Analyst",
+    "Vibe Coder",
+    "Python",
+    "Power BI",
+    "SQL",
+    "Data Analytics",
     "Machine Learning",
-    "React",
+    "Data Visualization",
     "Portfolio",
     "Prashant Kumar Yadav",
   ],
   authors: [{ name: "Prashant Kumar Yadav" }],
   openGraph: {
-    title: "Prashant Kumar Yadav — Full-Stack Developer & ML Engineer",
-    description: "Building intelligent, scalable web solutions with modern technologies.",
+    title: "Prashant Kumar Yadav — Data Analyst & Vibe Coder",
+    description: "Transforming raw data into actionable insights with analytics, ML, and modern tools.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prashant Kumar Yadav — Full-Stack Developer & ML Engineer",
-    description: "Building intelligent, scalable web solutions with modern technologies.",
+    title: "Prashant Kumar Yadav — Data Analyst & Vibe Coder",
+    description: "Transforming raw data into actionable insights with analytics, ML, and modern tools.",
   },
   robots: {
     index: true,
@@ -61,21 +63,26 @@ export const metadata: Metadata = {
   },
 };
 
+import SmoothScroll from "@/components/SmoothScroll";
+// ... imports
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} ${syne.variable} font-sans antialiased`}
       >
-        {/* Skip to content for accessibility */}
-        <a href="#main-content" className="skip-to-content">
-          Skip to content
-        </a>
-        {children}
+        <SmoothScroll>
+          {/* Skip to content for accessibility */}
+          <a href="#main-content" className="skip-to-content">
+            Skip to content
+          </a>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

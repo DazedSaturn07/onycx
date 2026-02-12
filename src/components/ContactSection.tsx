@@ -77,24 +77,43 @@ export default function ContactSection() {
           </p>
         </RevealOnScroll>
 
-        {/* Availability Badge */}
-        <RevealOnScroll delay={0.1}>
-          <div className="flex justify-center mb-10">
+        {/* ── Enhanced Availability Banner ── */}
+        <RevealOnScroll delay={0.05}>
+          <div className="flex justify-center mb-14">
             <div
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm"
+              className="relative rounded-2xl p-[1px] overflow-hidden"
               style={{
-                background: "rgba(34,197,94,0.06)",
-                border: "1px solid rgba(34,197,94,0.15)",
+                background:
+                  "linear-gradient(135deg, rgba(34,197,94,0.5), rgba(34,211,238,0.3), rgba(139,92,246,0.3), rgba(34,197,94,0.5))",
+                backgroundSize: "300% 300%",
+                animation: "shimmer 4s linear infinite",
               }}
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-              </span>
-              <span className="text-green-400/80 font-medium">Available for work</span>
+              <div
+                className="relative flex items-center gap-4 px-8 py-4 rounded-2xl"
+                style={{
+                  background: "rgba(11,15,20,0.85)",
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                {/* Glow dot */}
+                <span className="relative flex h-3 w-3 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-400 shadow-[0_0_12px_rgba(34,197,94,0.6)]" />
+                </span>
+                <div>
+                  <p className="text-white font-semibold text-sm md:text-base tracking-tight">
+                    Open to Work
+                  </p>
+                  <p className="text-white/40 text-xs md:text-sm mt-0.5">
+                    Available for full-time roles, freelance & collaborations
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </RevealOnScroll>
+
 
         {/* Contact Cards Grid */}
         <RevealOnScroll delay={0.15}>

@@ -14,9 +14,9 @@ function padFrame(n: number): string {
 
 /* ── Roles ── */
 const roles = [
-  "Full-Stack Developer",
-  "ML Engineer",
   "Data Analyst",
+  "Vibe Coder",
+  "ML Enthusiast",
   "Problem Solver",
 ];
 
@@ -303,23 +303,6 @@ export default function HeroSection() {
         {/* ── Hero Content (z-10) ── */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 md:px-8">
           <div className="text-center max-w-5xl mx-auto">
-            {/* Availability Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-medium"
-              style={{
-                background: "rgba(255,140,66,0.08)",
-                border: "1px solid rgba(255,140,66,0.2)",
-              }}
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
-              </span>
-              <span className="text-white/70">Available for opportunities</span>
-            </motion.div>
 
             {/* Name — Word-level kinetic stagger */}
             <motion.h1
@@ -372,9 +355,9 @@ export default function HeroSection() {
               }}
               className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
             >
-              Building intelligent, scalable web solutions with modern
-              technologies. Turning complex problems into elegant,
-              production-ready applications.
+              Transforming raw data into actionable business insights
+              with Python, SQL & Power BI. Building intelligent,
+              AI-driven data solutions that drive decisions.
             </motion.p>
 
             {/* CTAs */}

@@ -16,74 +16,47 @@ interface Achievement {
 
 const achievements: Achievement[] = [
   {
-    title: "IBM Full Stack Software Developer",
+    title: "IBM Machine Learning Professional Certificate",
     issuer: "Coursera — IBM Professional Certificate",
     date: "2024",
     image: "/certificates/21BCS2563_Prashant_IBM_final.webp",
     verifyUrl: "https://coursera.org/verify/professional-cert/KW27N63JG4YO",
   },
   {
-    title: "Developing Front-End Apps with React",
+    title: "Exploratory Data Analysis for ML",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/developing_frontend_apps_react.webp",
-    verifyUrl: "https://coursera.org/verify/X7JXBK7SNFQX",
+    image: "/certificates/1_exploratory_data.webp",
   },
   {
-    title: "Introduction to Cloud Computing",
+    title: "Supervised Machine Learning: Regression",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/introduction_to_cloud_computing.webp",
-    verifyUrl: "https://coursera.org/verify/2Y4FHPKHSEKV",
+    image: "/certificates/2_supervised_ml.webp",
   },
   {
-    title: "Introduction to Web Development",
+    title: "Supervised ML: Classification",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/introduction_to_webdevelopment.webp",
-    verifyUrl: "https://coursera.org/verify/9KXCVH77KJ94",
+    image: "/certificates/3_supervised_ml_classification.webp",
   },
   {
-    title: "Getting Started with Git and GitHub",
+    title: "Unsupervised Machine Learning",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/getting_started_with_git_github.webp",
-    verifyUrl: "https://coursera.org/verify/1XAZB5BFEJJM",
+    image: "/certificates/4_unsupervised_ml.webp",
   },
   {
-    title: "Developing AI Applications with Python & Flask",
+    title: "Deep Learning & Neural Networks",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/developing_ai_applications_with_python_and_flask.webp",
-    verifyUrl: "https://coursera.org/verify/YT6Y1RRHMDPH",
+    image: "/certificates/5_deep_learning.webp",
   },
   {
-    title: "Django Application Development with SQL & Databases",
+    title: "ML Capstone Project",
     issuer: "Coursera — IBM",
     date: "2024",
-    image: "/certificates/django_application_dev.webp",
-    verifyUrl: "https://coursera.org/verify/H71UJK0YWCBO",
-  },
-  {
-    title: "JavaScript Programming Essentials",
-    issuer: "Coursera — IBM",
-    date: "2024",
-    image: "/certificates/javascript_programming_essentials.webp",
-    verifyUrl: "https://coursera.org/verify/E1GBJZRR9B7I",
-  },
-  {
-    title: "Node.js & Express - Application Development",
-    issuer: "Coursera — IBM",
-    date: "2024",
-    image: "/certificates/nodejsandexpress.webp",
-    verifyUrl: "https://coursera.org/verify/S78F0F9F48CB",
-  },
-  {
-    title: "Intermediate Web & Front-End Development",
-    issuer: "Coursera — IBM",
-    date: "2024",
-    image: "/certificates/intermediate_web_frontend_development.webp",
-    verifyUrl: "https://coursera.org/verify/BGPCGHG5OVQ7",
+    image: "/certificates/6_ml_capstone.webp",
   },
   {
     title: "Advanced Python Data Analysis",
@@ -110,39 +83,24 @@ export default function AchievementsSection() {
             Certifications
           </h2>
           <p className="text-white/40 text-center mb-12 max-w-xl mx-auto">
-            Professional certifications validating expertise across the stack.
+            Professional certifications validating expertise in data analytics, development & cloud technologies.
           </p>
         </RevealOnScroll>
 
-        {/* Horizontal Scrolling Carousel */}
+        {/* Infinite Scrolling Carousel */}
         <RevealOnScroll delay={0.1}>
-          <div className="relative">
+          <div className="relative overflow-hidden group">
             {/* Fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg, #0b0f14, transparent)" }} />
-            <div className="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style={{ background: "linear-gradient(270deg, #0b0f14, transparent)" }} />
+            <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg, #0b0f14, transparent)" }} />
+            <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(270deg, #0b0f14, transparent)" }} />
 
-            <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto pb-4 px-2 snap-x snap-mandatory scrollbar-hide"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-              }}
-            >
-              {achievements.map((cert, i) => (
-                <motion.div
-                  key={cert.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.6,
-                    delay: i * 0.05,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className="snap-center shrink-0 w-[280px] md:w-[320px]"
+            <div className="flex gap-6 animate-marquee group-hover:[animation-play-state:paused] w-max">
+              {[...achievements, ...achievements].map((cert, i) => (
+                <div
+                  key={`${cert.title}-${i}`}
+                  className="w-[280px] md:w-[320px] shrink-0"
                 >
-                  <div className="glass h-full overflow-hidden group hover:translate-y-[-3px] transition-transform duration-300">
+                  <div className="glass h-full overflow-hidden group/card hover:translate-y-[-3px] transition-transform duration-300">
                     {/* Certificate Image */}
                     {cert.image && (
                       <div className="relative h-44 overflow-hidden">
@@ -150,7 +108,7 @@ export default function AchievementsSection() {
                           src={cert.image}
                           alt={cert.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="object-cover group-hover/card:scale-105 transition-transform duration-500"
                           sizes="320px"
                           loading="lazy"
                         />
@@ -187,13 +145,10 @@ export default function AchievementsSection() {
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-
-          {/* Scroll hint */}
-          <p className="text-center text-white/20 text-xs mt-4">← Scroll to explore →</p>
         </RevealOnScroll>
       </div>
     </section>

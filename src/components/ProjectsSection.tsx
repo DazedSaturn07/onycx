@@ -176,8 +176,8 @@ export default function ProjectsSection() {
               Featured Projects
             </h2>
             <p className="text-white/40 max-w-2xl mx-auto">
-              A curated selection spanning full-stack development, machine
-              learning, and data analytics — scroll to explore each project.
+              A curated selection spanning data analytics, machine
+              learning, and full-stack development — scroll to explore each project.
             </p>
           </RevealOnScroll>
         </div>
