@@ -6,8 +6,6 @@ import {
   GraduationCap,
   MapPin,
   Calendar,
-  Zap,
-  Code2,
   Layers,
   BrainCircuit,
   BarChart3,

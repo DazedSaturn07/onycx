@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion } from "framer-motion";
+
 import { Award, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import RevealOnScroll from "./RevealOnScroll";
@@ -73,7 +72,6 @@ const achievements: Achievement[] = [
 ];
 
 export default function AchievementsSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <section id="achievements" className="py-24 md:py-36 px-4 md:px-8" aria-label="Achievements">
