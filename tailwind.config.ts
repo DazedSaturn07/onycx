@@ -11,14 +11,16 @@ const config: Config = {
       colors: {
         primary: "#FF8C42",
         bg: {
-          DEFAULT: "#0b0f14",
-          surface: "#111820",
+          DEFAULT: "#000000",
+          surface: "#0a0a0a",
         },
         accent: {
           orange: "#FF8C42",
           warm: "#F59E42",
           cyan: "#22d3ee",
           violet: "#8b5cf6",
+          emerald: "#34d399",
+          rose: "#fb7185",
         },
       },
       fontFamily: {
@@ -74,7 +76,7 @@ const config: Config = {
         },
       },
       fontSize: {
-        "hero": ["clamp(2.5rem, 8vw, 5.5rem)", { lineHeight: "1.05", letterSpacing: "-0.03em" }],
+        "hero": ["clamp(2rem, 8vw, 5.5rem)", { lineHeight: "1.05", letterSpacing: "-0.03em" }],
         "section": ["clamp(2rem, 5vw, 3.5rem)", { lineHeight: "1.15", letterSpacing: "-0.02em" }],
         "sub": ["clamp(1.25rem, 3vw, 1.75rem)", { lineHeight: "1.3" }],
       },

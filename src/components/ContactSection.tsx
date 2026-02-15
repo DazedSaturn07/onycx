@@ -92,7 +92,7 @@ export default function ContactSection() {
               <div
                 className="relative flex items-center gap-4 px-8 py-4 rounded-2xl"
                 style={{
-                  background: "rgba(11,15,20,0.85)",
+                  background: "rgba(0,0,0,0.85)",
                   backdropFilter: "blur(20px)",
                 }}
               >

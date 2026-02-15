@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Home, User, FolderKanban, Zap, Trophy, Mail } from "lucide-react";
+import { Home, User, FolderKanban, Zap, Trophy, Mail, Download } from "lucide-react";
 import { AnimeNavBar } from "@/components/ui/anime-navbar";
+import { usePreload } from "@/context/PreloadContext";
 
 const navItems = [
   { name: "Home", url: "#home", icon: Home },
@@ -15,17 +16,12 @@ const navItems = [
 
 /**
  * Navbar — Floating anime-style pill navbar with scroll-based
- * section tracking and smooth scrolling.
+ * section tracking, smooth scrolling, and a Resume download button.
  */
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("Home");
-  const [visible, setVisible] = useState(false);
-
-  // Wait for the preloader to finish before showing the navbar
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+  const { isLoading } = usePreload();
+  const visible = !isLoading;
 
   // Scroll-based active section detection
   useEffect(() => {
@@ -71,6 +67,31 @@ export default function Navbar() {
         activeTab={activeTab}
         onTabClick={handleTabClick}
       />
+
+      {/* ── Resume Download Button — Fixed position, glassmorphism capsule ── */}
+      <a
+        href="/Prashant_res.pdf"
+        download="Prashant_Kumar_Yadav_Resume.pdf"
+        className="fixed top-4 left-4 md:top-6 md:left-6 z-50 group"
+        aria-label="Download Resume"
+      >
+        <div
+          className="flex items-center gap-2 px-4 py-2.5 md:px-5 md:py-3 rounded-full text-white/70 hover:text-white font-semibold text-xs md:text-sm transition-all duration-500 hover:scale-[1.04] active:scale-[0.97]"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          }}
+        >
+          <Download
+            size={14}
+            className="group-hover:text-accent-orange transition-colors duration-300"
+          />
+          <span className="hidden md:inline">Resume</span>
+        </div>
+      </a>
     </div>
   );
 }

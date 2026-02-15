@@ -172,14 +172,14 @@ export default function SkillsSection() {
               className="absolute left-0 top-0 bottom-0 w-24 z-10"
               style={{
                 background:
-                  "linear-gradient(90deg, #0b0f14, transparent)",
+                  "linear-gradient(90deg, #000000, transparent)",
               }}
             />
             <div
               className="absolute right-0 top-0 bottom-0 w-24 z-10"
               style={{
                 background:
-                  "linear-gradient(270deg, #0b0f14, transparent)",
+                  "linear-gradient(270deg, #000000, transparent)",
               }}
             />
             <div className="flex animate-marquee gap-5 will-change-transform">
@@ -209,8 +209,8 @@ export default function SkillsSection() {
                   key={cat.key}
                   onClick={() => setActiveTab(cat.key)}
                   className={`relative text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-300 flex items-center gap-2 ${activeTab === cat.key
-                      ? "text-white"
-                      : "text-white/40 hover:text-white/60"
+                    ? "text-white"
+                    : "text-white/40 hover:text-white/60"
                     }`}
                 >
                   {activeTab === cat.key && (

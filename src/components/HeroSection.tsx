@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowDown, Linkedin, Github, Mail, Sparkles } from "lucide-react";
+import { usePreload } from "@/context/PreloadContext";
 
 /* ── Scroll Frame Animation Config ── */
 const TOTAL_FRAMES = 192;
@@ -22,8 +23,8 @@ const roles = [
 
 /**
  * HeroSection — Full viewport hero with a scroll-scrubbed head-turn
- * animation as background. The section is 400vh tall with a sticky
- * viewport, giving 300vh of scroll travel to scrub 192 frames.
+ * animation as background. Uses a continuous rAF loop with frame
+ * interpolation (lerp) for buttery smooth playback.
  */
 export default function HeroSection() {
   const [roleIndex, setRoleIndex] = useState(0);
@@ -31,8 +32,12 @@ export default function HeroSection() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const loadedRef = useRef<Set<number>>(new Set());
-  const currentFrameRef = useRef(-1);
+  const currentFrameRef = useRef(0);
+  const targetFrameRef = useRef(0);
   const rafRef = useRef(0);
+  const lastDrawnFrameRef = useRef(-1);
+
+  const { registerAsset, markLoaded } = usePreload();
 
   // ── Role Cycling ──
   useEffect(() => {
@@ -47,17 +52,19 @@ export default function HeroSection() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const roundedIndex = Math.round(index);
+    if (roundedIndex === lastDrawnFrameRef.current) return;
+
     // Find the closest loaded frame
-    let targetIndex = index;
-    if (!loadedRef.current.has(index)) {
-      // Search nearby frames
+    let targetIndex = roundedIndex;
+    if (!loadedRef.current.has(roundedIndex)) {
       for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
-        if (loadedRef.current.has(index - offset)) {
-          targetIndex = index - offset;
+        if (loadedRef.current.has(roundedIndex - offset)) {
+          targetIndex = roundedIndex - offset;
           break;
         }
-        if (loadedRef.current.has(index + offset)) {
-          targetIndex = index + offset;
+        if (loadedRef.current.has(roundedIndex + offset)) {
+          targetIndex = roundedIndex + offset;
           break;
         }
       }
@@ -69,20 +76,20 @@ export default function HeroSection() {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const displayW = canvas.clientWidth;
     const displayH = canvas.clientHeight;
 
-    if (canvas.width !== displayW * dpr || canvas.height !== displayH * dpr) {
-      canvas.width = displayW * dpr;
-      canvas.height = displayH * dpr;
+    if (canvas.width !== Math.round(displayW * dpr) || canvas.height !== Math.round(displayH * dpr)) {
+      canvas.width = Math.round(displayW * dpr);
+      canvas.height = Math.round(displayH * dpr);
       ctx.scale(dpr, dpr);
     }
 
-    ctx.fillStyle = "#0b0f14";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, displayW, displayH);
 
-    // Cover-fit the image (no crop, no aspect change)
+    // Cover-fit the image
     const imgAspect = img.naturalWidth / img.naturalHeight;
     const canvasAspect = displayW / displayH;
     let drawW: number, drawH: number, dx: number, dy: number;
@@ -90,19 +97,20 @@ export default function HeroSection() {
     if (imgAspect > canvasAspect) {
       drawH = displayH;
       drawW = displayH * imgAspect;
-      dx = (displayW - drawW) / 2;
+      dx = Math.round((displayW - drawW) / 2);
       dy = 0;
     } else {
       drawW = displayW;
       drawH = displayW / imgAspect;
       dx = 0;
-      dy = (displayH - drawH) / 2;
+      dy = Math.round((displayH - drawH) / 2);
     }
 
-    ctx.drawImage(img, dx, dy, drawW, drawH);
+    ctx.drawImage(img, dx, dy, Math.round(drawW), Math.round(drawH));
+    lastDrawnFrameRef.current = roundedIndex;
   }, []);
 
-  // ── Compute frame index from scroll position ──
+  // ── Compute target frame index from scroll position ──
   const getFrameIndex = useCallback(() => {
     const section = sectionRef.current;
     if (!section) return 0;
@@ -112,71 +120,93 @@ export default function HeroSection() {
     const sectionHeight = section.offsetHeight;
     const viewportHeight = window.innerHeight;
 
-    // Scrollable distance within this section
-    // (section height minus one viewport that the sticky container occupies)
     const scrollDistance = sectionHeight - viewportHeight;
     if (scrollDistance <= 0) return 0;
 
-    // How far we've scrolled INTO this section
     const scrolledInSection = scrollY - sectionTop;
-
-    // Progress: 0 when at section top, 1 when section is fully scrolled
     const progress = Math.max(0, Math.min(1, scrolledInSection / scrollDistance));
 
-    return Math.min(Math.floor(progress * TOTAL_FRAMES), TOTAL_FRAMES - 1);
+    return Math.min(progress * (TOTAL_FRAMES - 1), TOTAL_FRAMES - 1);
   }, []);
 
-  // ── Preload all frames ──
+  // ── Preload all frames with priority loading ──
   useEffect(() => {
-    const images: HTMLImageElement[] = [];
+    const images: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
+    // Register assets
     for (let i = 0; i < TOTAL_FRAMES; i++) {
+      registerAsset(`hero-frame-${i}`);
+    }
+
+    const loadFrame = (i: number) => {
       const img = new window.Image();
       img.decoding = "async";
-
       img.onload = () => {
         loadedRef.current.add(i);
-        // Draw frame 0 immediately, and also draw current frame if it just loaded
-        if (i === 0 || i === currentFrameRef.current) {
-          drawFrame(i);
-        }
+        markLoaded(`hero-frame-${i}`);
+        // Draw frame 0 immediately
+        if (i === 0) drawFrame(0);
       };
-
       img.src = `${FRAME_PATH}${padFrame(i)}.webp`;
-      images.push(img);
+      images[i] = img;
+    };
+
+    // Priority: load key frames first (every 12th frame for quick preview)
+    const keyFrames: number[] = [];
+    for (let i = 0; i < TOTAL_FRAMES; i += 12) keyFrames.push(i);
+    keyFrames.forEach(loadFrame);
+
+    // Then load all remaining frames
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      if (i % 12 !== 0) loadFrame(i);
     }
 
     imagesRef.current = images;
 
     return () => {
       images.forEach((img) => {
-        img.onload = null;
+        if (img) img.onload = null;
       });
     };
-  }, [drawFrame]);
+  }, [drawFrame, registerAsset, markLoaded]);
 
-  // ── Scroll → Frame mapping ──
+  // ── Continuous rAF loop with lerp + visibility-based pausing ──
+  // When hero scrolls out of view, pause rAF to free GPU for LightPillar
   useEffect(() => {
-    const update = () => {
-      const frameIndex = getFrameIndex();
-
-      if (frameIndex !== currentFrameRef.current) {
-        currentFrameRef.current = frameIndex;
-        drawFrame(frameIndex);
-      }
-      rafRef.current = 0;
-    };
+    let isVisible = true;
 
     const handleScroll = () => {
-      if (!rafRef.current) {
-        rafRef.current = requestAnimationFrame(update);
+      targetFrameRef.current = getFrameIndex();
+      // Check if hero is visible (with 200px buffer)
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        isVisible = rect.bottom > -200;
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial
 
-    // Initial draw based on current scroll position
-    update();
+    const animate = () => {
+      // Skip canvas work entirely when hero is offscreen
+      if (isVisible) {
+        const current = currentFrameRef.current;
+        const target = targetFrameRef.current;
+        const diff = target - current;
+
+        if (Math.abs(diff) > 0.1) {
+          currentFrameRef.current = current + diff * 0.15;
+          drawFrame(currentFrameRef.current);
+        } else if (Math.abs(diff) > 0.01) {
+          currentFrameRef.current = target;
+          drawFrame(target);
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -187,13 +217,12 @@ export default function HeroSection() {
   // ── Resize → Redraw ──
   useEffect(() => {
     const handleResize = () => {
-      const frameIndex = getFrameIndex();
-      currentFrameRef.current = frameIndex;
-      drawFrame(frameIndex);
+      lastDrawnFrameRef.current = -1; // Force redraw
+      drawFrame(currentFrameRef.current);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [drawFrame, getFrameIndex]);
+  }, [drawFrame]);
 
   // ── Framer-motion variants ──
   const nameWords = "Prashant Kumar Yadav".split(" ");
@@ -240,8 +269,8 @@ export default function HeroSection() {
           className="absolute inset-0 z-[1] pointer-events-none"
           style={{
             background: `
-              radial-gradient(ellipse at center, transparent 30%, #0b0f14 80%),
-              linear-gradient(to bottom, rgba(11,15,20,0.3) 0%, rgba(11,15,20,0.1) 40%, rgba(11,15,20,0.5) 100%)
+              radial-gradient(ellipse at center, transparent 30%, #000000 80%),
+              linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.5) 100%)
             `,
           }}
         />
@@ -256,7 +285,7 @@ export default function HeroSection() {
               className="w-full h-full animate-morph"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(255,140,66,0.08) 0%, transparent 70%)",
+                  "radial-gradient(circle, rgba(255,140,66,0.1) 0%, transparent 70%)",
                 filter: "blur(80px)",
               }}
             />
@@ -269,7 +298,7 @@ export default function HeroSection() {
               className="w-full h-full animate-morph"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(245,158,66,0.05) 0%, transparent 70%)",
+                  "radial-gradient(circle, rgba(245,158,66,0.07) 0%, transparent 70%)",
                 filter: "blur(100px)",
                 animationDelay: "-3s",
               }}
@@ -283,7 +312,7 @@ export default function HeroSection() {
               className="w-full h-full animate-morph"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 70%)",
+                  "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)",
                 filter: "blur(90px)",
                 animationDelay: "-6s",
               }}
@@ -309,7 +338,7 @@ export default function HeroSection() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="font-display font-bold text-hero mb-6"
+              className="font-display font-bold text-hero mb-6 break-words px-2"
               style={{ perspective: "1000px" }}
             >
               {nameWords.map((word, i) => (
@@ -353,7 +382,7 @@ export default function HeroSection() {
                 delay: 1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="text-white/50 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
+              className="text-white/45 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
             >
               Transforming raw data into actionable business insights
               with Python, SQL & Power BI. Building intelligent,
@@ -379,10 +408,10 @@ export default function HeroSection() {
                     .querySelector("#projects")
                     ?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="group relative px-8 py-4 rounded-full font-semibold text-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] hover:shadow-[0_0_40px_rgba(245,158,66,0.35)]"
+                className="group relative px-8 py-4 rounded-full font-semibold text-white transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] hover:shadow-[0_0_50px_rgba(245,158,66,0.4)]"
                 style={{
                   background:
-                    "linear-gradient(135deg, #F59E42 0%, #FF8C42 100%)",
+                    "linear-gradient(135deg, #F59E42 0%, #FF8C42 50%, #E85D04 100%)",
                 }}
               >
                 <span className="relative z-10 flex items-center gap-2">
@@ -410,7 +439,7 @@ export default function HeroSection() {
                     .querySelector("#contact")
                     ?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-8 py-4 rounded-full font-semibold text-white/80 border border-white/15 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] hover:bg-white/5 hover:border-accent-orange/40 hover:text-white"
+                className="px-8 py-4 rounded-full font-semibold text-white/80 border border-white/15 transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] hover:bg-white/5 hover:border-accent-orange/40 hover:text-white"
               >
                 Get In Touch
               </a>
@@ -452,7 +481,7 @@ export default function HeroSection() {
                       : undefined
                   }
                   aria-label={social.label}
-                  className="p-3 rounded-full text-white/40 hover:text-accent-orange transition-all duration-300 hover:scale-110 hover:bg-white/5"
+                  className="p-3 rounded-full text-white/40 hover:text-accent-orange transition-all duration-500 hover:scale-110 hover:bg-white/5"
                   style={{
                     border: "1px solid rgba(255,255,255,0.06)",
                   }}

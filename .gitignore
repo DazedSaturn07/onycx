@@ -38,6 +38,10 @@ next-env.d.ts
 # temporary files
 tmpclaude-*
 nul
+lint_*.txt
+*.
+*.swp
+*.tmp
 
 # secret / sensitive files
 .env

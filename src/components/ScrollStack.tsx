@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 export interface ScrollStackCard {
     title: string;
@@ -11,336 +11,276 @@ export interface ScrollStackCard {
 
 interface ScrollStackProps {
     cards: ScrollStackCard[];
-    backgroundColor?: string;
     cardHeight?: string;
-    animationDuration?: string;
     sectionHeightMultiplier?: number;
-    intersectionThreshold?: number;
     className?: string;
 }
 
-const defaultBackgrounds = [
-    "https://images.pexels.com/photos/6985136/pexels-photo-6985136.jpeg",
-    "https://images.pexels.com/photos/6985128/pexels-photo-6985128.jpeg",
-    "https://images.pexels.com/photos/2847648/pexels-photo-2847648.jpeg",
-    "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg",
-    "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg",
-    "https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg",
-    "https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg",
-];
-
 const ScrollStack: React.FC<ScrollStackProps> = ({
     cards,
-    backgroundColor = "bg-background",
-    cardHeight = "65vh",
-    animationDuration = "0.5s",
-    sectionHeightMultiplier = 3,
-    intersectionThreshold = 0.1,
+    cardHeight = "75vh",
+    sectionHeightMultiplier = 6,
     className = "",
 }) => {
-    const scrollableSectionRef = useRef<HTMLDivElement>(null);
     const sectionRef = useRef<HTMLDivElement>(null);
-    const cardsContainerRef = useRef<HTMLDivElement>(null);
     const [activeCardIndex, setActiveCardIndex] = useState(0);
-    const [isIntersecting, setIsIntersecting] = useState(false);
-    const [isScrollLocked, setIsScrollLocked] = useState(false);
-    const [hasCompletedScroll, setHasCompletedScroll] = useState(false);
-    const ticking = useRef(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const rafRef = useRef(0);
+    const currentProgressRef = useRef(0);
+    const targetProgressRef = useRef(0);
     const cardCount = cards.length;
 
-    const cardStyle: React.CSSProperties = {
-        height: cardHeight,
-        borderRadius: "24px",
-        transition: `transform ${animationDuration} cubic-bezier(0.19, 1, 0.22, 1), opacity ${animationDuration} cubic-bezier(0.19, 1, 0.22, 1)`,
-        willChange: "transform, opacity",
-    };
+    // Smooth scroll progress via rAF with lerp
+    const updateScrollTarget = useCallback(() => {
+        if (!sectionRef.current) return;
 
-    // Prevent body scroll when locked — use overflow instead of position:fixed
-    // to avoid scroll-position desync issues with the navbar section detection
+        const rect = sectionRef.current.getBoundingClientRect();
+        const viewportH = window.innerHeight;
+        const sectionH = sectionRef.current.offsetHeight;
+        const scrollableDistance = sectionH - viewportH;
+
+        if (scrollableDistance <= 0) return;
+
+        const scrolled = -rect.top;
+        targetProgressRef.current = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+    }, []);
+
     useEffect(() => {
-        if (isScrollLocked) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
+        window.addEventListener("scroll", updateScrollTarget, { passive: true });
+        updateScrollTarget();
 
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [isScrollLocked]);
+        // Smooth animation loop — lerp current toward target
+        const animate = () => {
+            const current = currentProgressRef.current;
+            const target = targetProgressRef.current;
+            const diff = target - current;
 
-    // Handle scroll locking logic with wheel events
-    useEffect(() => {
-        const handleWheel = (e: WheelEvent) => {
-            if (!sectionRef.current || !scrollableSectionRef.current) return;
+            if (Math.abs(diff) > 0.0005) {
+                currentProgressRef.current = current + diff * 0.12;
+            } else {
+                currentProgressRef.current = target;
+            }
 
-            const rect = sectionRef.current.getBoundingClientRect();
-            const isInView =
-                rect.top <= 100 && rect.bottom >= window.innerHeight * 0.5;
+            const progress = currentProgressRef.current;
+            setScrollProgress(progress);
 
-            if (isInView && !hasCompletedScroll) {
-                const scrollContainer = scrollableSectionRef.current;
-                const maxScroll =
-                    scrollContainer.scrollHeight - scrollContainer.clientHeight;
-                const currentScroll = scrollContainer.scrollTop;
-
-                if (e.deltaY > 0) {
-                    e.preventDefault();
-                    setIsScrollLocked(true);
-
-                    scrollContainer.scrollTop += e.deltaY;
-
-                    if (scrollContainer.scrollTop >= maxScroll - 5) {
-                        setHasCompletedScroll(true);
-                        setIsScrollLocked(false);
-                    }
-                } else if (e.deltaY < 0) {
-                    if (currentScroll <= 5) {
-                        setIsScrollLocked(false);
-                        return;
-                    }
-
-                    e.preventDefault();
-                    setIsScrollLocked(true);
-                    scrollContainer.scrollTop += e.deltaY;
-                }
-            } else if (isInView && hasCompletedScroll && e.deltaY < 0) {
-                const scrollContainer = scrollableSectionRef.current;
-                const maxScroll =
-                    scrollContainer.scrollHeight - scrollContainer.clientHeight;
-
-                if (scrollContainer.scrollTop >= maxScroll - 10) {
-                    e.preventDefault();
-                    setIsScrollLocked(true);
-                    setHasCompletedScroll(false);
-                    scrollContainer.scrollTop += e.deltaY;
+            // Map progress to card index
+            const progressPerCard = 1 / cardCount;
+            let newActiveIndex = 0;
+            for (let i = 0; i < cardCount; i++) {
+                if (progress >= progressPerCard * i) {
+                    newActiveIndex = i;
                 }
             }
+            setActiveCardIndex(Math.min(newActiveIndex, cardCount - 1));
+
+            rafRef.current = requestAnimationFrame(animate);
         };
 
-        if (isIntersecting) {
-            window.addEventListener("wheel", handleWheel, { passive: false });
-        }
+        rafRef.current = requestAnimationFrame(animate);
 
         return () => {
-            window.removeEventListener("wheel", handleWheel);
+            window.removeEventListener("scroll", updateScrollTarget);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
         };
-    }, [isIntersecting, hasCompletedScroll]);
+    }, [updateScrollTarget, cardCount]);
 
-    // Intersection observer
-    useEffect(() => {
-        const currentSection = sectionRef.current;
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const [entry] = entries;
-                setIsIntersecting(entry.isIntersecting);
+    // Each card gets a distinct tint color for visual differentiation
+    const cardTints = [
+        "rgba(255,140,66,0.04)",   // warm orange
+        "rgba(34,211,238,0.04)",   // cyan
+        "rgba(139,92,246,0.04)",   // violet
+        "rgba(52,211,153,0.04)",   // emerald
+        "rgba(251,113,133,0.04)", // rose
+        "rgba(255,140,66,0.04)",   // warm orange
+        "rgba(34,211,238,0.04)",   // cyan
+    ];
 
-                if (!entry.isIntersecting) {
-                    if (entry.boundingClientRect.top > 0) {
-                        setHasCompletedScroll(false);
-                        setIsScrollLocked(false);
-                        if (scrollableSectionRef.current) {
-                            scrollableSectionRef.current.scrollTop = 0;
-                        }
-                    } else if (entry.boundingClientRect.bottom < 0) {
-                        setIsScrollLocked(false);
-                    }
-                }
-            },
-            { threshold: intersectionThreshold }
-        );
-
-        if (currentSection) {
-            observer.observe(currentSection);
-        }
-
-        return () => {
-            if (currentSection) observer.unobserve(currentSection);
-        };
-    }, [intersectionThreshold]);
-
-    // Handle internal scroll for card animation
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!ticking.current) {
-                requestAnimationFrame(() => {
-                    if (!sectionRef.current || !cardsContainerRef.current) return;
-
-                    const scrollContainer = scrollableSectionRef.current;
-                    if (!scrollContainer) return;
-
-                    const scrollTop = scrollContainer.scrollTop;
-                    const maxScroll =
-                        scrollContainer.scrollHeight - scrollContainer.clientHeight;
-                    const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
-
-                    let newActiveIndex = 0;
-                    const progressPerCard = 1 / cardCount;
-                    for (let i = 0; i < cardCount; i++) {
-                        if (progress >= progressPerCard * (i + 1)) {
-                            newActiveIndex = i + 1;
-                        }
-                    }
-
-                    setActiveCardIndex(Math.min(newActiveIndex, cardCount - 1));
-                    ticking.current = false;
-                });
-                ticking.current = true;
-            }
-        };
-
-        const scrollElement = scrollableSectionRef.current;
-        scrollElement?.addEventListener("scroll", handleScroll, { passive: true });
-        handleScroll();
-
-        return () => {
-            scrollElement?.removeEventListener("scroll", handleScroll);
-        };
-    }, [cardCount]);
+    const cardBorderAccents = [
+        "rgba(255,140,66,0.12)",
+        "rgba(34,211,238,0.12)",
+        "rgba(139,92,246,0.12)",
+        "rgba(52,211,153,0.12)",
+        "rgba(251,113,133,0.12)",
+        "rgba(255,140,66,0.12)",
+        "rgba(34,211,238,0.12)",
+    ];
 
     const getCardTransform = (index: number) => {
-        const isVisible = isIntersecting && activeCardIndex >= index;
-        // Scale cards progressively — cards closer to front are slightly larger
-        const scaleStep = 0.015;
-        const scale = 0.85 + index * scaleStep;
-        let translateY = "100px";
+        const progressPerCard = 1 / cardCount;
+        const cardStartProgress = progressPerCard * index;
+        const cardProgress = Math.max(0, Math.min(1,
+            (scrollProgress - cardStartProgress) / progressPerCard
+        ));
 
-        if (isVisible) {
-            // Stack cards with decreasing offset so they appear layered
-            const stackOffset = 80 - index * (60 / cardCount);
-            translateY = `${stackOffset}px`;
+        const isRevealed = scrollProgress >= cardStartProgress;
+
+        // Each card has a slightly different scale for depth
+        const scaleBase = 0.92;
+        const scaleStep = 0.008;
+        const scale = isRevealed
+            ? scaleBase + index * scaleStep + cardProgress * 0.02
+            : scaleBase;
+
+        // Stacking: revealed cards stack up with offset
+        let translateY: number;
+        if (isRevealed) {
+            // Slight vertical offset per card for visual separation
+            const stackOffset = 20 - index * 4;
+            translateY = stackOffset * (1 - cardProgress * 0.3);
+        } else {
+            translateY = 100 + (index * 8);
         }
 
+        // Opacity with smooth fade in
+        const opacity = isRevealed
+            ? Math.min(1, cardProgress * 2.5 + 0.4)
+            : 0;
+
         return {
-            transform: `translateY(${translateY}) scale(${scale})`,
-            opacity: isVisible ? (index === 0 ? 0.85 : 1) : 0,
+            transform: `translateY(${translateY}px) scale(${scale})`,
+            opacity,
             zIndex: 10 + index * 10,
-            pointerEvents: isVisible ? "auto" : "none",
+            pointerEvents: isRevealed ? "auto" : "none",
         };
     };
 
     return (
         <section
-            ref={scrollableSectionRef}
-            className="relative w-full h-screen overflow-y-scroll"
-            style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-            }}
+            ref={sectionRef}
+            className={`relative w-full ${className}`}
+            style={{ height: `${sectionHeightMultiplier * 100}vh` }}
         >
-            {/* Hide webkit scrollbar */}
-            <style>{`
-        .scroll-stack-section::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+            <div className="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden">
+                <div className="container px-4 sm:px-6 lg:px-8 mx-auto h-full flex flex-col justify-center pt-16 md:pt-20">
+                    <div
+                        className="relative w-full max-w-7xl mx-auto flex-shrink-0"
+                        style={{ height: cardHeight }}
+                    >
+                        {cards.map((card, index) => {
+                            const cardTransform = getCardTransform(index);
 
-            <div
-                ref={sectionRef}
-                className={`relative ${className}`}
-                style={{ height: `${sectionHeightMultiplier * 100}vh` }}
-            >
-                <div
-                    className={`sticky top-0 w-full h-screen flex items-center 
-            justify-center overflow-hidden ${backgroundColor} z-[40]`}
-                >
-                    <div className="container px-6 lg:px-8 mx-auto h-full flex flex-col justify-center pt-20">
-                        <div
-                            ref={cardsContainerRef}
-                            className="relative w-full max-w-6xl mx-auto flex-shrink-0"
-                            style={{ height: cardHeight }}
-                        >
-                            {cards.map((card, index) => {
-                                const cardTransform = getCardTransform(index);
-                                const backgroundImage =
-                                    card.backgroundImage ||
-                                    defaultBackgrounds[index % defaultBackgrounds.length];
-
-                                return (
-                                    <div
-                                        key={index}
-                                        className="absolute overflow-hidden shadow-xl transition-all duration-300"
-                                        style={{
-                                            ...cardStyle,
-                                            top: 0,
-                                            left: "50%",
-                                            transform: `translateX(-50%) ${cardTransform.transform}`,
-                                            width: "100%",
-                                            maxWidth: "100%",
-                                            opacity: cardTransform.opacity,
-                                            zIndex: cardTransform.zIndex,
-                                            pointerEvents:
-                                                cardTransform.pointerEvents as React.CSSProperties["pointerEvents"],
-                                        }}
-                                    >
-                                        {/* Background image with overlay */}
+                            return (
+                                <div
+                                    key={index}
+                                    className="absolute overflow-hidden"
+                                    style={{
+                                        height: cardHeight,
+                                        borderRadius: "20px",
+                                        transition: "none", // rAF handles smoothing now
+                                        willChange: "transform, opacity",
+                                        top: 0,
+                                        left: "50%",
+                                        transform: `translateX(-50%) ${cardTransform.transform}`,
+                                        width: "100%",
+                                        maxWidth: "100%",
+                                        opacity: cardTransform.opacity,
+                                        zIndex: cardTransform.zIndex,
+                                        pointerEvents:
+                                            cardTransform.pointerEvents as React.CSSProperties["pointerEvents"],
+                                    }}
+                                >
+                                    {/* Background image */}
+                                    {card.backgroundImage && (
                                         <div
                                             className="absolute inset-0 z-0"
                                             style={{
-                                                backgroundImage: `url('${backgroundImage}')`,
+                                                backgroundImage: `url('${card.backgroundImage}')`,
                                                 backgroundSize: "cover",
                                                 backgroundPosition: "center",
                                             }}
                                         />
-                                        {/* Dark gradient overlay */}
-                                        <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+                                    )}
 
-                                        {/* Badge */}
-                                        {card.badge && (
-                                            <div className="absolute top-4 right-4 z-20">
-                                                <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white">
-                                                    <span className="text-sm font-medium">
-                                                        {card.badge}
-                                                    </span>
-                                                </div>
+                                    {/* Glassmorphism overlay with per-card tint */}
+                                    <div
+                                        className="absolute inset-0 z-[1]"
+                                        style={{
+                                            background: `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.35) 100%)`,
+                                            backdropFilter: "blur(2px)",
+                                            WebkitBackdropFilter: "blur(2px)",
+                                        }}
+                                    />
+
+                                    {/* Card-specific tint overlay for differentiation */}
+                                    <div
+                                        className="absolute inset-0 z-[2] pointer-events-none"
+                                        style={{
+                                            background: cardTints[index % cardTints.length],
+                                        }}
+                                    />
+
+                                    {/* Glass border with accent color per card */}
+                                    <div
+                                        className="absolute inset-0 z-[3] pointer-events-none"
+                                        style={{
+                                            borderRadius: "20px",
+                                            border: `1px solid ${cardBorderAccents[index % cardBorderAccents.length]}`,
+                                            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 40px rgba(0,0,0,0.4)`,
+                                        }}
+                                    />
+
+                                    {/* Badge */}
+                                    {card.badge && (
+                                        <div className="absolute top-4 right-4 z-20">
+                                            <div
+                                                className="inline-flex items-center justify-center px-3 py-1.5 rounded-full text-white"
+                                                style={{
+                                                    background: "rgba(255,255,255,0.08)",
+                                                    backdropFilter: "blur(12px)",
+                                                    WebkitBackdropFilter: "blur(12px)",
+                                                    border: "1px solid rgba(255,255,255,0.10)",
+                                                }}
+                                            >
+                                                <span className="text-xs font-semibold">
+                                                    {card.badge}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Content */}
+                                    <div className="relative z-10 p-5 sm:p-6 md:p-8 lg:p-10 h-full flex items-center">
+                                        {card.content ? (
+                                            card.content
+                                        ) : (
+                                            <div className="max-w-lg">
+                                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-3">
+                                                    {card.title}
+                                                </h3>
+                                                {card.subtitle && (
+                                                    <p className="text-base text-white/70">
+                                                        {card.subtitle}
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
-
-                                        {/* Content */}
-                                        <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
-                                            {card.content ? (
-                                                card.content
-                                            ) : (
-                                                <div className="max-w-lg">
-                                                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
-                                                        {card.title}
-                                                    </h3>
-                                                    {card.subtitle && (
-                                                        <p className="text-lg text-white/80">
-                                                            {card.subtitle}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                </div>
+                            );
+                        })}
+                    </div>
 
-                        {/* Scroll progress dots */}
-                        <div className="flex justify-center gap-2 mt-8">
-                            {cards.map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="w-2 h-2 rounded-full transition-all duration-300"
-                                    style={{
-                                        background:
-                                            activeCardIndex >= index
-                                                ? "linear-gradient(135deg, #FF8C42, #F59E42)"
-                                                : "rgba(255, 255, 255, 0.15)",
-                                        transform:
-                                            activeCardIndex === index
-                                                ? "scale(1.4)"
-                                                : "scale(1)",
-                                        boxShadow:
-                                            activeCardIndex === index
-                                                ? "0 0 10px rgba(255, 140, 66, 0.5)"
-                                                : "none",
-                                    }}
-                                />
-                            ))}
-                        </div>
+                    {/* Scroll progress dots */}
+                    <div className="flex justify-center gap-2 mt-6 md:mt-8">
+                        {cards.map((_, index) => (
+                            <div
+                                key={index}
+                                className="rounded-full transition-all duration-300"
+                                style={{
+                                    width: activeCardIndex === index ? "20px" : "6px",
+                                    height: "6px",
+                                    background:
+                                        activeCardIndex >= index
+                                            ? "linear-gradient(135deg, #FFB366, #FF8C42, #E85D04)"
+                                            : "rgba(255, 255, 255, 0.10)",
+                                    boxShadow:
+                                        activeCardIndex === index
+                                            ? "0 0 12px rgba(255, 140, 66, 0.4)"
+                                            : "none",
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

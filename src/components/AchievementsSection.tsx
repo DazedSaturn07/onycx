@@ -1,9 +1,9 @@
 "use client";
 
 
-import { Award, ExternalLink } from "lucide-react";
-import Image from "next/image";
+
 import RevealOnScroll from "./RevealOnScroll";
+import ThreeDImageCarousel from "./ThreeDImageCarousel";
 
 interface Achievement {
   title: string;
@@ -85,67 +85,17 @@ export default function AchievementsSection() {
           </p>
         </RevealOnScroll>
 
-        {/* Infinite Scrolling Carousel */}
         <RevealOnScroll delay={0.1}>
-          <div className="relative overflow-hidden group">
-            {/* Fade edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(90deg, #0b0f14, transparent)" }} />
-            <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(270deg, #0b0f14, transparent)" }} />
-
-            <div className="flex gap-6 animate-marquee group-hover:[animation-play-state:paused] w-max">
-              {[...achievements, ...achievements].map((cert, i) => (
-                <div
-                  key={`${cert.title}-${i}`}
-                  className="w-[280px] md:w-[320px] shrink-0"
-                >
-                  <div className="glass h-full overflow-hidden group/card hover:translate-y-[-3px] transition-transform duration-300">
-                    {/* Certificate Image */}
-                    {cert.image && (
-                      <div className="relative h-44 overflow-hidden">
-                        <Image
-                          src={cert.image}
-                          alt={cert.title}
-                          fill
-                          className="object-cover group-hover/card:scale-105 transition-transform duration-500"
-                          sizes="320px"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(11,15,20,0.6), transparent)" }} />
-                      </div>
-                    )}
-
-                    <div className="p-5">
-                      <div className="flex items-start gap-3 mb-3">
-                        <div
-                          className="p-2 rounded-lg shrink-0"
-                          style={{ background: "rgba(255,140,66,0.1)" }}
-                        >
-                          <Award size={16} className="text-accent-orange" />
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-semibold text-white leading-snug">
-                            {cert.title}
-                          </h3>
-                          <p className="text-[11px] text-white/35 mt-1">{cert.issuer}</p>
-                          <p className="text-[10px] text-white/25 mt-0.5">{cert.date}</p>
-                        </div>
-                      </div>
-
-                      {cert.verifyUrl && (
-                        <a
-                          href={cert.verifyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-accent-orange/70 hover:text-accent-orange transition-colors"
-                        >
-                          <ExternalLink size={10} /> Verify Certificate
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="relative z-10">
+            <ThreeDImageCarousel
+              slides={achievements.map((cert, index) => ({
+                id: index,
+                src: cert.image || "",
+                href: cert.verifyUrl || "#",
+              }))}
+              autoplay={true}
+              delay={3}
+            />
           </div>
         </RevealOnScroll>
       </div>

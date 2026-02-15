@@ -64,7 +64,7 @@ export const metadata: Metadata = {
 };
 
 import SmoothScroll from "@/components/SmoothScroll";
-// ... imports
+import { PreloadProvider } from "@/context/PreloadContext";
 
 export default function RootLayout({
   children,
@@ -76,13 +76,15 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} ${syne.variable} font-sans antialiased`}
       >
-        <SmoothScroll>
-          {/* Skip to content for accessibility */}
-          <a href="#main-content" className="skip-to-content">
-            Skip to content
-          </a>
-          {children}
-        </SmoothScroll>
+        <PreloadProvider>
+          <SmoothScroll>
+            {/* Skip to content for accessibility */}
+            <a href="#main-content" className="skip-to-content">
+              Skip to content
+            </a>
+            {children}
+          </SmoothScroll>
+        </PreloadProvider>
       </body>
     </html>
   );

@@ -2,29 +2,43 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePreload } from "@/context/PreloadContext";
 
 /**
  * Preloader — Animated loading screen with name reveal.
  * Plays once on initial page load and exits with a smooth wipe.
  */
 export default function Preloader() {
-    const [loading, setLoading] = useState(true);
+    const { isLoading, progress } = usePreload();
+    const [displayProgress, setDisplayProgress] = useState(0);
 
+    // Smooth progress interpolation
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 2200);
-        return () => clearTimeout(timer);
-    }, []);
+        // approximate the progress with a lerp for smoothness
+        const update = () => {
+            setDisplayProgress(prev => {
+                const diff = progress * 100 - prev;
+                if (Math.abs(diff) < 0.1) return progress * 100;
+                return prev + diff * 0.1;
+            });
+            if (displayProgress < progress * 100) {
+                requestAnimationFrame(update);
+            }
+        };
+        requestAnimationFrame(update);
+    }, [progress, displayProgress]);
+
 
     return (
         <AnimatePresence>
-            {loading && (
+            {isLoading && (
                 <motion.div
-                    className="fixed inset-0 z-[100] flex items-center justify-center"
-                    style={{ background: "#0b0f14" }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center h-[100dvh] w-screen"
+                    style={{ background: "#000000" }}
                     exit={{ y: "-100%" }}
                     transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
                 >
-                    <div className="relative flex flex-col items-center gap-4">
+                    <div className="relative flex flex-col items-center gap-4 p-4 text-center">
                         {/* Name reveal */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -46,8 +60,8 @@ export default function Preloader() {
                                 className="h-full rounded-full"
                                 style={{ background: "linear-gradient(90deg, #F59E42, #FF8C42)" }}
                                 initial={{ width: "0%" }}
-                                animate={{ width: "100%" }}
-                                transition={{ duration: 1.4, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                                animate={{ width: `${Math.max(displayProgress, 5)}%` }}
+                                transition={{ type: "spring", stiffness: 50, damping: 20 }}
                             />
                         </motion.div>
 
@@ -59,6 +73,15 @@ export default function Preloader() {
                             className="text-white/30 text-sm tracking-[0.3em] uppercase"
                         >
                             Portfolio
+                        </motion.p>
+
+                        {/* Percentage */}
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-white/20 text-xs font-mono mt-2"
+                        >
+                            {Math.round(displayProgress)}%
                         </motion.p>
                     </div>
                 </motion.div>

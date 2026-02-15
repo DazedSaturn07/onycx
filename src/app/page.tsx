@@ -8,10 +8,14 @@ import SkillsSection from "@/components/SkillsSection";
 import AchievementsSection from "@/components/AchievementsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import LightPillarBackground from "@/components/LightPillarBackground";
 
 /**
  * Home — Single-page scrollytelling portfolio.
  * Sections flow: Hero → About → Projects → Skills → Achievements → Contact → Footer
+ *
+ * LightPillarBackground is a fixed WebGL overlay with mix-blend-mode: screen
+ * that becomes visible after scrolling past the hero section.
  */
 export default function Home() {
   return (
@@ -21,6 +25,7 @@ export default function Home() {
       <Navbar />
       <main id="main-content">
         <HeroSection />
+        <LightPillarBackground />
         <AboutSection />
         <ProjectsSection />
         <SkillsSection />
@@ -31,3 +36,4 @@ export default function Home() {
     </>
   );
 }
+
