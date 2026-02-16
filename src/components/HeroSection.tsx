@@ -76,7 +76,8 @@ export default function HeroSection() {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const isMobile = window.innerWidth < 768;
+    const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     const displayW = canvas.clientWidth;
     const displayH = canvas.clientHeight;
 
@@ -120,6 +121,10 @@ export default function HeroSection() {
     const sectionHeight = section.offsetHeight;
     const viewportHeight = window.innerHeight;
 
+    // Mobile: section height is smaller, so we need to map the scroll distance differently
+    // to ensure we play through the whole sequence if possible, or just a part of it.
+    // However, drawing 192 frames on a 200vh scroll is too fast. 
+    // We should probably limit the frame range on mobile or just let it spin fast.
     const scrollDistance = sectionHeight - viewportHeight;
     if (scrollDistance <= 0) return 0;
 
@@ -131,10 +136,13 @@ export default function HeroSection() {
 
   // ── Preload all frames with priority loading ──
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
     const images: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
     // Register assets
     for (let i = 0; i < TOTAL_FRAMES; i++) {
+      // On mobile, maybe we only load every 2nd frame to save memory? 
+      // But for smooth lerp we need them. Let's keep loading but prioritize better.
       registerAsset(`hero-frame-${i}`);
     }
 
@@ -151,15 +159,20 @@ export default function HeroSection() {
       images[i] = img;
     };
 
-    // Priority: load key frames first (every 12th frame for quick preview)
+    // Priority: load key frames first
     const keyFrames: number[] = [];
-    for (let i = 0; i < TOTAL_FRAMES; i += 12) keyFrames.push(i);
+    // On mobile, load fewer keyframes initially to unblock UI faster
+    const step = isMobile ? 24 : 12;
+    for (let i = 0; i < TOTAL_FRAMES; i += step) keyFrames.push(i);
     keyFrames.forEach(loadFrame);
 
     // Then load all remaining frames
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      if (i % 12 !== 0) loadFrame(i);
-    }
+    // On mobile, we might want to delay this further or do it in smaller chunks
+    setTimeout(() => {
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        if (i % step !== 0) loadFrame(i);
+      }
+    }, 1000);
 
     imagesRef.current = images;
 
@@ -174,6 +187,7 @@ export default function HeroSection() {
   // When hero scrolls out of view, pause rAF to free GPU for LightPillar
   useEffect(() => {
     let isVisible = true;
+    const isMobile = window.innerWidth < 768;
 
     const handleScroll = () => {
       targetFrameRef.current = getFrameIndex();
@@ -194,8 +208,14 @@ export default function HeroSection() {
         const target = targetFrameRef.current;
         const diff = target - current;
 
-        if (Math.abs(diff) > 0.1) {
-          currentFrameRef.current = current + diff * 0.15;
+        // On mobile, aggressive lerp to catch up faster and avoid "lag" feel
+        // or smoother lerp? If it lags, maybe snap faster.
+        const lerpFactor = isMobile ? 0.2 : 0.15;
+        // Stop updating if close enough to save battery/perf
+        const threshold = isMobile ? 0.5 : 0.1;
+
+        if (Math.abs(diff) > threshold) {
+          currentFrameRef.current = current + diff * lerpFactor;
           drawFrame(currentFrameRef.current);
         } else if (Math.abs(diff) > 0.01) {
           currentFrameRef.current = target;
@@ -246,8 +266,7 @@ export default function HeroSection() {
     <section
       id="home"
       ref={sectionRef}
-      className="relative w-full"
-      style={{ height: "400vh" }}
+      className="relative w-full h-[200vh] md:h-[400vh]"
       aria-label="Hero section"
     >
       {/* Sticky viewport container — canvas BG + content overlay */}

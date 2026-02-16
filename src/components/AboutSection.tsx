@@ -138,7 +138,7 @@ export default function AboutSection() {
         <RevealOnScroll delay={0.1}>
           <h2
             className="font-headline font-extrabold leading-[0.92] tracking-[-0.04em] mb-8 max-w-6xl"
-            style={{ fontSize: "clamp(2.5rem, 8vw, 7rem)" }}
+            style={{ fontSize: "clamp(2rem, 7vw, 7rem)" }}
           >
             <span className="text-white">I turn </span>
             <span
@@ -197,7 +197,7 @@ export default function AboutSection() {
               <div className="relative z-10 flex flex-col items-center gap-5 p-6 md:p-8 h-full justify-center">
                 {/* Profile Image */}
                 <div className="relative">
-                  <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden ring-1 ring-white/10">
+                  <div className="relative w-44 h-44 sm:w-48 sm:h-48 md:w-52 md:h-52 rounded-2xl overflow-hidden ring-1 ring-white/10">
                     <Image
                       src="/pic.avif"
                       alt="Prashant Kumar Yadav"

@@ -7,6 +7,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
+        // Simple mobile detection
+        const isMobile = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        if (isMobile) return; // Skip Lenis on mobile for native smooth scroll
+
         const lenis = new Lenis({
             duration: 1.0,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

@@ -24,7 +24,7 @@ const projects: ProjectData[] = [
       "Production-ready e-commerce with secure payment processing, real-time cart sync, and admin analytics. Features automated PDF invoices and enterprise security.",
     tech: ["Next.js", "TypeScript", "Supabase", "Razorpay", "Tailwind", "Redis", "Sentry"],
     liveUrl: "https://www.scotiadelights.in/",
-    previewUrl: "https://www.scotiadelights.in/",
+    // previewUrl: "https://www.scotiadelights.in/", // Blocked by X-Frame-Options
   },
   {
     title: "Luxe",

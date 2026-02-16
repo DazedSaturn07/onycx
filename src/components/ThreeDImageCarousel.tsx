@@ -48,7 +48,7 @@ const EMBEDDED_CSS = `
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translateY(-50%) translateX(-50%) scale(0.3); 
+    transform: translateY(-50%) translateX(-50%) scale(0.5); /* Mobile default slightly bigger */
     transition: all 1s ease; 
     opacity: 0;
     z-index: 1; 
@@ -64,13 +64,13 @@ const EMBEDDED_CSS = `
 /* Slide Positioning Classes (Core 3D Logic - MUST REMAIN IN CSS) */
 .cascade-slider_item.next {
     left: 50%;
-    transform: translateY(-50%) translateX(-120%) scale(0.6);
+    transform: translateY(-50%) translateX(-120%) scale(0.7);
     opacity: 1;
     z-index: 4; 
 }
 .cascade-slider_item.prev {
     left: 50%;
-    transform: translateY(-50%) translateX(20%) scale(0.6);
+    transform: translateY(-50%) translateX(20%) scale(0.7);
     opacity: 1;
     z-index: 4; 
 }
@@ -106,6 +106,8 @@ const EMBEDDED_CSS = `
     .cascade-slider_arrow-right { 
         right: 5px; 
     }
+    .cascade-slider_container { height: 35vh; }
+    .cascade-slider_slides img { max-width: 180px; }
 }
 @media screen and (min-width: 576px) {
     .cascade-slider_arrow-left { left: -4%; }
@@ -283,8 +285,7 @@ export const ThreeDImageCarousel: React.FC<ThreeDImageCarouselProps> = ({
 
             {/* 2. SLIDER HTML STRUCTURE */}
             <div
-                className={`cascade-slider_container ${className} bg-transparent 
-                min-w-[600px]`}
+                className={`cascade-slider_container ${className} bg-transparent w-full max-w-full`}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleExit}
                 onMouseDown={onMouseDown}

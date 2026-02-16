@@ -76,7 +76,7 @@ export default function Navbar() {
         aria-label="Download Resume"
       >
         <div
-          className="flex items-center gap-2 px-4 py-2.5 md:px-5 md:py-3 rounded-full text-white/70 hover:text-white font-semibold text-xs md:text-sm transition-all duration-500 hover:scale-[1.04] active:scale-[0.97]"
+          className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-full text-white/70 hover:text-white font-semibold text-xs md:text-sm transition-all duration-500 hover:scale-[1.04] active:scale-[0.97]"
           style={{
             background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(20px)",

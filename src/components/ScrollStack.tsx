@@ -116,17 +116,19 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         const isRevealed = scrollProgress >= cardStartProgress;
 
         // Each card has a slightly different scale for depth
-        const scaleBase = 0.92;
-        const scaleStep = 0.008;
+        // Reduced base scale and growth to prevent bleeding out of viewport
+        const scaleBase = 0.90;
+        const scaleStep = 0.005;
         const scale = isRevealed
-            ? scaleBase + index * scaleStep + cardProgress * 0.02
+            ? Math.min(1.0, scaleBase + index * scaleStep + cardProgress * 0.05) // Cap at 1.0 to fit container
             : scaleBase;
 
         // Stacking: revealed cards stack up with offset
         let translateY: number;
         if (isRevealed) {
             // Slight vertical offset per card for visual separation
-            const stackOffset = 20 - index * 4;
+            // Adjusted to keep cards more contained
+            const stackOffset = 15 - index * 3;
             translateY = stackOffset * (1 - cardProgress * 0.3);
         } else {
             translateY = 100 + (index * 8);
@@ -144,6 +146,87 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
             pointerEvents: isRevealed ? "auto" : "none",
         };
     };
+
+    // --- Mobile Detection for Simpler Layout ---
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile(); // Check on mount
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    if (isMobile) {
+        // Simple vertical stack for mobile
+        return (
+            <section className={`relative w-full px-4 py-12 ${className}`}>
+                <div className="flex flex-col gap-6">
+                    {cards.map((card, index) => (
+                        <div key={index} className="relative w-full overflow-hidden rounded-2xl h-[65vh] sm:h-[75vh]">
+                            {/* Background image */}
+                            {card.backgroundImage && (
+                                <div
+                                    className="absolute inset-0 z-0"
+                                    style={{
+                                        backgroundImage: `url('${card.backgroundImage}')`,
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                    }}
+                                />
+                            )}
+
+                            {/* Glassmorphism overlay */}
+                            <div
+                                className="absolute inset-0 z-[1]"
+                                style={{
+                                    background: `linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.35) 100%)`,
+                                    backdropFilter: "blur(2px)",
+                                    WebkitBackdropFilter: "blur(2px)",
+                                }}
+                            />
+
+                            {/* Tint */}
+                            <div
+                                className="absolute inset-0 z-[2] pointer-events-none"
+                                style={{
+                                    background: cardTints[index % cardTints.length],
+                                }}
+                            />
+
+                            {/* Border */}
+                            <div
+                                className="absolute inset-0 z-[3] pointer-events-none"
+                                style={{
+                                    borderRadius: "16px",
+                                    border: `1px solid ${cardBorderAccents[index % cardBorderAccents.length]}`,
+                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.2)",
+                                }}
+                            />
+
+                            {/* Badge */}
+                            {card.badge && (
+                                <div className="absolute top-4 right-4 z-20">
+                                    <div className="inline-flex items-center justify-center px-3 py-1 rounded-full text-white bg-white/10 backdrop-blur-md border border-white/10">
+                                        <span className="text-[10px] font-semibold">{card.badge}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Content */}
+                            <div className="relative z-10 p-5 h-full flex items-center">
+                                {card.content || (
+                                    <div className="max-w-lg">
+                                        <h3 className="text-2xl font-bold text-white mb-2">{card.title}</h3>
+                                        {card.subtitle && <p className="text-sm text-white/70">{card.subtitle}</p>}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section
@@ -180,6 +263,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
                                             cardTransform.pointerEvents as React.CSSProperties["pointerEvents"],
                                     }}
                                 >
+                                    {/* (Rest of the desktop card structure remains inside map) */}
                                     {/* Background image */}
                                     {card.backgroundImage && (
                                         <div
@@ -256,6 +340,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
                                             </div>
                                         )}
                                     </div>
+                                    {/* End of desktop card content */}
                                 </div>
                             );
                         })}
