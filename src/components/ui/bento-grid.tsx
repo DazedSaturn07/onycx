@@ -51,7 +51,7 @@ const BentoCard = ({
             It has padding (p-2) so the glow border is visible between
             the outer edge and the inner content card.
             It must NOT have overflow-hidden so the glow can render. */}
-        <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-white/[0.08] p-2 md:rounded-[1.5rem] md:p-3">
+        <div className="relative h-full rounded-[1.5rem] border-[0.75px] border-white/[0.08] p-2 md:rounded-[2rem] md:p-3">
             <GlowingEffect
                 spread={40}
                 glow={true}
@@ -66,7 +66,7 @@ const BentoCard = ({
                 It has its own background, border, and visual styles. */}
             <div
                 className={cn(
-                    "glass3d relative flex h-full flex-col justify-between overflow-hidden rounded-xl",
+                    "glass3d relative flex h-full flex-col justify-between overflow-hidden rounded-2xl",
                     "transform-gpu",
                     "[border:0.75px_solid_rgba(255,255,255,0.07)]",
                     "transition-all duration-500 hover:[border:0.75px_solid_rgba(255,255,255,0.14)]"

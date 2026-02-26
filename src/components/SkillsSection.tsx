@@ -250,11 +250,10 @@ export default function SkillsSection() {
             >
               {/* Category Card */}
               <div
-                className="relative rounded-3xl overflow-hidden p-8 md:p-12"
+                className="glass3d relative rounded-3xl overflow-hidden p-8 md:p-12"
                 style={{
                   background: activeCat.glowColor,
                   border: `1px solid ${activeCat.borderColor}`,
-                  backdropFilter: "blur(20px)",
                 }}
               >
                 {/* Subtle inner glow */}

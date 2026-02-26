@@ -70,8 +70,8 @@ export default function Navbar() {
 
       {/* ── Resume Download Button — Fixed position, glassmorphism capsule ── */}
       <a
-        href="/Prashant_res.pdf"
-        download="Prashant_Kumar_Yadav_Resume.pdf"
+        href="/Prashant_Resume.pdf"
+        download="Prashant_Resume.pdf"
         className="fixed top-4 left-4 md:top-6 md:left-6 z-50 group"
         aria-label="Download Resume"
       >

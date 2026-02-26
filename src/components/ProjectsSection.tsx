@@ -24,7 +24,7 @@ const projects: ProjectData[] = [
       "Production-ready e-commerce with secure payment processing, real-time cart sync, and admin analytics. Features automated PDF invoices and enterprise security.",
     tech: ["Next.js", "TypeScript", "Supabase", "Razorpay", "Tailwind", "Redis", "Sentry"],
     liveUrl: "https://www.scotiadelights.in/",
-    // previewUrl: "https://www.scotiadelights.in/", // Blocked by X-Frame-Options
+    previewUrl: "https://www.scotiadelights.in/", // Blocked by X-Frame-Options
   },
   {
     title: "Luxe",
@@ -77,31 +77,52 @@ const projects: ProjectData[] = [
   },
 ];
 
-/* ── Site Preview (iframe for live sites) ── */
+/* ── Site Preview ── */
+/* Uses Microlink screenshot API for sites that block iframes */
+const SCREENSHOT_BLOCKED = new Set(["https://www.scotiadelights.in/"]);
+
 function SitePreview({ url, title }: { url: string; title: string }) {
+  const isBlocked = SCREENSHOT_BLOCKED.has(url);
+  const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url`;
+
   return (
     <div className="absolute inset-0 z-0">
       <div className="absolute inset-0 overflow-hidden rounded-[20px]">
-        <iframe
-          src={url}
-          title={`${title} preview`}
-          className="w-full h-full border-0 pointer-events-none"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
-          style={{
-            transform: "scale(1)",
-            transformOrigin: "top left",
-            width: "100%",
-            height: "100%",
-          }}
-        />
+        {isBlocked ? (
+          /* Screenshot image for X-Frame-Options blocked sites */
+          <img
+            src={screenshotUrl}
+            alt={`${title} preview`}
+            className="w-full h-full border-0 object-cover object-top"
+            loading="lazy"
+            onError={(e) => {
+              // Fallback: hide image if screenshot service fails
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+        ) : (
+          /* Embeddable iframe for other live sites */
+          <iframe
+            src={url}
+            title={`${title} preview`}
+            className="w-full h-full border-0 pointer-events-none"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin"
+            style={{
+              transform: "scale(1)",
+              transformOrigin: "top left",
+              width: "100%",
+              height: "100%",
+            }}
+          />
+        )}
       </div>
       {/* Dark gradient overlay so text remains readable */}
       <div
         className="absolute inset-0 z-[1]"
         style={{
           background:
-            "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.4) 100%)",
+            "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.35) 100%)",
         }}
       />
     </div>
