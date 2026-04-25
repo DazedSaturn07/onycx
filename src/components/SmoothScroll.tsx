@@ -1,41 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Lenis from "lenis";
+import { ReactLenis } from "lenis/react";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
-    const lenisRef = useRef<Lenis | null>(null);
-
-    useEffect(() => {
-        // Simple mobile detection
-        const isMobile = window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-        if (isMobile) return; // Skip Lenis on mobile for native smooth scroll
-
-        const lenis = new Lenis({
-            duration: 1.0,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: "vertical",
-            gestureOrientation: "vertical",
-            smoothWheel: true,
-            wheelMultiplier: 1,
-            touchMultiplier: 2,
-            lerp: 0.1,
-        });
-
-        lenisRef.current = lenis;
-
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-
-        requestAnimationFrame(raf);
-
-        return () => {
-            lenis.destroy();
-        };
-    }, []);
-
-    return <>{children}</>;
+  return (
+    <ReactLenis
+      root
+      options={{
+        lerp: 0.075,
+        smoothWheel: true,
+        wheelMultiplier: 0.88,
+        touchMultiplier: 1.12,
+      }}
+    >
+      {children}
+    </ReactLenis>
+  );
 }
