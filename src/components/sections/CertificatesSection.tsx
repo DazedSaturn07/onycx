@@ -84,25 +84,17 @@ const EASE = [0.23, 1, 0.32, 1] as const;
 export function CertificatesSection() {
   const [activeCertificateIndex, setActiveCertificateIndex] = useState(0);
   const activeCertificate = certificates[activeCertificateIndex];
-
   const sectionRef = useRef<HTMLElement>(null);
-
-  /* ── scroll-linked motion: fade/blur as it enters and exits ── */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
 
-  // Range for 300svh container with start-end/end-start:
-  // 0.00 - 0.25: Sliding up from bottom (100svh)
-  // 0.25 - 0.50: Sticky reading time (100svh)
-  // 0.50 - 0.75: Contact sliding up over it (100svh)
-  // 0.75 - 1.00: Fully scrolled past
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.85, 1], [0, 1, 1, 0]);
   const y = useTransform(scrollYProgress, [0.8, 1], [0, 80]);
   const filter = useTransform(
-    scrollYProgress, 
-    [0, 0.2, 0.85, 1], 
+    scrollYProgress,
+    [0, 0.2, 0.85, 1],
     ["blur(10px)", "blur(0px)", "blur(0px)", "blur(12px)"]
   );
 
@@ -222,6 +214,28 @@ export function CertificatesSection() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="cinema-certificates-mobile-gallery" aria-label="Certificate gallery">
+            {certificates.map((certificate) => (
+              <a
+                key={certificate.image}
+                href={certificate.image}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cinema-mobile-certificate-image"
+                data-cursor="interactive"
+                aria-label={`Open ${certificate.title} certificate`}
+              >
+                <Image
+                  src={certificate.image}
+                  alt={`${certificate.title} certificate`}
+                  fill
+                  sizes="92vw"
+                  className="cinema-certificate-feature-image"
+                />
+              </a>
+            ))}
           </div>
         </div>
       </motion.div>
