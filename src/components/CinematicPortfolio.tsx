@@ -12,7 +12,6 @@ import {
   motion,
   useReducedMotion,
   useScroll,
-  useSpring,
 } from "framer-motion";
 import { useLenis } from "lenis/react";
 import Image from "next/image";
@@ -47,12 +46,7 @@ const sections: SectionMeta[] = [
 
 export default function CinematicPortfolio() {
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll();
-  const pageProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 26,
-    restDelta: 0.001,
-  });
+  useScroll();
 
   const [activeSectionId, setActiveSectionId] = useState<SectionId>("home");
   const [menuOpen, setMenuOpen] = useState(false);

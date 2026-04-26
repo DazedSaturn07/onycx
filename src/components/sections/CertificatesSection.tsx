@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { BadgeCheck, ExternalLink, Award } from "lucide-react";
-import { useSectionOutroMotion } from "./useSectionOutroMotion";
 
 export interface Certificate {
   title: string;
