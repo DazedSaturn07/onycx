@@ -2,6 +2,7 @@ import { CSSProperties, useCallback, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
+import { useSectionOutroMotion } from "./useSectionOutroMotion";
 
 export interface Project {
   title: string;
@@ -113,18 +114,31 @@ export function getScrollyRange(index: number, total: number) {
 export function WorkSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeProjectIndex, setActiveProjectIndex] = useState(0);
-  const sectionScrollHeight = `${Math.max(projects.length * 92, 360)}svh`;
+  const projectScrollUnits = Math.max(projects.length * 92, 360);
+  const overlayScrollUnits = 100;
+  const sectionScrollHeight = `${projectScrollUnits + overlayScrollUnits}svh`;
+  const projectScrollEnd = (projectScrollUnits - 100) / projectScrollUnits;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  const smoothProgress = useSpring(scrollYProgress, {
+  const projectProgress = useTransform(
+    scrollYProgress,
+    [0, projectScrollEnd],
+    [0, 1]
+  );
+
+  const smoothProgress = useSpring(projectProgress, {
     stiffness: 80,
     damping: 24,
     mass: 0.34,
     restDelta: 0.001,
+  });
+  const { opacity: sectionOpacity, y: sectionY } = useSectionOutroMotion(sectionRef, {
+    offset: ["start start", "end end"],
+    fadeRange: [projectScrollEnd, 1],
   });
 
   const deviceScale = useTransform(smoothProgress, [0, 0.48, 1], [0.94, 1, 0.96]);
@@ -132,7 +146,7 @@ export function WorkSection() {
   const deviceRotate = useTransform(smoothProgress, [0, 1], [-1.8, 1.8]);
   const titleY = useTransform(smoothProgress, [0, 0.45, 1], [42, -8, -54]);
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+  useMotionValueEvent(projectProgress, "change", (latest) => {
     const nextIndex = clamp(Math.round(latest * (projects.length - 1)), 0, projects.length - 1);
     setActiveProjectIndex((current) => (current === nextIndex ? current : nextIndex));
   });
@@ -143,10 +157,10 @@ export function WorkSection() {
 
     const top = section.offsetTop;
     const scrollable = section.offsetHeight - window.innerHeight;
-    const target = top + scrollable * (index / Math.max(projects.length - 1, 1));
+    const target = top + scrollable * projectScrollEnd * (index / Math.max(projects.length - 1, 1));
 
     window.scrollTo({ top: target, behavior: "smooth" });
-  }, []);
+  }, [projectScrollEnd]);
 
   return (
     <section
@@ -160,7 +174,7 @@ export function WorkSection() {
         } as CSSProperties
       }
     >
-      <div className="cinema-work-sticky">
+      <motion.div className="cinema-work-sticky" style={{ opacity: sectionOpacity, y: sectionY }}>
         {projects.map((project, index) => (
           <WorkBackdropLayer
             key={project.title}
@@ -173,10 +187,12 @@ export function WorkSection() {
 
         <div className="cinema-work-layout">
           <div className="cinema-work-copy">
-            <p className="cinema-kicker">Selected work / Scroll narrative</p>
-            <motion.h2 className="cinema-work-title" style={{ y: titleY }}>
-              Case <span className="cinema-outline">Studies</span>
-            </motion.h2>
+            <motion.div style={{ y: titleY }}>
+              <p className="cinema-kicker">Work / Selected projects</p>
+              <h2 className="cinema-work-title">
+                Projects
+              </h2>
+            </motion.div>
 
             <div className="cinema-project-story-stack">
               {projects.map((project, index) => (
@@ -234,7 +250,7 @@ export function WorkSection() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="cinema-work-mobile">
         <p className="cinema-kicker">Selected work / Mobile narrative</p>

@@ -1,26 +1,40 @@
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
 const stats = [
-  { value: "15+", label: "Projects built" },
-  { value: "10+", label: "Core tools" },
-  { value: "04", label: "Focus lanes" },
+  { label: "Years Experience", value: "02" },
+  { label: "Data Projects", value: "15+" },
+  { label: "Client Satisfaction", value: "100%" },
 ];
 
 const capabilities = [
-  "Data analytics",
-  "Machine learning",
-  "Power BI dashboards",
-  "AI assisted web builds",
-  "ETL pipelines",
-  "Business intelligence",
+  "Data Analysis", "Python", "SQL", "Power BI",
+  "Machine Learning", "Web Experience", "AI Integration", "React", "Firebase / Supabase", "SaaS"
 ];
 
 export function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  /* ── scroll-linked outro: fade + push down as work arrives ── */
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const opacity = useTransform(scrollYProgress, [0, 0.55, 1], [1, 1, 0]);
+  const y       = useTransform(scrollYProgress, [0, 0.55, 1], [0, 0, 120]);
+  const filter  = useTransform(scrollYProgress, [0, 0.55, 1], ["blur(0px)", "blur(0px)", "blur(12px)"]);
+
   return (
-    <section id="about" className="cinema-section cinema-about-section">
+    <motion.section
+      id="about"
+      ref={sectionRef}
+      className="cinema-section cinema-about-section"
+      style={{ opacity, y, filter }}
+    >
       <div className="cinema-section-inner cinema-about">
         <div className="cinema-about-copy">
-          <p className="cinema-kicker">About / Signal over noise</p>
+          <p className="cinema-kicker">About / Results over noise</p>
           <h2 className="cinema-display-title">
             Builder of <span className="cinema-outline">data intelligence</span>
           </h2>
@@ -62,6 +76,6 @@ export function AboutSection() {
           />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

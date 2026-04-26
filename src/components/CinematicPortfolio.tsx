@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { ReactLenis } from 'lenis/react';
 import {
   AnimatePresence,
   motion,
@@ -15,6 +14,7 @@ import {
   useScroll,
   useSpring,
 } from "framer-motion";
+import { useLenis } from "lenis/react";
 import Image from "next/image";
 import {
   Download,
@@ -27,7 +27,7 @@ import { AboutSection } from "./sections/AboutSection";
 import { WorkSection } from "./sections/WorkSection";
 import { CertificatesSection } from "./sections/CertificatesSection";
 import { ContactSection } from "./sections/ContactSection";
-import SplashCursor from "./SplashCursor";
+
 
 const EASE = [0.23, 1, 0.32, 1] as const;
 
@@ -72,12 +72,18 @@ export default function CinematicPortfolio() {
     [activeIndex]
   );
 
+  const lenis = useLenis();
+
   const navigateToSection = useCallback((id: SectionId) => {
     const target = document.getElementById(id);
     setMenuOpen(false);
     setHoveredPreview(sections.find((section) => section.id === id)?.preview ?? sections[0].preview);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+    if (lenis && target) {
+      lenis.scrollTo(target, { duration: 1.5 });
+    } else {
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [lenis]);
 
   useEffect(() => {
     let raf = 0;
@@ -93,7 +99,16 @@ export default function CinematicPortfolio() {
       if (rawProgress < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        finishTimer = setTimeout(() => setIsLoading(false), 180);
+        const checkReady = () => {
+          if (document.readyState === "complete") {
+            finishTimer = setTimeout(() => setIsLoading(false), 300);
+          } else {
+            window.addEventListener("load", () => {
+              finishTimer = setTimeout(() => setIsLoading(false), 300);
+            }, { once: true });
+          }
+        };
+        checkReady();
       }
     };
 
@@ -110,17 +125,17 @@ export default function CinematicPortfolio() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visibleEntry?.target.id) {
-          setActiveSectionId(visibleEntry.target.id as SectionId);
+        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+        if (visibleEntries.length > 0) {
+          const topMost = visibleEntries.sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top)[0];
+          if (topMost?.target.id) {
+            setActiveSectionId(topMost.target.id as SectionId);
+          }
         }
       },
       {
-        threshold: [0.18, 0.3, 0.45, 0.6],
-        rootMargin: "-28% 0px -42% 0px",
+        threshold: [0.1, 0.2, 0.4, 0.6, 0.8],
+        rootMargin: "-48% 0px -48% 0px",
       }
     );
 
@@ -155,21 +170,8 @@ export default function CinematicPortfolio() {
   }, []);
 
   return (
-    <ReactLenis root>
-      <div className="cinema-root">
-        <SplashCursor
-        DENSITY_DISSIPATION={3.5}
-        VELOCITY_DISSIPATION={2}
-        PRESSURE={0.1}
-        CURL={3}
-        SPLAT_RADIUS={0.2}
-        SPLAT_FORCE={6000}
-        COLOR_UPDATE_SPEED={10}
-        SHADING
-        RAINBOW_MODE={false}
-        COLOR="#bb2464"
-      />
-      <motion.div className="cinema-page-progress" style={{ scaleX: pageProgress }} />
+    <div className="cinema-root">
+
       <div className="cinema-grain" aria-hidden="true" />
 
       <div className="cinema-mesh" aria-hidden="true">
@@ -219,12 +221,12 @@ export default function CinematicPortfolio() {
           data-cursor="interactive"
           aria-label="Go to home"
         >
-          PK.
+          <Image src="/Logo.png" alt="PK Logo" width={160} height={90} style={{ height: 'auto', maxWidth: '140px' }} unoptimized />
         </button>
 
         <div className="cinema-header-actions">
           <a
-            href="/Prashant_Resume.pdf?v=2"
+            href="/Prashant_Resume.pdf?v=4"
             download="Prashant_Resume.pdf"
             className="cinema-resume"
             data-cursor="interactive"
@@ -284,7 +286,7 @@ export default function CinematicPortfolio() {
               </button>
             ))}
             <a
-              href="/Prashant_Resume.pdf?v=2"
+              href="/Prashant_Resume.pdf?v=4"
               download="Prashant_Resume.pdf"
               className="cinema-nav-link cinema-nav-link-small"
               data-cursor="interactive"
@@ -331,7 +333,6 @@ export default function CinematicPortfolio() {
             />
           ))}
         </div>
-      </div>
-    </ReactLenis>
+    </div>
   );
 }

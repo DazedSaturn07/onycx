@@ -55,7 +55,7 @@ export function HeroSection({ navigateTo }: HeroSectionProps) {
 
         <div className="cinema-hero-portrait" aria-hidden="true">
           <Image
-            src="/photo.png"
+            src="/pics1.avif"
             alt=""
             fill
             sizes="(max-width: 768px) 70vw, 38vw"

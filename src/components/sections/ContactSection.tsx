@@ -1,4 +1,4 @@
-import { Mail, Phone, Download, Github, Linkedin } from "lucide-react";
+import { Mail, Phone, Download, Github, Linkedin, Instagram } from "lucide-react";
 import type { SectionId } from "./HeroSection";
 
 const socials = [
@@ -13,6 +13,11 @@ const socials = [
     icon: Linkedin,
   },
   {
+    label: "Instagram",
+    href: "https://www.instagram.com/0nycx/",
+    icon: Instagram,
+  },
+  {
     label: "Email",
     href: "mailto:prashants0325@gmail.com",
     icon: Mail,
@@ -25,7 +30,10 @@ interface ContactSectionProps {
 
 export function ContactSection({ navigateTo }: ContactSectionProps) {
   return (
-    <section id="contact" className="cinema-section cinema-contact">
+    <section 
+      id="contact" 
+      className="cinema-section cinema-contact"
+    >
       <div className="cinema-section-inner cinema-contact-inner">
         <p className="cinema-kicker">Contact / Open to work</p>
         <a
@@ -73,7 +81,7 @@ export function ContactSection({ navigateTo }: ContactSectionProps) {
 
         <div className="cinema-contact-actions">
           <a
-            href="/Prashant_Resume.pdf?v=2"
+            href="/Prashant_Resume.pdf?v=4"
             download="Prashant_Resume.pdf"
             className="cinema-secondary-link"
             data-cursor="interactive"

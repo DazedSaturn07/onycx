@@ -271,10 +271,12 @@ html.lenis body {
   background: transparent;
   color: #fff;
   font-family: var(--font-cabinet), system-ui, sans-serif;
-  font-size: clamp(1.45rem, 2.4vw, 2.4rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cinema-header-actions {
@@ -440,6 +442,8 @@ html.lenis body {
   position: relative;
   min-height: 100svh;
   overflow: clip;
+  background: var(--bg);
+  will-change: transform, opacity;
 }
 
 .cinema-section-inner {
@@ -535,8 +539,6 @@ html.lenis body {
 }
 
 .cinema-hero {
-  position: sticky;
-  top: 0;
   z-index: 3;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -644,20 +646,32 @@ html.lenis body {
   right: clamp(-4rem, -2vw, -1rem);
   bottom: 0;
   width: clamp(17rem, 39vw, 43rem);
-  height: min(82vh, 52rem);
-  opacity: 0.34;
-  mix-blend-mode: luminosity;
-  mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+  height: 100%;
+  opacity: 0.85;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 8%, #000 80%, transparent 100%),
+    linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: destination-in;
 }
 
 .cinema-hero-portrait-image {
-  object-fit: cover;
-  object-position: center top;
-  filter: contrast(1.05) grayscale(1);
+  object-fit: contain;
+  object-position: center bottom;
+  filter: contrast(1.05) grayscale(0.8);
 }
 
 .cinema-about-section {
-  min-height: 110svh;
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  height: 100svh;
+  z-index: 2;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 32% 68%, rgba(255, 77, 0, 0.08), transparent 32rem),
+    radial-gradient(ellipse at 72% 28%, rgba(255, 140, 0, 0.06), transparent 28rem),
+    var(--bg);
 }
 
 .cinema-about {
@@ -752,12 +766,11 @@ html.lenis body {
 .cinema-about-media {
   position: relative;
   grid-column: 9 / 13;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 2rem;
-  background: #101010;
-  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  background: #0d0d0d;
 }
 
 .cinema-about-glow {
@@ -776,27 +789,17 @@ html.lenis body {
 .cinema-about-image {
   object-fit: cover;
   object-position: center top;
-  filter: grayscale(1) contrast(1.08);
   transition:
-    filter 0.7s var(--ease-cinema),
     scale 0.7s var(--ease-cinema);
 }
 
 .cinema-about-media:hover .cinema-about-image {
-  filter: grayscale(0) contrast(1);
   scale: 1.035;
 }
 
-.cinema-work-scrolly,
-.cinema-certificates,
-.cinema-contact {
-  position: relative;
-  z-index: var(--section-layer, 2);
-  margin-top: calc(var(--section-overlap) * -1);
-}
-
 .cinema-work-scrolly {
-  --section-layer: 3;
+  position: relative;
+  z-index: 3;
   min-height: var(--work-scroll-height, 552svh);
   overflow: visible;
 }
@@ -1116,19 +1119,34 @@ html.lenis body {
   display: none;
 }
 
-.cinema-certificates {
-  --section-layer: 4;
-  min-height: 118svh;
+.cinema-certificates-scrolly {
+  position: relative;
+  z-index: 4;
+  min-height: 300svh; /* 100svh slide up, 100svh reading, 100svh slide out */
+  overflow: visible;
+  margin-top: -100svh;
+}
+
+.cinema-certificates-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
   background:
-    radial-gradient(circle at 78% 18%, rgba(255, 77, 0, 0.13), transparent 30rem),
-    radial-gradient(circle at 18% 74%, rgba(255, 140, 0, 0.08), transparent 28rem),
-    linear-gradient(180deg, rgba(8, 8, 8, 0.86), var(--bg) 28%, rgba(8, 8, 8, 0.94));
+    radial-gradient(circle at 78% 18%, rgba(255, 77, 0, 0.28), transparent 30rem),
+    radial-gradient(circle at 18% 74%, rgba(255, 140, 0, 0.18), transparent 28rem),
+    linear-gradient(180deg, rgba(14, 14, 14, 0.2), var(--bg) 28%, rgba(14, 14, 14, 0.3));
 }
 
 .cinema-certificates-inner {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 100svh;
+  padding-top: clamp(4.7rem, 8vh, 6rem);
+  padding-bottom: clamp(2.2rem, 4vh, 3rem);
 }
 
 .cinema-certificates-header {
@@ -1141,6 +1159,8 @@ html.lenis body {
 
 .cinema-certificates-header .cinema-display-title {
   margin-bottom: 0;
+  font-size: clamp(2.8rem, 7vw, 7.2rem);
+  line-height: 0.86;
 }
 
 .cinema-certificates-copy {
@@ -1152,23 +1172,24 @@ html.lenis body {
 
 .cinema-certificates-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.92fr);
   gap: clamp(1rem, 3vw, 2rem);
-  align-items: stretch;
+  align-items: start;
+  min-height: 0;
 }
 
 .cinema-certificate-feature {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: clamp(1.1rem, 2vw, 1.8rem);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.035)),
-    rgba(12, 12, 12, 0.9);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.145), rgba(255, 255, 255, 0.055)),
+    rgba(18, 18, 18, 0.92);
   box-shadow:
-    0 38px 110px rgba(0, 0, 0, 0.48),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    0 38px 110px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .cinema-certificate-feature::before {
@@ -1178,8 +1199,8 @@ html.lenis body {
   z-index: 2;
   pointer-events: none;
   background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.17), transparent 28%, transparent 65%, rgba(255, 77, 0, 0.08)),
-    linear-gradient(180deg, transparent 62%, rgba(0, 0, 0, 0.38));
+    linear-gradient(125deg, rgba(255, 255, 255, 0.14), transparent 28%, transparent 65%, rgba(255, 77, 0, 0.06)),
+    linear-gradient(180deg, transparent 68%, rgba(0, 0, 0, 0.18));
   mix-blend-mode: screen;
 }
 
@@ -1211,15 +1232,16 @@ html.lenis body {
 .cinema-certificate-frame {
   position: relative;
   aspect-ratio: 3300 / 2550;
-  min-height: 26rem;
+  height: clamp(14rem, 36vh, 22rem);
+  min-height: 0;
   overflow: hidden;
-  background: #111;
+  background: #181818;
 }
 
 .cinema-certificate-feature-image {
   object-fit: contain;
-  padding: clamp(1.1rem, 2.4vw, 2rem);
-  filter: saturate(0.98) contrast(1.02);
+  padding: clamp(0.9rem, 1.7vw, 1.4rem);
+  filter: saturate(1.02) contrast(1.02);
 }
 
 .cinema-certificate-feature-info {
@@ -1230,8 +1252,8 @@ html.lenis body {
   justify-content: space-between;
   gap: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(8, 8, 8, 0.76);
-  padding: clamp(1rem, 2.2vw, 1.45rem);
+  background: rgba(14, 14, 14, 0.72);
+  padding: clamp(0.8rem, 1.8vw, 1.15rem);
   backdrop-filter: blur(22px);
 }
 
@@ -1240,7 +1262,7 @@ html.lenis body {
   margin: 0;
   color: #fff;
   font-family: var(--font-cabinet), system-ui, sans-serif;
-  font-size: clamp(1.35rem, 2.3vw, 2.35rem);
+  font-size: clamp(1.1rem, 1.75vw, 1.75rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
@@ -1270,6 +1292,14 @@ html.lenis body {
   gap: 0.58rem;
   align-content: start;
   min-width: 0;
+  max-height: min(70svh, 48rem);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  scrollbar-width: none;
+}
+
+.cinema-certificate-list::-webkit-scrollbar {
+  display: none;
 }
 
 .cinema-certificate-card {
@@ -1279,7 +1309,7 @@ html.lenis body {
   align-items: center;
   gap: 0.78rem;
   min-width: 0;
-  min-height: 5.8rem;
+  min-height: 4.9rem;
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 0.9rem;
   background: rgba(255, 255, 255, 0.045);
@@ -1387,8 +1417,11 @@ html.lenis body {
 }
 
 .cinema-contact {
-  --section-layer: 5;
+  position: relative;
+  z-index: 5;
+  margin-top: -100svh;
   min-height: 100svh;
+  isolation: isolate;
   background:
     radial-gradient(circle at 50% 12%, rgba(255, 77, 0, 0.13), transparent 30rem),
     radial-gradient(circle at 16% 80%, rgba(178, 34, 34, 0.1), transparent 28rem),
@@ -1704,7 +1737,7 @@ html.lenis body {
   }
 
   .cinema-work-scrolly,
-  .cinema-certificates,
+  .cinema-certificates-scrolly,
   .cinema-contact {
     margin-top: 0;
   }
@@ -1745,8 +1778,10 @@ html.lenis body {
   }
 
   .cinema-hero-title {
-    font-size: clamp(4rem, 21vw, 7.4rem);
-    line-height: 0.82;
+    font-size: clamp(3rem, 18vw, 6rem);
+    line-height: 0.84;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .cinema-hero-text {
@@ -1912,8 +1947,14 @@ html.lenis body {
     font-size: 0.8rem;
   }
 
-  .cinema-certificates {
+  .cinema-certificates-scrolly,
+  .cinema-certificates-sticky {
+    position: relative;
+    top: auto;
+    height: auto;
     min-height: auto;
+    overflow: visible;
+    margin-top: 0;
   }
 
   .cinema-certificates-header {
@@ -1932,8 +1973,21 @@ html.lenis body {
     grid-template-columns: 1fr;
   }
 
+  .cinema-certificate-list {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
   .cinema-certificate-feature {
-    border-radius: 1rem;
+    border-radius: 1.25rem;
+    position: relative;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .cinema-certificate-frame {
@@ -1960,18 +2014,31 @@ html.lenis body {
   }
 
   .cinema-certificate-card {
-    grid-template-columns: auto 4.6rem minmax(0, 1fr);
-    min-height: 5.4rem;
-    transform: none;
+    grid-template-columns: 2.2rem 4.6rem minmax(0, 1fr);
+    min-height: 5.2rem;
+    gap: 0.65rem;
+    padding: 0.5rem;
+    transform: none !important;
+    overflow: hidden;
   }
 
-  .cinema-certificate-card:hover,
-  .cinema-certificate-card.is-active {
-    transform: none;
+  .cinema-certificate-card-index {
+    font-size: 0.65rem;
+    opacity: 0.5;
   }
 
   .cinema-certificate-card-thumb {
     width: 4.6rem;
+    height: 3.4rem;
+  }
+
+  .cinema-certificate-card-copy strong {
+    font-size: 0.82rem;
+    line-height: 1.2;
+  }
+
+  .cinema-certificate-card-copy small {
+    font-size: 0.6rem;
   }
 
   .cinema-certificate-card-icon {
@@ -2047,6 +2114,13 @@ html.lenis body {
   .cinema-mobile-project {
     min-height: 72svh;
   }
+
+  .cinema-hero-title {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+    line-height: 0.85;
+    word-break: break-word;
+    white-space: normal;
+  }
 }
 
 @media (max-height: 760px) and (min-width: 901px) {
@@ -2111,3 +2185,63 @@ html.lenis body {
     display: none;
   }
 }
+
+/* Mobile Lag & Performance Optimizations */
+@media (max-width: 768px) {
+  .cinema-section, 
+  .cinema-about-sticky, 
+  .cinema-certificates-sticky {
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cinema-blob {
+    display: none !important;
+  }
+}
+
+/* Scroll Spy Indicator (Right Bottom) */
+.cinema-scroll-spy {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  z-index: 100;
+  font-family: var(--font-jetbrains);
+  font-size: 0.85rem;
+  color: var(--muted);
+  mix-blend-mode: difference;
+}
+
+.cinema-scroll-spy span {
+  opacity: 0.8;
+}
+
+.cinema-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cinema-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: all 0.3s var(--ease-cinema);
+}
+
+.cinema-dot.active {
+  background: var(--accent);
+  transform: scale(1.5);
+}
+
+@media (max-width: 768px) {
+  .cinema-scroll-spy {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    font-size: 0.75rem;
+  }
+}
+
