@@ -1,4 +1,4 @@
-import { Mail, Phone, Download, Github, Linkedin, Instagram } from "lucide-react";
+import { Mail, Phone, Download } from "lucide-react";
 import type { SectionId } from "./HeroSection";
 import AsciiWave from "../ui/AsciiWave";
 
