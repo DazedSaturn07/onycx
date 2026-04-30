@@ -1,22 +1,9 @@
 import { Mail, Phone, Download, Github, Linkedin, Instagram } from "lucide-react";
 import type { SectionId } from "./HeroSection";
+import AsciiWave from "../ui/AsciiWave";
 
 const socials = [
-  {
-    label: "GitHub",
-    href: "https://github.com/DazedSaturn07",
-    icon: Github,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://linkedin.com/in/onycx",
-    icon: Linkedin,
-  },
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/0nycx/",
-    icon: Instagram,
-  },
+// ... (lines 4-25 unchanged)
   {
     label: "Email",
     href: "mailto:prashants0325@gmail.com",
@@ -102,6 +89,14 @@ export function ContactSection({ navigateTo }: ContactSectionProps) {
         <p className="cinema-footer-line">
           Copyright 2026 Prashant Kumar Yadav - Next.js / TypeScript / Motion
         </p>
+
+      </div>
+
+      <div className="cinema-contact-wave" aria-hidden="true">
+        <AsciiWave 
+          color="#ff4d00" 
+          speed={0.6} 
+        />
       </div>
     </section>
   );

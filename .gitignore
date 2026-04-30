@@ -51,3 +51,4 @@ lint_*.txt
 *.key
 *.p12
 *.pfx
+*.md

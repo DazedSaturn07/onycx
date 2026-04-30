@@ -1124,7 +1124,7 @@ html.lenis body {
   z-index: 4;
   min-height: 300svh; /* 100svh slide up, 100svh reading, 100svh slide out */
   overflow: visible;
-  margin-top: -100svh;
+  margin-top: -90svh;
 }
 
 .cinema-certificates-sticky {
@@ -1420,10 +1420,52 @@ html.lenis body {
   display: none;
 }
 
+.cinema-certificates-carousel-stage {
+  position: relative;
+  display: grid;
+  gap: clamp(0.95rem, 2.2vh, 1.4rem);
+  min-height: 0;
+}
+
+.cinema-certificates-carousel {
+  margin-top: clamp(-0.5rem, -1vh, 0rem);
+}
+
+.cinema-certificate-carousel-info {
+  position: relative;
+  width: min(100%, 54rem);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: clamp(1rem, 1.8vw, 1.4rem);
+  background:
+    linear-gradient(135deg, rgba(255, 77, 0, 0.13), transparent 34%),
+    rgba(14, 14, 14, 0.72);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px);
+}
+
+.cinema-certificate-carousel-meta {
+  position: static;
+  width: fit-content;
+  margin: clamp(0.8rem, 1.6vw, 1rem) clamp(0.8rem, 1.8vw, 1.15rem) 0;
+}
+
+.cinema-certificate-carousel-info .cinema-certificate-feature-info {
+  border-top: 0;
+  background: transparent;
+}
+
+.cinema-certificate-carousel-info .cinema-certificate-feature-info h3 {
+  max-width: 44rem;
+}
+
 .cinema-contact {
   position: relative;
   z-index: 5;
-  margin-top: -100svh;
+  margin-top: -90svh;
   min-height: 100svh;
   isolation: isolate;
   background:
@@ -1438,6 +1480,37 @@ html.lenis body {
   justify-content: center;
   flex-direction: column;
   text-align: center;
+}
+
+.cinema-contact-wave {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: clamp(9rem, 24vh, 14rem);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.72;
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(to top, black 0%, black 42%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 42%, transparent 100%);
+}
+
+.ascii-wave {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ascii-wave-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .cinema-contact-title {
@@ -1534,6 +1607,7 @@ html.lenis body {
   position: absolute;
   bottom: clamp(1.2rem, 3vh, 2rem);
   left: 50%;
+  z-index: 4;
   width: min(90vw, 54rem);
   margin: 0;
   transform: translateX(-50%);
@@ -1544,6 +1618,7 @@ html.lenis body {
   letter-spacing: 0.3em;
   line-height: 1.5;
   text-transform: uppercase;
+  text-shadow: 0 1px 12px #080808, 0 0 24px #080808;
 }
 
 .cinema-progress {
@@ -1970,6 +2045,23 @@ html.lenis body {
   .cinema-certificates-copy {
     font-size: 0.94rem;
     line-height: 1.56;
+  }
+
+  .cinema-certificates-carousel-stage {
+    gap: 0.9rem;
+  }
+
+  .cinema-certificate-carousel-info {
+    border-radius: 1rem;
+  }
+
+  .cinema-certificate-carousel-info .cinema-certificate-feature-info {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cinema-certificate-actions {
+    justify-content: flex-start;
   }
 
   .cinema-certificates-layout {
