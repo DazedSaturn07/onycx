@@ -183,24 +183,60 @@ const EMBEDDED_CSS = `
 
 @media (max-width: 760px) {
   .cinema-3d-carousel {
-    height: clamp(16rem, 48vh, 25rem);
+    height: clamp(15.5rem, 45svh, 23rem);
+    padding-bottom: 2.8rem;
+    perspective: 900px;
   }
 
   .cinema-3d-carousel__card {
-    width: clamp(13rem, 68vw, 19rem);
+    width: clamp(11.25rem, 60vw, 17rem);
+    border-radius: clamp(1rem, 4.5vw, 1.6rem);
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.42);
   }
 
   .cinema-3d-carousel__item.is-next {
-    transform: translateY(-50%) translateX(-102%) scale(0.5) rotateY(8deg);
+    transform: translateY(-54%) translateX(-86%) scale(0.48) rotateY(7deg);
+    opacity: 0.58;
   }
 
   .cinema-3d-carousel__item.is-prev {
-    transform: translateY(-50%) translateX(2%) scale(0.5) rotateY(-8deg);
+    transform: translateY(-54%) translateX(-14%) scale(0.48) rotateY(-7deg);
+    opacity: 0.58;
   }
 
   .cinema-3d-carousel__item.is-next2,
   .cinema-3d-carousel__item.is-prev2 {
     opacity: 0;
+  }
+
+  .cinema-3d-carousel__arrow {
+    top: auto;
+    bottom: 0;
+    width: 40px;
+    height: 40px;
+    transform: none;
+  }
+
+  .cinema-3d-carousel__arrow:hover {
+    transform: scale(1.04);
+  }
+
+  .cinema-3d-carousel__arrow--left {
+    left: calc(50% - 3.15rem);
+  }
+
+  .cinema-3d-carousel__arrow--right {
+    right: calc(50% - 3.15rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .cinema-3d-carousel {
+    height: clamp(14.5rem, 42svh, 20rem);
+  }
+
+  .cinema-3d-carousel__card {
+    width: clamp(10.8rem, 66vw, 15.5rem);
   }
 }
 `;

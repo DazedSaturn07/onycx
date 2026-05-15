@@ -51,4 +51,12 @@ lint_*.txt
 *.key
 *.p12
 *.pfx
-*.md
+# documentation
+# (removed *.md to allow README and GEMINI tracking)
+
+# graphify
+graphify-out/
+.agents/
+
+# gemini
+.gemini/

@@ -215,7 +215,14 @@ export default function CinematicPortfolio() {
           data-cursor="interactive"
           aria-label="Go to home"
         >
-          <Image src="/Logo.png" alt="PK Logo" width={160} height={90} style={{ height: 'auto', maxWidth: '140px' }} unoptimized />
+          <Image
+            src="/Logo.png"
+            alt="PK Logo"
+            width={160}
+            height={90}
+            className="cinema-logo-image"
+            unoptimized
+          />
         </button>
 
         <div className="cinema-header-actions">
