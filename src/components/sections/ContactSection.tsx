@@ -1,9 +1,19 @@
-import { Mail, Phone, Download } from "lucide-react";
+import { Mail, Github, Linkedin, Download } from "lucide-react";
+import Image from "next/image";
 import type { SectionId } from "./HeroSection";
 import AsciiWave from "../ui/AsciiWave";
 
 const socials = [
-// ... (lines 4-25 unchanged)
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/onycx/",
+    icon: Linkedin,
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/DazedSaturn07",
+    icon: Github,
+  },
   {
     label: "Email",
     href: "mailto:prashants0325@gmail.com",
@@ -21,8 +31,20 @@ export function ContactSection({ navigateTo }: ContactSectionProps) {
       id="contact" 
       className="cinema-section cinema-contact"
     >
+      <div className="cinema-contact-bg" aria-hidden="true">
+        <Image 
+          src="/cts.jpg" 
+          alt="Contact Background" 
+          fill 
+          sizes="100vw"
+          className="cinema-contact-bg-img"
+        />
+        <div className="cinema-contact-overlay" />
+      </div>
+
       <div className="cinema-section-inner cinema-contact-inner">
         <p className="cinema-kicker">Contact / Open to work</p>
+        
         <a
           href="mailto:prashants0325@gmail.com"
           className="cinema-contact-title"
@@ -41,10 +63,6 @@ export function ContactSection({ navigateTo }: ContactSectionProps) {
           <a href="mailto:prashants0325@gmail.com" data-cursor="interactive">
             <Mail size={15} />
             prashants0325@gmail.com
-          </a>
-          <a href="tel:+919170787018" data-cursor="interactive">
-            <Phone size={15} />
-            +91 9170787018
           </a>
         </div>
 

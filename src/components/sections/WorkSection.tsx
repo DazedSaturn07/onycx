@@ -255,7 +255,7 @@ export function WorkSection() {
       <div className="cinema-work-mobile">
         <p className="cinema-kicker">Selected work / Mobile narrative</p>
         <h2 className="cinema-work-title">
-          Case <span className="cinema-outline">Studies</span>
+          Selected <span className="cinema-outline">Projects</span>
         </h2>
         <div className="cinema-mobile-projects">
           {projects.map((project, index) => (
