@@ -227,8 +227,8 @@ export default function CinematicPortfolio() {
 
         <div className="cinema-header-actions">
           <a
-            href="/Prashant_Resume.pdf?v=4"
-            download="Prashant_Resume.pdf"
+            href="/Prashant_res.pdf"
+            download="Prashant_res.pdf"
             className="cinema-resume"
             data-cursor="interactive"
             aria-label="Download resume"
@@ -287,8 +287,8 @@ export default function CinematicPortfolio() {
               </button>
             ))}
             <a
-              href="/Prashant_Resume.pdf?v=4"
-              download="Prashant_Resume.pdf"
+              href="/Prashant_res.pdf"
+              download="Prashant_res.pdf"
               className="cinema-nav-link cinema-nav-link-small"
               data-cursor="interactive"
             >

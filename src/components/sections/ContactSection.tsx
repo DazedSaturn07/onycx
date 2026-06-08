@@ -86,8 +86,8 @@ export function ContactSection({ navigateTo }: ContactSectionProps) {
 
         <div className="cinema-contact-actions">
           <a
-            href="/Prashant_Resume.pdf?v=4"
-            download="Prashant_Resume.pdf"
+            href="/Prashant_res.pdf"
+            download="Prashant_res.pdf"
             className="cinema-secondary-link"
             data-cursor="interactive"
           >
