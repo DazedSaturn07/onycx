@@ -1,0 +1,9 @@
+Boska Black (900) by Indian Type Foundry, from Fontshare.
+Copyright 2017-2021 Indian Type Foundry. All rights reserved.
+Downloaded unchanged from the official Fontshare CDN on 2026-09-26.
+Only the 27 KB WOFF2 is served. The TTF is the original source file.
+
+Font: https://www.fontshare.com/fonts/boska
+Stylesheet: https://api.fontshare.com/v2/css?f[]=boska@900&display=swap
+License: https://www.fontshare.com/licenses/itf-ffl
+Terms: https://www.fontshare.com/terms

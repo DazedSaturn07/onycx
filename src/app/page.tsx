@@ -1,10 +1,5 @@
-import CinematicPortfolio from "@/components/CinematicPortfolio";
-import SmoothScroll from "@/components/SmoothScroll";
+import PortfolioPage from "@/components/PortfolioPage";
 
 export default function Home() {
-  return (
-    <SmoothScroll>
-      <CinematicPortfolio />
-    </SmoothScroll>
-  );
+  return <PortfolioPage />;
 }
