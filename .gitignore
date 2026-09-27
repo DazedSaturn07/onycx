@@ -8,4 +8,10 @@ out/
 npm-debug.log*
 /graphify-out/
 public/*.pdf
+!public/Prashant_res.pdf
+!public/Prashant_Resume.pdf
+!public/resume.pdf
 public/*.jpg
+dashboard_datasets/
+
+.README.md

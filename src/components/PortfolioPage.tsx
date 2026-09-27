@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight, Download } from "lucide-react";
 import Hero from "@/components/sections/Hero";
 import ScrollEffects from "@/components/ScrollEffects";
@@ -8,7 +9,9 @@ import Navigation from "@/components/Navigation";
 import CertificateCarousel from "@/components/CertificateCarousel";
 import ScrollHighlight from "@/components/ScrollHighlight";
 import GlowCursor from "@/components/GlowCursor";
-import { capabilityGroups, projects } from "@/data/portfolio";
+import ProjectArtwork from "@/components/ProjectArtwork";
+import { capabilityGroups } from "@/data/portfolio";
+import { featuredProjects } from "@/data/project-catalog";
 
 export default function PortfolioPage() {
   return (
@@ -29,7 +32,7 @@ export default function PortfolioPage() {
             <h2 id="about-heading">Curiosity,<br />made <em>useful.</em></h2>
             <p><ScrollHighlight text="I bring data analysis, applied machine learning, and frontend craft together to make complex ideas clearer and easier to act on." /></p>
             <div className="portfolio-about-actions">
-              <a href="/Prashant_res.pdf" download className="portfolio-text-link">Download résumé <Download size={16} aria-hidden="true" /></a>
+              <a href="/Prashant_res.pdf" download="Prashant_Yadav_Resume.pdf" className="portfolio-text-link">Download résumé <Download size={16} aria-hidden="true" /></a>
               <span>Data · Products · Experiences</span>
             </div>
             <div className="portfolio-about-signature">
@@ -43,29 +46,29 @@ export default function PortfolioPage() {
           <div className="portfolio-heading">
             <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">02 / Selected work</p>
             <div data-reveal data-reveal-side="right">
-              <h2 id="work-heading">Work with<br /><em>intent.</em></h2>
-              <span>Selected digital work shaped by useful ideas, considered systems, and the people who use them.</span>
+              <h2 id="work-heading">Insight<br /><em>in practice.</em></h2>
+              <span>My core work starts with a business question, follows the evidence, and makes the answer clear enough to use.</span>
             </div>
           </div>
-          <div className="portfolio-project-grid">
-            {projects.map((project, index) => (
-              <article key={project.id} className={`portfolio-project-card${index === 0 ? " is-featured" : ""}`} data-reveal data-reveal-side={index % 2 === 0 ? "left" : "right"}>
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="portfolio-project-image-wrap" aria-label={`Visit ${project.title}`}>
-                  <span className="project-window-bar" aria-hidden="true"><span className="project-window-dots"><i /><i /><i /></span><span>{new URL(project.liveUrl).hostname}</span><ArrowUpRight size={14} /></span>
-                  <div className="project-preview"><Image src={project.image} alt={`${project.title} website preview`} fill sizes="(max-width: 760px) 92vw, (max-width: 1100px) 48vw, 65vw" className="portfolio-project-image" /></div>
-                  <span className="portfolio-project-open">View live site <ArrowUpRight size={16} aria-hidden="true" /></span>
-                </a>
-                <div className="portfolio-project-details">
-                  <div className="portfolio-project-meta"><span>{String(index + 1).padStart(2, "0")} / {project.category}</span><span>{project.year}</span></div>
-                  <h3><a href={project.liveUrl} target="_blank" rel="noopener noreferrer">{project.title}<ArrowUpRight aria-hidden="true" /></a></h3>
+          <div className="featured-project-grid">
+            {featuredProjects.map((project, index) => (
+              <article key={project.id} className="featured-project-card" data-reveal data-reveal-side={index === 1 ? "right" : "left"}>
+                <div className="featured-project-art">
+                  <ProjectArtwork visual={project.visual} title={project.title} />
+                  <span className="featured-project-index">0{index + 1} / {project.category}</span>
+                </div>
+                <div className="featured-project-copy">
+                  <h3>{project.title}</h3>
                   <p>{project.summary}</p>
-                  <div className="portfolio-project-bottom">
-                    <span>{project.role}</span>
-                    <ul aria-label={`${project.title} technologies`}>{project.tech.map((technology) => <li key={technology}>{technology}</li>)}</ul>
-                  </div>
+                  <ul aria-label={project.title + " technologies"}>{project.technologies.slice(0, 4).map((technology) => <li key={technology}>{technology}</li>)}</ul>
+                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">View on GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
                 </div>
               </article>
             ))}
+          </div>
+          <div className="featured-project-footer">
+            <span>Data analytics · machine learning · thoughtful software</span>
+            <Link href="/projects">Explore all projects <ArrowUpRight size={16} aria-hidden="true" /></Link>
           </div>
         </section>
 

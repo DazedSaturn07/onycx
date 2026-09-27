@@ -60,25 +60,12 @@ export default function SignaturePreloader({ onReveal, onComplete }: Props) {
     const skip = element.querySelector<HTMLButtonElement>("button");
     focusFrame = requestAnimationFrame(() => skip?.focus({ preventScroll: true }));
 
-    const prepare = async () => {
-      // Four requests at a time keep the intro from saturating a mobile connection.
-      const images = [...document.querySelectorAll<HTMLImageElement>(".portfolio-shell img")];
-      const warmImages = async () => {
-        let cursor = 0;
-        const worker = async () => {
-          while (!cancelled && !exiting && cursor < images.length) {
-            const image = images[cursor++];
-            image.loading = "eager";
-            try { await image.decode(); } catch { /* A missing image must not block the page. */ }
-          }
-        };
-        await Promise.all(Array.from({ length: Math.min(4, images.length) }, worker));
-      };
-      // Wait until sibling effects have registered their preparation listeners.
+    const prepare = () => {
+      // Keep below-the-fold imagery lazy; only wake lightweight, deferred page data here.
       prepareFrame = requestAnimationFrame(() => {
         if (!cancelled && !exiting) window.dispatchEvent(new Event("portfolio:prepare"));
       });
-      await Promise.allSettled([document.fonts.ready, warmImages()]);
+      return document.fonts.ready;
     };
 
     const strokes = [...element.querySelectorAll<SVGPathElement>("[data-signature-stroke]")];

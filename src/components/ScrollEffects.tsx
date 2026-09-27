@@ -48,27 +48,40 @@ export default function ScrollEffects() {
     });
 
     media.add("(min-width: 1025px) and (prefers-reduced-motion: no-preference)", () => {
-      gsap.to(".shatter-light-field", {
-        yPercent: 12,
-        ease: "none",
-        scrollTrigger: { trigger: ".shatter-hero", start: "top top", end: "bottom top", scrub: 0.7 },
-      });
-
-      gsap.fromTo(
-        ".portfolio-about-image",
-        { yPercent: -2 },
-        {
-          yPercent: 2,
+      const hero = document.querySelector<HTMLElement>(".shatter-hero");
+      const lightField = document.querySelector<HTMLElement>(".shatter-light-field");
+      if (hero && lightField) {
+        gsap.to(lightField, {
+          yPercent: 12,
           ease: "none",
-          scrollTrigger: { trigger: ".portfolio-about", start: "top bottom", end: "bottom top", scrub: 0.7 },
-        },
-      );
+          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.7 },
+        });
 
-      gsap.to(".hero-sculpture", { yPercent: 10, rotation: -4, ease: "none",
-        scrollTrigger: { trigger: ".shatter-hero", start: "top top", end: "bottom top", scrub: .7 } });
+        const sculpture = hero.querySelector<HTMLElement>(".hero-sculpture");
+        if (sculpture) {
+          gsap.to(sculpture, { yPercent: 10, rotation: -4, ease: "none",
+            scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: .7 } });
+        }
+      }
+
+      const about = document.querySelector<HTMLElement>(".portfolio-about");
+      const aboutImage = about?.querySelector<HTMLElement>(".portfolio-about-image");
+      if (about && aboutImage) {
+        gsap.fromTo(
+          aboutImage,
+          { yPercent: -2 },
+          {
+            yPercent: 2,
+            ease: "none",
+            scrollTrigger: { trigger: about, start: "top bottom", end: "bottom top", scrub: 0.7 },
+          },
+        );
+      }
 
       gsap.utils.toArray<HTMLElement>(".project-preview").forEach((preview) => {
-        gsap.fromTo(preview.querySelector("img"), { yPercent: -2, scale: 1.05 }, {
+        const image = preview.querySelector("img");
+        if (!image) return;
+        gsap.fromTo(image, { yPercent: -2, scale: 1.05 }, {
           yPercent: 2, scale: 1.05, ease: "none",
           scrollTrigger: { trigger: preview, start: "top bottom", end: "bottom top", scrub: .6 },
         });

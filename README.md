@@ -1,6 +1,6 @@
 # Prashant Yadav — portfolio
 
-A responsive portfolio for selected digital work, capabilities, public GitHub activity, credentials, and contact links. The site is built with Next.js App Router, Lenis, GSAP ScrollTrigger, and content in `src/data/portfolio.ts`.
+A responsive portfolio for data analytics, applied machine learning, product and web work, public GitHub activity, credentials, and contact links. The site is built with Next.js App Router, Lenis, GSAP ScrollTrigger, and content in `src/data/portfolio.ts` and `src/data/project-catalog.ts`.
 
 ## Run locally
 
@@ -14,8 +14,10 @@ Open `http://localhost:3005`.
 ## Update portfolio content
 
 - Update projects, skills, credentials, résumé path, and profile links in `src/data/portfolio.ts`.
+- Update repository case studies and their project visuals in `src/data/project-catalog.ts` and `src/components/ProjectArtwork.tsx`. The full project index lives at `/projects`; the home page shows a smaller analytics-led selection.
 - The GitHub activity panel currently uses `DazedSaturn07`. Set `profile.githubUsername` to the desired public GitHub username and keep `profile.github` pointed at that same account.
 - No GitHub token is required. The server route caches the public contribution calendar for one hour through the GitHub Contributions API. The panel degrades to a clear message if that third-party service is unavailable.
+- The day cells show GitHub profile contribution totals. Those totals can include more than commits; hovering, focusing, or selecting a day updates its date and credited total.
 - The site's canonical origin is `https://www.onycx.dev`, matching the repository `CNAME`. Update `src/lib/site-config.ts` if the production domain changes.
 
 ## Production hosting
@@ -26,7 +28,7 @@ This site uses a Next.js server route for contribution data, the Next.js image o
 
 - Lenis runs from GSAP's ticker and forwards scroll updates to ScrollTrigger. Same-page links remain native anchors.
 - On the first visit in each tab session, a Rustic Roadway signature is written letter by letter, with Prashant followed by Yadav, then the landing page fades in. A versioned session flag skips the animation on reload. Direct section links and reduced motion also skip it. Storage being disabled does not prevent access.
-- The intro prepares local fonts and optimized images with four image requests at a time and starts the GitHub request in the background. It releases scrolling after the opening fade and refreshes section positions. A 6.5-second preparation limit, Escape, and the Skip intro button prevent slow assets from blocking access. Images still loading after the limit finish normally; this is not a guarantee of frame rate on every device or connection.
+- The intro prepares local fonts and starts the contribution request in the background. It leaves below-the-fold images lazy instead of eagerly decoding the whole page, then refreshes section positions after the opening fade. A 6.5-second preparation limit, Escape, and the Skip intro button prevent slow fonts from blocking access.
 - Scroll reveals, word highlights, and parallax honor `prefers-reduced-motion`. The tilted certificate carousel stays pinned while the page scrolls through all nine cards. Its arrows, keyboard navigation, and horizontal swipes use the same scroll sequence. Reduced motion and short landscape viewports use a native horizontal gallery.
 - Images use local assets and Next.js image optimization. Fonts are self-hosted with `next/font/local`; visitors make no requests to a font provider.
 - The mobile navigation uses a grainy glass disclosure button and dropdown with a darker backing for readability over photographs. It closes on selection, outside press or Escape, and resets when switching to the desktop layout. The static grain tile is reused across accents and mobile glass; it does not run a noise animation while scrolling.

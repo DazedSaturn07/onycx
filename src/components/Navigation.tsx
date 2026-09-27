@@ -1,14 +1,18 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 const navItems = [
-  ["About", "#about"], ["Work", "#work"], ["Capabilities", "#capabilities"],
-  ["Activity", "#activity"], ["Credentials", "#credentials"],
+  ["About", "/#about"], ["Projects", "/projects"], ["Capabilities", "/#capabilities"],
+  ["Activity", "/#activity"], ["Credentials", "/#credentials"],
 ] as const;
 
 export default function Navigation() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
@@ -66,16 +70,30 @@ export default function Navigation() {
 
   return (
     <><header ref={header} className={`shatter-nav${scrolled ? " is-scrolled" : ""}`}>
-      <a className="shatter-wordmark" href="#top" aria-label="Prashant Yadav — home" onClick={() => setMenuOpen(false)}>PY<span>©26</span></a>
+      <Link className="shatter-wordmark" href="/" aria-label="Prashant Yadav — home" onClick={() => setMenuOpen(false)}>
+        <Image src="/Logo.png" alt="Prashant Yadav Logo" width={48} height={48} style={{ height: "1.5rem", width: "auto", objectFit: "contain" }} priority />
+        <span>©26</span>
+      </Link>
       <nav className="shatter-nav-links" aria-label="Primary navigation">
-        {navItems.map(([label, href]) => <a key={href} href={href} aria-current={active === href ? "location" : undefined}>{label}</a>)}
+        {navItems.map(([label, href]) => {
+          const destination = pathname === "/" && href.startsWith("/#") ? href.slice(1) : href;
+          const isActive = href === "/projects" ? pathname === href : pathname === "/" && active === href.slice(1);
+          return <Link key={href} href={destination} aria-current={isActive ? "location" : undefined} onClick={() => setMenuOpen(false)}>{label}</Link>;
+        })}
       </nav>
-      <a className="shatter-contact-link" href="#contact">Let&apos;s talk <ArrowUpRight size={15} aria-hidden="true" /></a>
+      <Link className="shatter-contact-link" href={pathname === "/" ? "#contact" : "/#contact"} onClick={() => setMenuOpen(false)}>Let&apos;s talk <ArrowUpRight size={15} aria-hidden="true" /></Link>
       <button ref={menuButton} type="button" className="shatter-menu-button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? "Close navigation" : "Open navigation"} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X size={20} /> : <Menu size={21} />}</button>
     </header>
       <nav ref={mobileMenu} id="mobile-navigation" className={`shatter-mobile-nav${scrolled ? " is-scrolled" : ""}`} aria-label="Mobile navigation" hidden={!menuOpen} data-lenis-prevent>
-        {navItems.map(([label, href], index) => <a key={href} href={href} onClick={() => setMenuOpen(false)} aria-current={active === href ? "location" : undefined}><span>0{index + 1}</span>{label}</a>)}
-        <a href="#contact" onClick={() => setMenuOpen(false)}><span>06</span>Contact</a>
+        {navItems.map(([label, href], index) => {
+          const destination = pathname === "/" && href.startsWith("/#") ? href.slice(1) : href;
+          const isActive = href === "/projects" ? pathname === href : pathname === "/" && active === href.slice(1);
+          return <Link key={href} href={destination} onClick={() => setMenuOpen(false)} aria-current={isActive ? "location" : undefined}><span>0{index + 1}</span>{label}</Link>;
+        })}
+        <Link href={pathname === "/" ? "#contact" : "/#contact"} onClick={() => setMenuOpen(false)}><span>06</span>Contact</Link>
+        <Link href="/" aria-label="Home" onClick={() => setMenuOpen(false)} className="shatter-mobile-logo-text">
+          <span className="shatter-mobile-logo-word">ONYCX</span>
+        </Link>
       </nav>
     </>
   );

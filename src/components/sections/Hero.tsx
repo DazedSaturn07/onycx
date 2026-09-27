@@ -5,9 +5,9 @@ export default function Hero() {
     <section id="top" className="shatter-hero" aria-labelledby="hero-title">
       <div className="shatter-hero-copy">
         <div className="shatter-hero-content">
-          <p className="shatter-kicker"><span />Data analyst & creative developer</p>
+          <p className="shatter-kicker"><span />Data analyst & machine learning practitioner</p>
           <h1 id="hero-title" className="shatter-title">Prashant<span>Yadav</span></h1>
-          <p className="shatter-intro">I turn complex data and ambitious ideas into clear, useful digital experiences.</p>
+          <p className="shatter-intro">I turn real-world data into clear analysis, useful recommendations, and digital experiences that make sense.</p>
           <div className="shatter-actions"><a href="#work" className="shatter-button shatter-button-solid">Selected work <ArrowDown size={17} aria-hidden="true" /></a><a href="#contact" className="shatter-button">Start a conversation <ArrowUpRight size={17} aria-hidden="true" /></a></div>
         </div>
         <div className="hero-sculpture" aria-hidden="true">

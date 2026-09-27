@@ -109,7 +109,7 @@ export default function GitHubContributions() {
       <div className="portfolio-heading">
         <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">04 / Open source</p>
         <div data-reveal data-reveal-side="right">
-          <h2 id="activity-heading">Small commits.<br /><em>Real progress.</em></h2>
+          <h2 id="activity-heading">Work, day<br /><em>by day.</em></h2>
           <span>A look behind the finished work. A year of building, learning, and contributing on GitHub.</span>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function GitHubContributions() {
                       {activity.weeks.map((week, index) => (
                         <div className="github-calendar-week" key={index}>
                           {week.map((day, dayIndex) => day ? (
-                            <button type="button" key={day.date} data-date={day.date} className={`github-calendar-day level-${day.level}`} tabIndex={day.date === (selectedDate ?? lastDate) ? 0 : -1} aria-label={`${day.count} contributions on ${formatDate(day.date)}`} title={`${day.count} contributions · ${formatDate(day.date)}`} onFocus={() => setSelectedDate(day.date)} onClick={() => setSelectedDate(day.date)} />
+                            <button type="button" key={day.date} data-date={day.date} className={`github-calendar-day level-${day.level}`} tabIndex={day.date === (selectedDate ?? lastDate) ? 0 : -1} aria-label={`${day.count} contributions on ${formatDate(day.date)}`} title={`${day.count} contributions · ${formatDate(day.date)}`} onMouseEnter={() => setSelectedDate(day.date)} onFocus={() => setSelectedDate(day.date)} onClick={() => setSelectedDate(day.date)} />
                           ) : <span key={dayIndex} className="github-calendar-day is-empty" aria-hidden="true" />)}
                         </div>
                       ))}
@@ -167,7 +167,7 @@ export default function GitHubContributions() {
           </div>
         </div>
         <div className="github-activity-footer">
-          <span>Small steps. Lasting work.<span className="github-activity-source"> · Public contribution history</span></span>
+          <span>Daily totals reflect GitHub profile contributions, not commit-only counts.<span className="github-activity-source"> · Public contribution history</span></span>
           <a href={profile.github} target="_blank" rel="noopener noreferrer">Explore GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
         </div>
       </div>
