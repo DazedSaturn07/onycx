@@ -1,4 +1,5 @@
 node_modules/
+.venv/
 .next/
 out/
 .vercel/
@@ -9,9 +10,29 @@ npm-debug.log*
 /graphify-out/
 public/*.pdf
 !public/Prashant_res.pdf
-!public/Prashant_Resume.pdf
-!public/resume.pdf
 public/*.jpg
 dashboard_datasets/
 
 .README.md
+
+# Local tools, private settings, and generated verification output
+/.agents/
+/.gemini/
+/.codex/
+/.aws/
+/.vscode/
+/.idea/
+/CLAUDE.md
+/artifacts/
+__pycache__/
+*.py[cod]
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Superseded payloads and unused font-package previews
+/public/dashboard-data/v1/
+/fonts/rustic-roadway-personal-use/*.png
+/fonts/rustic-roadway-personal-use/*.jpg

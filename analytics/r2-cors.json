@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "http://localhost:3005",
+          "https://www.onycx.dev"
+        ],
+        "methods": [
+          "GET",
+          "HEAD"
+        ]
+      },
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

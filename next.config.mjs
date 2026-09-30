@@ -7,6 +7,18 @@ const nextConfig = {
     root: process.cwd(),
   },
   async headers() {
+    let analyticsDataOrigin = "";
+    const analyticsDataBaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL?.trim();
+    if (analyticsDataBaseUrl) {
+      try {
+        const candidate = new URL(analyticsDataBaseUrl);
+        if (candidate.protocol === "https:" || (process.env.NODE_ENV !== "production" && candidate.protocol === "http:")) {
+          analyticsDataOrigin = candidate.origin;
+        }
+      } catch {
+        analyticsDataOrigin = "";
+      }
+    }
     const securityHeaders = [
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
@@ -18,7 +30,7 @@ const nextConfig = {
       securityHeaders.push(
         {
           key: "Content-Security-Policy",
-          value: "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+          value: `default-src 'self'; base-uri 'self'; connect-src 'self'${analyticsDataOrigin ? ` ${analyticsDataOrigin}` : ""}; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'`,
         },
         { key: "Strict-Transport-Security", value: "max-age=31536000" },
       );
@@ -28,6 +40,14 @@ const nextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/dashboard-data/v2/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/dashboard-data/manifest.json",
+        headers: [{ key: "Cache-Control", value: "public, max-age=60, stale-while-revalidate=300" }],
       },
     ];
   },

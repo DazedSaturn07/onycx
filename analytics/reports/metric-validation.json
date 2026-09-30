@@ -1,0 +1,48 @@
+{
+  "built_at_utc": "2026-09-28T06:29:06.684911+00:00",
+  "online_retail_ii": {
+    "shoplens": {
+      "rows": 805549,
+      "sales_proxy": 17743429.178000003,
+      "invoices": 36969,
+      "customers": 5878,
+      "aov_formula": "sales_proxy / distinct invoices",
+      "aov": 479.9542637885797,
+      "summary_matches_independent_frame_aggregation": true
+    },
+    "sales_analysis": {
+      "rows": 805549,
+      "sales_proxy": 17743429.16,
+      "invoices": 36969,
+      "customers": 5878,
+      "aov_formula": "sales_proxy / distinct invoices",
+      "aov": 479.9542633016852,
+      "summary_matches_independent_frame_aggregation": true
+    }
+  },
+  "customer_behaviour": {
+    "rows": 3900,
+    "purchase_amount": 233081.0,
+    "rating_count": 3863,
+    "rating_average_observed": 3.750064716541548,
+    "unique_customer_ids": 3900,
+    "rating_mean_excludes_missing": true,
+    "summary_matches_independent_frame_aggregation": true
+  },
+  "retail_iq_online_retail": {
+    "rows": 514269,
+    "sales_proxy": 10277380.674,
+    "invoices": 19559,
+    "customers": 4296,
+    "aov_formula": "sales_proxy / distinct invoices",
+    "aov": 525.4553235850503,
+    "summary_matches_independent_frame_aggregation": true
+  },
+  "instacart": {
+    "all_order_product_rows": 1047617,
+    "matched_order_product_rows": 238156,
+    "coverage": 0.2273311716018354,
+    "product_catalog_repaired_rows": 3235,
+    "user_time_metrics_use_matched_rows_only": true
+  }
+}

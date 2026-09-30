@@ -48,7 +48,7 @@ export const analyticsProjects: RepositoryProject[] = [
     technologies: ["Python", "Pandas", "NumPy", "SciPy", "SQL", "Power BI"],
     repoUrl: "https://github.com/DazedSaturn07/Customer_Behaviour_Analysis",
     visual: "customer",
-    note: "The README describes a dataset of more than 3,900 customer records.",
+    note: "The supplied file contains 3,900 customer records and has no dated transaction column.",
   },
   {
     id: "sales-analysis",
@@ -60,7 +60,7 @@ export const analyticsProjects: RepositoryProject[] = [
     technologies: ["Python", "Pandas", "MySQL", "SQL", "Power BI", "DAX", "RFM"],
     repoUrl: "https://github.com/DazedSaturn07/Sales_Analysis_Dashboard",
     visual: "sales",
-    note: "This project also uses Online Retail II; its README contains conflicting currency labels, so no revenue total is repeated here.",
+    note: "The supplied Online Retail II data is denominated in GBP; dashboard totals are labeled as a retained positive-line sales proxy.",
   },
 ];
 

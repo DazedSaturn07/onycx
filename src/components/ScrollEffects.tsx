@@ -45,6 +45,37 @@ export default function ScrollEffects() {
           } },
         );
       });
+
+      gsap.utils.toArray<HTMLElement>(".portfolio-home > .portfolio-about,.portfolio-home > .portfolio-capabilities").forEach((section) => {
+        gsap.fromTo(section,
+          { scale: 1 },
+          {
+            scale: context.conditions?.compact ? .972 : .965,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 98%",
+              end: "top 18%",
+              scrub: .5,
+              invalidateOnRefresh: true,
+              onToggle: (self) => { section.style.willChange = self.isActive ? "transform" : "auto"; },
+            },
+          },
+        );
+      });
+
+      const signature = document.querySelector<HTMLElement>(".portfolio-signature-section");
+      if (signature) {
+        const ink = signature.querySelector<HTMLElement>(".portfolio-signature-ink");
+        if (ink) gsap.fromTo(ink,
+          { clipPath: "inset(0 100% 0 0)" },
+          {
+            clipPath: "inset(0 0% 0 0)",
+            ease: "none",
+            scrollTrigger: { trigger: signature, start: "top 70%", end: "bottom bottom", scrub: .4 },
+          },
+        );
+      }
     });
 
     media.add("(min-width: 1025px) and (prefers-reduced-motion: no-preference)", () => {
@@ -86,6 +117,7 @@ export default function ScrollEffects() {
           scrollTrigger: { trigger: preview, start: "top bottom", end: "bottom top", scrub: .6 },
         });
       });
+
     });
 
     const refresh = () => ScrollTrigger.refresh();

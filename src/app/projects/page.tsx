@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import ScrollEffects from "@/components/ScrollEffects";
-import ProjectCaseStudy from "@/components/ProjectCaseStudy";
+import { ProjectShowcase } from "@/components/ProjectShowcase";
 import { CinematicFooter } from "@/components/ui/motion-footer";
 import { projects as webProjects } from "@/data/portfolio";
 import { analyticsProjects, machineLearningProjects, productProjects } from "@/data/project-catalog";
@@ -22,35 +21,47 @@ export const metadata: Metadata = {
   },
 };
 
-const projectIndex = [
-  ["Retail & customer analytics", "#analytics"],
-  ["Machine learning", "#machine-learning"],
-  ["AI-assisted software", "#ai-software"],
-  ["Web experiences", "#web-experiences"],
-] as const;
-
 export default function ProjectsPage() {
   return (
     <>
       <ScrollEffects />
       <Navigation />
       <main id="main-content" className="project-index">
-        <section id="top" className="project-index-hero" aria-labelledby="project-index-title">
-          <div className="project-index-hero-inner">
-            <p className="shatter-kicker"><span />Selected work · 2026</p>
-            <h1 id="project-index-title">Curiosity,<br /><em>put to work.</em></h1>
-            <p className="project-index-intro">Analytics is the through line. These projects move from a business question to a clear, evidence-led story; product and web work sits alongside it.</p>
-            <a className="project-index-scroll" href="#analytics">Explore the work <ArrowDown size={15} aria-hidden="true" /></a>
-            <div className="project-index-hero-orbit" aria-hidden="true"><span /><i /><b /></div>
-            <div className="project-index-index" aria-hidden="true"><span>DATA</span><span>PRODUCT</span><span>WEB</span></div>
+        <section id="top" className="relative flex min-h-[min(820px,95svh)] items-end overflow-hidden px-[clamp(1.15rem,5vw,5.2rem)] pt-[12rem] pb-[8rem] border-b border-white/10" aria-labelledby="project-index-title">
+          {/* Custom Mesh Gradient Background */}
+          <div className="absolute inset-0 z-0 bg-[#040404]">
+            {/* Deep Crimson blob top left */}
+            <div className="absolute -top-[10%] -left-[10%] w-[70vw] h-[70vw] md:w-[50vw] md:h-[50vw] rounded-full bg-[radial-gradient(circle,_#85051a_0%,_transparent_70%)] blur-[100px] mix-blend-screen opacity-90" />
+            {/* Bright Silver/Grey blob bottom right */}
+            <div className="absolute -bottom-[20%] -right-[10%] w-[80vw] h-[80vw] md:w-[60vw] md:h-[60vw] rounded-full bg-[radial-gradient(circle,_#d4d4d4_0%,_transparent_70%)] blur-[120px] mix-blend-screen opacity-70" />
+
+            {/* Optional delicate elliptical orbit lines if desired for 'warp gradient' aesthetic */}
+            <div className="absolute top-1/2 left-1/2 w-[120%] md:w-[80%] aspect-[2/1] -translate-x-1/2 -translate-y-1/2 border-[0.5px] border-white/10 rounded-[100%] rotate-[-15deg]" />
+            <div className="absolute top-1/2 left-1/2 w-[110%] md:w-[75%] aspect-[2/1] -translate-x-1/2 -translate-y-1/2 border-[0.5px] border-white/10 rounded-[100%] rotate-[-18deg]" />
+
+            {/* Noise/Grain overlay for professional texture */}
+            <div
+              className="absolute inset-0 mix-blend-overlay opacity-[0.25] pointer-events-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+            />
+          </div>
+
+          <div className="relative z-10 w-full max-w-[1380px] mx-auto">
+            <p className="mb-6 font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs opacity-80">Selected work · 2026</p>
+            <h1 id="project-index-title" className="max-w-[900px] m-0 font-semibold text-[clamp(3.8rem,10vw,10.2rem)] leading-[0.88] tracking-tight text-white">
+              Curiosity,<br />
+              <em className="text-white italic font-serif opacity-90">put to work.</em>
+            </h1>
+            <p className="mt-8 max-w-[50ch] text-[clamp(1rem,1.5vw,1.35rem)] leading-relaxed text-white/70">
+              Analytics is the through line. These projects move from a business question to a clear, evidence-led story; product and web work sits alongside it.
+            </p>
+            <a className="mt-12 inline-flex items-center gap-2 uppercase tracking-wider text-[11px] md:text-sm font-bold text-white hover:text-white/70 transition-colors" href="#analytics">
+              Explore the work <ArrowDown size={16} aria-hidden="true" />
+            </a>
           </div>
         </section>
 
-        <nav className="project-index-nav" aria-label="Project categories">
-          {projectIndex.map(([label, href], index) => (
-            <a key={href} href={href}><span>0{index + 1}</span>{label}<ArrowUpRight size={14} aria-hidden="true" /></a>
-          ))}
-        </nav>
+
 
         <section id="analytics" className="portfolio-section project-catalog-section" aria-labelledby="analytics-projects-title">
           <div className="portfolio-heading">
@@ -60,9 +71,7 @@ export default function ProjectsPage() {
               <span>Different business questions across transaction, customer, and order data. Methods and figures are grounded in each repository.</span>
             </div>
           </div>
-          <div className="project-story-stack">
-            {analyticsProjects.map((project, index) => <ProjectCaseStudy key={project.id} project={project} index={index} stacked />)}
-          </div>
+          <ProjectShowcase projects={analyticsProjects} title="Retail & customer insight projects" />
         </section>
 
         <section id="machine-learning" className="portfolio-section project-catalog-section" aria-labelledby="machine-learning-title">
@@ -73,9 +82,7 @@ export default function ProjectsPage() {
               <span>A computer-vision project that makes its model flow and evaluation claim explicit.</span>
             </div>
           </div>
-          <div className="project-case-list">
-            {machineLearningProjects.map((project, index) => <ProjectCaseStudy key={project.id} project={project} index={index} />)}
-          </div>
+          <ProjectShowcase projects={machineLearningProjects} title="Machine learning projects" />
         </section>
 
         <section id="ai-software" className="portfolio-section project-catalog-section" aria-labelledby="ai-software-title">
@@ -86,9 +93,7 @@ export default function ProjectsPage() {
               <span>AI-assisted software work is labelled clearly and kept distinct from the self-authored analytics and machine-learning projects.</span>
             </div>
           </div>
-          <div className="project-case-list">
-            {productProjects.map((project, index) => <ProjectCaseStudy key={project.id} project={project} index={index} />)}
-          </div>
+          <ProjectShowcase projects={productProjects} title="Product engineering projects" />
         </section>
 
         <section id="web-experiences" className="portfolio-section portfolio-work project-web-section" aria-labelledby="web-experiences-title">
@@ -99,23 +104,7 @@ export default function ProjectsPage() {
               <span>Selected storefronts, studios, and product interfaces. Each project links to its live site; repository descriptions remain focused on the user-facing work.</span>
             </div>
           </div>
-          <div className="portfolio-project-grid">
-            {webProjects.map((project, index) => (
-              <article key={project.id} className={"portfolio-project-card" + (index === 0 ? " is-featured" : "")} data-reveal data-reveal-side={index % 2 === 0 ? "left" : "right"}>
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="portfolio-project-image-wrap" aria-label={"Visit " + project.title}>
-                  <span className="project-window-bar" aria-hidden="true"><span className="project-window-dots"><i /><i /><i /></span><span>{new URL(project.liveUrl).hostname}</span><ArrowUpRight size={14} /></span>
-                  <div className="project-preview"><Image src={project.image} alt={project.title + " website preview"} fill sizes="(max-width: 760px) 92vw, (max-width: 1100px) 48vw, 65vw" className="portfolio-project-image" /></div>
-                  <span className="portfolio-project-open">View live site <ArrowUpRight size={16} aria-hidden="true" /></span>
-                </a>
-                <div className="portfolio-project-details">
-                  <div className="portfolio-project-meta"><span>{String(index + 1).padStart(2, "0")} / {project.category}</span><span>{project.year}</span></div>
-                  <h3><a href={project.liveUrl} target="_blank" rel="noopener noreferrer">{project.title}<ArrowUpRight aria-hidden="true" /></a></h3>
-                  <p>{project.summary}</p>
-                  <div className="portfolio-project-bottom"><span>{project.role}</span><ul aria-label={project.title + " technologies"}>{project.tech.map((technology) => <li key={technology}>{technology}</li>)}</ul></div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <ProjectShowcase projects={webProjects} title="Web experience projects" />
           <div className="project-index-back"><Link href="/">Back to the introduction <ArrowUpRight size={15} aria-hidden="true" /></Link></div>
         </section>
         <CinematicFooter />

@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import "lenis/dist/lenis.css";
 import "./site.css";
+
 import SmoothScrolling from "@/components/SmoothScrolling";
 import { siteUrl } from "@/lib/site-config";
 
@@ -22,7 +25,7 @@ const gavency = localFont({
   fallback: ["Georgia"],
 });
 const signature = localFont({
-  src: "../../fonts/rustic-roadway-personal-use/RusticRoadway.otf",
+  src: "../../fonts/a-auto-signature-font/AAutoSignature-1GD9j.ttf",
   weight: "400",
   variable: "--font-signature",
   display: "swap",
@@ -41,7 +44,7 @@ const title = "Prashant Yadav — Data Analyst & Creative Developer";
 const description = "Prashant Yadav turns complex data and ambitious ideas into clear analytics, practical machine learning, and polished digital experiences.";
 
 export const viewport: Viewport = {
-  themeColor: "#070707",
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
 };
@@ -51,8 +54,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/" },
-  authors: [{ name: "Prashant Kumar Yadav" }],
-  creator: "Prashant Kumar Yadav",
+  authors: [{ name: "Prashant Yadav" }],
+  creator: "Prashant Yadav",
   keywords: ["Prashant Yadav", "Prashant Kumar Yadav", "Data Analyst", "Python", "SQL", "Power BI", "Machine Learning", "Next.js", "Creative Developer"],
   openGraph: {
     type: "website",
@@ -71,7 +74,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Prashant Kumar Yadav",
+    name: "Prashant Yadav",
     url: siteUrl,
     email: "mailto:prashants0325@gmail.com",
     jobTitle: "Data Analyst and Creative Developer",
@@ -79,7 +82,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   };
 
   return (
-    <html lang="en" className={`${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable}`}>
+    <html lang="en" className={`${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <SmoothScrolling>
           <a className="skip-to-content" href="#main-content">Skip to content</a>
