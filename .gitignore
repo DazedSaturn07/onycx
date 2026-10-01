@@ -23,7 +23,15 @@ dashboard_datasets/
 /.vscode/
 /.idea/
 /CLAUDE.md
-/artifacts/
+artifacts/
+.wrangler/
+# Private deployment settings, receipts, and source audit outputs
+/analytics/CLOUDFLARE_R2_SETUP.md
+/analytics/SECURITY_AUDIT.md
+/analytics/cloudflare/wrangler.jsonc
+/analytics/r2-cors.json
+/analytics/reports/
+/analytics/source-manifest.csv
 __pycache__/
 *.py[cod]
 *.log

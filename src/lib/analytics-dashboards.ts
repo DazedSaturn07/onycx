@@ -11,6 +11,7 @@ export const analyticsDashboards = {
       { id: "products", label: "Products", files: ["products.json"] },
       { id: "retention", label: "Retention", files: ["retention.json"] },
       { id: "baskets", label: "Baskets & reorders", files: ["personas.json", "affinity.json", "instacart.json"] },
+      { id: "quality", label: "Data quality", files: [] },
     ],
   },
   shoplens: {
@@ -22,6 +23,7 @@ export const analyticsDashboards = {
       { id: "trading", label: "Trading", files: ["interactions.json"] },
       { id: "retention", label: "Retention", files: ["retention.json"] },
       { id: "products", label: "Products", files: ["products.json"] },
+      { id: "quality", label: "Data quality", files: [] },
     ],
   },
   "customer-behaviour": {
@@ -32,6 +34,7 @@ export const analyticsDashboards = {
     tabs: [
       { id: "profile", label: "Customer profile", files: [] },
       { id: "choices", label: "Shopping choices", files: ["behavior.json"] },
+      { id: "quality", label: "Data quality", files: [] },
     ],
   },
   "sales-analysis": {

@@ -1,3 +1,10 @@
+import { analyticsDataOrigin, contentSecurityPolicy } from "./src/lib/security-policy.mjs";
+
+const configuredDataOrigin = analyticsDataOrigin(process.env.NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL);
+if (process.env.VERCEL_ENV === "production" && !configuredDataOrigin) {
+  throw new Error("Set NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL in the Vercel Production build environment before deploying.");
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -7,18 +14,7 @@ const nextConfig = {
     root: process.cwd(),
   },
   async headers() {
-    let analyticsDataOrigin = "";
-    const analyticsDataBaseUrl = process.env.NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL?.trim();
-    if (analyticsDataBaseUrl) {
-      try {
-        const candidate = new URL(analyticsDataBaseUrl);
-        if (candidate.protocol === "https:" || (process.env.NODE_ENV !== "production" && candidate.protocol === "http:")) {
-          analyticsDataOrigin = candidate.origin;
-        }
-      } catch {
-        analyticsDataOrigin = "";
-      }
-    }
+    const dataOrigin = configuredDataOrigin;
     const securityHeaders = [
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
@@ -30,7 +26,7 @@ const nextConfig = {
       securityHeaders.push(
         {
           key: "Content-Security-Policy",
-          value: `default-src 'self'; base-uri 'self'; connect-src 'self'${analyticsDataOrigin ? ` ${analyticsDataOrigin}` : ""}; font-src 'self' data:; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'`,
+          value: contentSecurityPolicy({ dataOrigin }),
         },
         { key: "Strict-Transport-Security", value: "max-age=31536000" },
       );
@@ -43,7 +39,7 @@ const nextConfig = {
       },
       {
         source: "/dashboard-data/v2/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
       {
         source: "/dashboard-data/manifest.json",

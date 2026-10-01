@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Moon, RotateCcw, Sun } from "lucide-react";
 import { useDashboardTheme } from "@/components/dashboard/DashboardThemeShell";
+import { loadDashboardAsset, loadDashboardManifest } from "@/lib/dashboard-data";
+import type { DashboardManifest } from "@/lib/dashboard-data";
 import { DashboardPanel as Panel, DashboardStat as KpiCard } from "@/components/ui/dashboard-4";
 import {
   analyticsDashboards,
@@ -159,7 +161,7 @@ function customerCategoryData(overview: JsonAsset, filters: Record<string, strin
 
 function getCurrency(overview: JsonAsset) {
   const metadata = assetObject(overview, "metadata");
-  return asText(metadata?.currency) || undefined;
+  return asText(metadata?.currency).match(/^[A-Z]{3}\b/)?.[0] || undefined;
 }
 
 function filterControls(options: DashboardOptions, selected: Record<string, string>, setSelected: (value: Record<string, string>) => void) {
@@ -217,7 +219,7 @@ function LoadingDashboard() {
 function FilterEmpty({ onReset }: { onReset: () => void }) {
   return (
     <div className="analytics-error" role="status">
-      <p>No aggregate rows match these filter selections.</p>
+      <p>No publishable aggregate rows match these filter selections.</p>
       <button type="button" onClick={onReset}>Reset filters</button>
     </div>
   );
@@ -246,27 +248,23 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
   const [selectedProduct, setSelectedProduct] = useState("");
   const inflight = useRef(new Set<string>());
   const loaded = useRef(new Set<string>());
-
-  const assetUrl = useCallback((file: string) => {
-    if (remoteBase) return `${remoteBase}/analytics/${DASHBOARD_DATA_VERSION}/${project}/${file}`;
-    return `/dashboard-data/${DASHBOARD_DATA_VERSION}/${project}/${file}`;
-  }, [project, remoteBase]);
+  const manifestRequest = useRef<Promise<DashboardManifest> | null>(null);
+  const [manifest, setManifest] = useState<DashboardManifest | null>(null);
 
   const loadAsset = useCallback(async (file: string, retry = false) => {
     if (loaded.current.has(file) && !retry) return;
     if (inflight.current.has(file)) return;
-    const url = assetUrl(file);
     inflight.current.add(file);
     setPending((current) => ({ ...current, [file]: true }));
     setErrors((current) => ({ ...current, [file]: "" }));
     try {
-      const response = await fetch(url, {
-        cache: process.env.NODE_ENV === "development" ? "no-store" : "force-cache",
-        mode: "cors",
+      manifestRequest.current ??= loadDashboardManifest(remoteBase ?? "").catch((error) => {
+        manifestRequest.current = null;
+        throw error;
       });
-      if (!response.ok) throw new Error(`The ${file} asset returned HTTP ${response.status}.`);
-      const value: unknown = await response.json();
-      if (!isJsonAsset(value)) throw new Error(`The ${file} asset is not a JSON object.`);
+      const release = await manifestRequest.current;
+      setManifest(release);
+      const value = await loadDashboardAsset(remoteBase ?? "", release, project, file);
       setAssets((current) => ({ ...current, [file]: value }));
       loaded.current.add(file);
     } catch (error) {
@@ -276,7 +274,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
       inflight.current.delete(file);
       setPending((current) => ({ ...current, [file]: false }));
     }
-  }, [assetUrl]);
+  }, [project, remoteBase]);
 
   useEffect(() => {
     const requestTimer = window.setTimeout(() => { void loadAsset("overview.json"); }, 0);
@@ -371,7 +369,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
   };
   const hasFilters = Object.keys(options).length > 0 || crossFilters.period !== "All" || crossFilters.value_band !== "All";
   const hasChartSelections = commerceDashboard && (country !== "All" || crossFilters.period !== "All" || crossFilters.value_band !== "All");
-  const metricMissing = !metric;
+  const metricMissing = !metric || metric.suppressed === true;
   const formatDatasetAmount = useCallback((value: number, decimals = 0) => formatMoney(value, currency, decimals), [currency]);
 
   const insights = useMemo(() => {
@@ -398,17 +396,18 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
     const formatSelected = (value: number) => selectedMeasure === "sales_proxy" || selectedMeasure === "average_invoice"
       ? formatDatasetAmount(value, selectedMeasure === "average_invoice" ? 2 : 0)
       : formatNumber(value);
-    const peak = [...chartTimeline].sort((left, right) => right.value - left.value)[0];
+    const peak = chartTimeline.filter((row) => crossFilters.period === "All" || row.label === crossFilters.period)
+      .sort((left, right) => right.value - left.value)[0];
     const leadingCountry = countryRank[0];
     const invoices = readNumber(metric, "invoices");
     const list = [];
     if (peak && peak.value > 0 && selectedTotal > 0) list.push(
-      selectedMeasure === "average_invoice"
+      selectedMeasure === "average_invoice" || selectedMeasure === "customers"
         ? `${formatMonth(peak.label)} has the highest observed ${measureLabel} (${formatSelected(peak.value)}) in this selection.`
         : `${formatMonth(peak.label)} is the largest observed month for ${measureLabel} (${formatSelected(peak.value)}; ${formatPercent(peak.value / selectedTotal)} of the selected total).`,
     );
     if (leadingCountry && selectedTotal > 0) list.push(
-      selectedMeasure === "average_invoice"
+      selectedMeasure === "average_invoice" || selectedMeasure === "customers"
         ? `${leadingCountry.label} leads the displayed market ranking for ${measureLabel} (${formatSelected(leadingCountry.value)}).`
         : `${leadingCountry.label} leads the displayed market ranking at ${formatPercent(leadingCountry.value / selectedTotal)} of selected ${measureLabel}.`,
     );
@@ -416,10 +415,10 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
     if (project === "retail-iq") {
       const anonymousRows = readNumber(assetObject(overview, "quality") ?? undefined, "anonymous_retained_rows");
       const retainedRows = readNumber(assetObject(overview, "quality") ?? undefined, "retained_positive_sales_rows");
-      if (retainedRows > 0) list.push(`${formatPercent(anonymousRows / retainedRows)} of retained positive sales lines have no customer ID; those lines remain in trading totals.`);
+      if (retainedRows > 0) list.push(`Across the full source, ${formatPercent(anonymousRows / retainedRows)} of retained positive sales lines have no customer ID; those lines remain in trading totals.`);
     }
     return list.slice(0, 4);
-  }, [overview, metric, project, selectedFilters, selectedMeasure, chartTimeline, countryRank, formatDatasetAmount]);
+  }, [overview, metric, project, selectedFilters, selectedMeasure, chartTimeline, countryRank, crossFilters.period, formatDatasetAmount]);
 
   if (!overview) {
     return (
@@ -446,6 +445,12 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
         <Link href="/projects" className="analytics-back-link"><ArrowLeft size={14} aria-hidden="true" /> Project studies</Link>
         <span className="analytics-source-tag"><i aria-hidden="true" /> {config.source}</span>
       </div>
+      <p className="analytics-data-status">
+        {remoteBase ? "Cloudflare R2 release" : "Bundled source-derived data"} · Prepared {manifest ? new Date(manifest.built_at_utc).toLocaleDateString("en-GB", { timeZone: "UTC" }) : "—"}
+        {readString(assetObject(overview, "metadata") ?? undefined, "period_start")
+          ? ` · Observations ${readString(assetObject(overview, "metadata") ?? undefined, "period_start")} to ${readString(assetObject(overview, "metadata") ?? undefined, "period_end")}`
+          : " · Source has no transaction date"}
+      </p>
 
       <div className="analytics-toolbar" aria-label="Dashboard filters">
         <div className="analytics-filter-list">
@@ -509,6 +514,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
       </nav>
 
       <div id="analytics-tabpanel" className="analytics-tabpanel" role="tabpanel" aria-labelledby={`analytics-tab-${activeTab.id}`} aria-busy={activeTabFilesPending}>
+        {(activeTab.id === "retention" || activeTab.id === "baskets" || activeTab.id === "quality") && <p className="analytics-small-note">{activeTab.id === "retention" ? "Full-history customer snapshot · country filter applies; sales year does not." : activeTab.id === "baskets" ? "Separate full-source studies · trading year and country filters do not apply." : "Full-source quality audit · trading filters do not apply."}</p>}
         {activeTabFileError
           ? <DataError message={errors[activeTabFileError]} onRetry={() => { loaded.current.delete(activeTabFileError); void loadAsset(activeTabFileError, true); }} />
           : activeTabFilesPending
@@ -517,7 +523,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
 
         {activeTab.id === "trading" || activeTab.id === "performance" || activeTab.id === "profile" ? (
           <>
-            <div className="analytics-kpi-grid" aria-label="Key performance indicators">
+            {!metricMissing && <div className="analytics-kpi-grid" aria-label="Key performance indicators">
               {project === "customer-behaviour" ? (
                 <>
                   <KpiCard label="Recorded purchase amount" value={formatMoney(readNumber(metric ?? undefined, "purchase_amount"), "USD")} note="Sum of source purchase amount field" />
@@ -534,7 +540,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
                   <KpiCard label="Average invoice value" value={formatDatasetAmount(readNumber(metric ?? undefined, "invoices") ? readNumber(metric ?? undefined, "sales_proxy") / readNumber(metric ?? undefined, "invoices") : 0, 2)} note="Sales proxy divided by distinct invoices" active={selectedMeasure === "average_invoice"} onClick={() => setSelectedMeasure("average_invoice")} />
                 </>
               )}
-            </div>
+            </div>}
 
             {metricMissing ? <FilterEmpty onReset={resetFilters} /> : (
               <>
@@ -604,6 +610,14 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
                 )}
 
                 <div className="analytics-content-grid analytics-content-grid-secondary">
+                  {(project === "sales-analysis" || project === "shoplens") && <>
+                    <Panel title="Sales proxy by weekday" eyebrow="Year and country slice · independent of month and invoice band">
+                      <RankingChart data={filteredRollups(assetRows<RollupRecord>(overview, "weekday"), selectedFilters).map((row) => ({ label: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][readNumber(row, "weekday_index")], value: readNumber(row, "sales_proxy") }))} formatValue={formatDatasetAmount} height={270} />
+                    </Panel>
+                    <Panel title="Sales proxy by hour" eyebrow="Recorded transaction hour · year and country slice">
+                      <RankingChart data={filteredRollups(assetRows<RollupRecord>(overview, "hours"), selectedFilters).map((row) => ({ label: `${String(readNumber(row, "hour")).padStart(2, "0")}:00`, value: readNumber(row, "sales_proxy") }))} formatValue={formatDatasetAmount} height={360} />
+                    </Panel>
+                  </>}
                   <Panel title={project === "customer-behaviour" ? "What the records say" : "Data-backed readout"} eyebrow="Current filters">
                     {insights.length > 0
                       ? <ul className="analytics-insight-list">{insights.map((insight) => <li key={insight}>{insight}</li>)}</ul>
@@ -683,6 +697,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
         {activeTab.id === "quality" && project === "sales-analysis" ? (
           <QualityDetails asset={assets["quality.json"]} project={project} />
         ) : null}
+        {activeTab.id === "quality" && project !== "sales-analysis" ? <SourceQuality overview={overview} /> : null}
       </div>
 
       <div className="analytics-dashboard-footnote">
@@ -693,6 +708,33 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
   );
 }
 
+function SourceQuality({ overview }: { overview: JsonAsset }) {
+  const quality = assetObject(overview, "quality");
+  const flatten = (value: JsonAsset, prefix = ""): React.ReactNode[][] => Object.entries(value).flatMap(([key, item]): React.ReactNode[][] => {
+    const label = `${prefix}${projectLabel(key.replaceAll("_", "-"))}`;
+    if (isJsonAsset(item)) return flatten(item, `${label} · `);
+    if (Array.isArray(item) || item === null) return [];
+    return [[label, typeof item === "number" ? formatNumber(item, 3) : typeof item === "boolean" ? item ? "Yes" : "No" : String(item)]];
+  });
+  return <Panel title="Source quality and cleaning" eyebrow="Audited source facts and reconciliation"><DataTable headers={["Check", "Observed result"]} rows={quality ? flatten(quality) : []} /><p className="analytics-small-note">Removal counts can overlap unless explicitly described as sequential exclusions. This report describes the complete source, independent of chart filters.</p></Panel>;
+}
+
+function CohortHeatmap({ rows, cohortKey }: { rows: JsonAsset[]; cohortKey: string }) {
+  const months = [...new Set(rows.map((row) => readString(row, cohortKey)))].sort().slice(-12);
+  const indices = [...new Set(rows.map((row) => readNumber(row, "month_index")))].sort((a, b) => a - b);
+  if (rows.length === 0) return <EmptyState>No publishable cohort observations for this country.</EmptyState>;
+  return <Panel title="Cohort retention map" eyebrow="Latest 12 first-purchase cohorts · percent returning">
+    <div className="analytics-table-wrap" tabIndex={0} role="region" aria-label="Cohort retention heatmap">
+      <table className="analytics-table analytics-cohort-map"><thead><tr><th scope="col">First month</th>{indices.map((index) => <th scope="col" key={index}>M{index}</th>)}</tr></thead>
+        <tbody>{months.map((month) => <tr key={month}><th scope="row">{month}</th>{indices.map((index) => {
+          const row = rows.find((item) => readString(item, cohortKey) === month && readNumber(item, "month_index") === index);
+          const rate = row ? readNullableNumber(row, "retention_rate") : null;
+          return <td key={index} style={rate === null ? undefined : { background: `color-mix(in srgb, var(--dash-series-2) ${15 + Math.min(1, Math.max(0, rate)) * 45}%, transparent)` }} title={rate === null ? "Unobserved or privacy-suppressed" : `${month}, month ${index}: ${formatPercent(rate)} returning`}>{rate === null ? "—" : formatPercent(rate, 0)}</td>;
+        })}</tr>)}</tbody></table>
+    </div><p className="analytics-small-note">Stronger teal means higher observed retention. — means unobserved or privacy-suppressed, never zero. Exact counts and rates appear in the detail table below.</p>
+  </Panel>;
+}
+
 function ShopLensRetention({ asset, country }: { asset: JsonAsset | undefined; country: string }) {
   if (!asset) return null;
   const rfmRows = assetRows<JsonAsset>(asset, "rfm").filter((row) => readString(row, "country") === country);
@@ -700,7 +742,6 @@ function ShopLensRetention({ asset, country }: { asset: JsonAsset | undefined; c
   const cohortRows = assetRows<JsonAsset>(asset, "cohorts")
     .filter((row) => readString(row, "country") === country)
     .sort((left, right) => readString(left, "cohort_month").localeCompare(readString(right, "cohort_month")) || readNumber(left, "month_index") - readNumber(right, "month_index"));
-  const latestCohorts = cohortRows.slice(-60);
   const customerCount = assetRows<JsonAsset>(asset, "customer_count_by_country")
     .find((row) => readString(row, "country") === country)?.customers;
   const churned = statusRows.find((row) => readString(row, "customer_status") === "Churned");
@@ -718,10 +759,11 @@ function ShopLensRetention({ asset, country }: { asset: JsonAsset | undefined; c
   return (
     <>
       <div className="analytics-kpi-grid analytics-kpi-grid-three">
-        <KpiCard label="Known shoppers" value={formatNumber(asNumber(customerCount))} note={`One snapshot · ${readString(asset, "snapshot_date")}`} />
-        <KpiCard label="Project-defined churned" value={formatNumber(readNumber(churned, "customers"))} note="More than 90 days since last retained purchase" />
-        <KpiCard label="Project-defined at risk" value={formatNumber(readNumber(atRisk, "customers"))} note="60–90 days inactive, inclusive" />
+        <KpiCard label="Known shoppers" value={typeof customerCount === "number" ? formatNumber(customerCount) : "—"} note={`One snapshot · ${readString(asset, "snapshot_date")}`} />
+        <KpiCard label="Project-defined churned" value={churned ? formatNumber(readNumber(churned, "customers")) : "—"} note="More than 90 days inactive · — if unavailable/suppressed" />
+        <KpiCard label="Project-defined at risk" value={atRisk ? formatNumber(readNumber(atRisk, "customers")) : "—"} note="60–90 days inactive · — if unavailable/suppressed" />
       </div>
+      <CohortHeatmap rows={cohortRows} cohortKey="cohort_month" />
       <div className="analytics-content-grid analytics-content-grid-main">
         <Panel title="RFM customer groups" eyebrow={`Customer count · ${country === "All" ? "all countries" : country}`}>
           <RankingChart data={segments} formatValue={formatNumber} height={340} />
@@ -729,7 +771,7 @@ function ShopLensRetention({ asset, country }: { asset: JsonAsset | undefined; c
         <Panel title="Observed repeat purchase" eyebrow="Cohort month and month index">
           <DataTable
             headers={["First month", "Month index", "Returning", "Cohort size", "Retention"]}
-            rows={latestCohorts.map((row) => [
+            rows={cohortRows.map((row) => [
               <span key="month">{readString(row, "cohort_month")}</span>,
               <span key="index">{formatNumber(readNumber(row, "month_index"))}</span>,
               <span key="returning">{formatNumber(readNumber(row, "returning_customers"))}</span>,
@@ -740,6 +782,7 @@ function ShopLensRetention({ asset, country }: { asset: JsonAsset | undefined; c
           <p className="analytics-small-note">Only observed months are included. Country and cohort cells below the documented privacy threshold are suppressed.</p>
         </Panel>
       </div>
+      <Panel title="Customer inactivity" eyebrow="Full-history snapshot · project-defined statuses"><RankingChart data={statusRows.map((row) => ({ label: readString(row, "customer_status"), value: readNumber(row, "customers") }))} formatValue={formatNumber} /></Panel>
       <Panel title="How to read this snapshot" eyebrow="Project definitions">
         <p className="analytics-panel-copy">{readString(definition ?? undefined, "churn")} {readString(definition ?? undefined, "cohort_retention")} {readString(definition ?? undefined, "privacy_suppression")}</p>
       </Panel>
@@ -765,16 +808,16 @@ function RetailIqRetention({ asset, country }: { asset: JsonAsset | undefined; c
     }, [])
     .sort((left, right) => right.value - left.value);
   return (
-    <div className="analytics-content-grid analytics-content-grid-main">
+    <><CohortHeatmap rows={cohorts} cohortKey="cohort" /><div className="analytics-content-grid analytics-content-grid-main">
       <Panel title="RetailIQ RFM profiles" eyebrow="Online Retail population · known customers only">
-          <p className="analytics-small-note">{formatNumber(asNumber(customerCount))} known shoppers in this country slice · snapshot {readString(rfm ?? undefined, "snapshot_date")}. The year filter does not change this full-history snapshot.</p>
+          <p className="analytics-small-note">{typeof customerCount === "number" ? formatNumber(customerCount) : "No publishable count of"} known shoppers in this country slice · snapshot {readString(rfm ?? undefined, "snapshot_date")}. The year filter does not change this full-history snapshot.</p>
         <RankingChart data={ranked} formatValue={formatNumber} height={340} />
         <p className="analytics-small-note">Anonymous positive sales lines remain in trading totals and do not enter these profiles.</p>
       </Panel>
       <Panel title="Observed acquisition cohorts" eyebrow="Positive-sales first-seen month">
         <DataTable
           headers={["Cohort", "Month index", "Customers", "Cohort size", "Retention"]}
-          rows={cohorts.slice(-45).map((row) => [
+          rows={cohorts.map((row) => [
             <span key="month">{readString(row, "cohort")}</span>,
             <span key="index">{formatNumber(readNumber(row, "month_index"))}</span>,
             <span key="retained">{formatNumber(readNumber(row, "customers"))}</span>,
@@ -784,7 +827,7 @@ function RetailIqRetention({ asset, country }: { asset: JsonAsset | undefined; c
         />
         <p className="analytics-small-note">{readString(cohort ?? undefined, "suppression")}</p>
       </Panel>
-    </div>
+    </div></>
   );
 }
 

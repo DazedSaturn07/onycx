@@ -286,7 +286,7 @@ def build_invoice_interactions(
         )
     )
     bins = [0, 25, 50, 100, 250, 500, 1000, 2500, math.inf]
-    labels = ["Â£0â€“Â£25", "Â£25â€“Â£50", "Â£50â€“Â£100", "Â£100â€“Â£250", "Â£250â€“Â£500", "Â£500â€“Â£1k", "Â£1kâ€“Â£2.5k", "Â£2.5k+"]
+    labels = ["£0–£25", "£25–£50", "£50–£100", "£100–£250", "£250–£500", "£500–£1k", "£1k–£2.5k", "£2.5k+"]
     invoices["value_band"] = pd.cut(
         invoices["invoice_sales"], bins=bins, labels=labels, right=False, include_lowest=True,
     ).astype("string")
@@ -541,7 +541,7 @@ def write_shoplens_and_sales(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "hours": json_records(shop_hours),
         "quality": quality["shoplens"],
         "definitions": {
-            "sales_proxy": "Sum of quantity Ã— unit price for retained positive transaction lines. It excludes cancellations and returns and is not profit or accounting revenue.",
+            "sales_proxy": "Sum of quantity × unit price for retained positive transaction lines. It excludes cancellations and returns and is not profit or accounting revenue.",
             "average_order_value": "Retained line sales proxy divided by distinct retained invoice numbers.",
             "rfm_and_churn": "RFM, churn, and cohort measures use known-customer retained lines and the full observed date range, independent of the sales-year filter.",
         },
@@ -573,7 +573,7 @@ def write_shoplens_and_sales(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "hours": json_records(sales_hours),
         "quality": quality["sales_analysis"],
         "definitions": {
-            "sales_proxy": "Sum of quantity Ã— unit price for the project cleaner's retained rows, in GBP. It is not profit or net recognized revenue.",
+            "sales_proxy": "Sum of quantity × unit price for the project cleaner's retained rows, in GBP. It is not profit or net recognized revenue.",
             "average_order_value": "Retained sales proxy divided by distinct retained invoice numbers; the dashboard does not use a per-line mean as AOV.",
         },
     }
@@ -805,7 +805,7 @@ def build_shoplens_retention(frame: pd.DataFrame) -> dict[str, Any]:
             "recency": "Days from the last retained purchase to the day after the last date in the dataset.",
             "frequency": "Distinct retained invoices per customer.",
             "monetary": "Historical retained line sales proxy in GBP; it is not profit or predictive lifetime value.",
-            "churn": "A project-defined snapshot: more than 90 days inactive. At Risk is 60â€“90 days inclusive.",
+            "churn": "A project-defined snapshot: more than 90 days inactive. At Risk is 60–90 days inclusive.",
             "cohort_retention": "Observed repeat purchases within 12 months after the acquisition month. Future unobserved months are absent, not zero.",
             "privacy_suppression": "Country-level RFM/status groups with fewer than five shoppers, cohorts with fewer than five shoppers, and non-zero cohort cells below five returning shoppers are omitted.",
         },
@@ -1273,7 +1273,7 @@ def build_retail_iq_personas(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "cluster_selection": silhouettes,
         "discount_test_priority": json_records(priority),
         "definitions": {
-            "purchase_amount": "quantity Ã— price in the supplied dataset; no accounting revenue or profit field is available.",
+            "purchase_amount": "quantity × price in the supplied dataset; no accounting revenue or profit field is available.",
             "cluster": "Cross-sectional descriptive cluster over one row per unique source customer ID.",
             "discount_test_priority": "A project-defined heuristic combining category units, sales proxy, and average price; it is not a causal discount result.",
         },
@@ -1395,7 +1395,7 @@ def build_instacart(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
         "definitions": {
             "reorder_rate": "Sum of non-null reorder flags divided by non-null reorder observations.",
             "orders": "Distinct order_id in the supplied order-product extract.",
-            "weekday": "Source day index 0â€“6, retained as an index because no weekday-name mapping is asserted.",
+            "weekday": "Source day index 0–6, retained as an index because no weekday-name mapping is asserted.",
             "time_coverage": "Only matched order IDs have user/time attributes in the supplied order extract.",
         },
     }
@@ -1461,7 +1461,7 @@ def build_customer_behaviour(data_root: Path) -> tuple[dict[str, Any], dict[str,
     frame["age_group"] = pd.cut(
         frame["age"],
         bins=[-np.inf, 30, 45, 60, np.inf],
-        labels=["Young Adult (18â€“30)", "Adult (31â€“45)", "Middle-Aged (46â€“60)", "Senior (61+)"],
+        labels=["Young Adult (18–30)", "Adult (31–45)", "Middle-Aged (46–60)", "Senior (61+)"],
     ).astype("string")
     frame["customer_segment"] = np.select(
         [frame["previous_purchases"].le(1), frame["previous_purchases"].le(10)],
@@ -1575,7 +1575,7 @@ def build_customer_behaviour(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "quality": quality,
         "definitions": {
             "purchase_amount": "Observed purchase amount in USD as labeled in the supplied data; this is not company revenue or profit.",
-            "customer_segment": "Project-defined descriptive groups: 1 or fewer previous purchases = New; 2â€“10 = Returning; over 10 = Loyal.",
+            "customer_segment": "Project-defined descriptive groups: 1 or fewer previous purchases = New; 2–10 = Returning; over 10 = Loyal.",
             "age_group": "Fixed age intervals matching the project documentation, rather than the notebook's quartile cut points.",
             "rating": "Mean of non-missing raw review ratings; the raw file has 37 missing values.",
         },
@@ -1697,11 +1697,13 @@ def build_manifest() -> dict[str, Any]:
                 "load": "initial" if path.name == "overview.json" else "lazy",
             }
         )
+    release_hash = hashlib.sha256("\n".join(f"{item['path']}:{item['sha256']}" for item in files).encode()).hexdigest()
     manifest = {
         "data_version": VERSION,
         "built_at_utc": datetime.now(timezone.utc).isoformat(),
         "local_base_path": "/dashboard-data",
         "r2_object_prefix": "analytics",
+        "r2_release_prefix": f"analytics/releases/{release_hash}",
         "files": files,
     }
     write_json(PUBLIC_ROOT / "manifest.json", manifest)

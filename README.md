@@ -54,9 +54,11 @@ For commercial use, obtain the appropriate licenses for the Gavency and Rustic R
 ## SEO and security
 
 - `src/app/layout.tsx` provides site metadata and Person JSON-LD. Dashboard routes add their own titles, descriptions, canonical URLs, and social metadata. `robots.ts` and `sitemap.ts` live beside the root route; the sitemap lists all four dashboard routes.
-- Production responses add a restrictive Content Security Policy and standard framing, MIME, referrer, permissions, and HTTPS transport headers. The CSP allows inline scripts and styles required by Next.js and font variables; review it if new external services or embeds are added.
+- Production HTML uses a fresh per-response script nonce, strict-dynamic CSP, and private/no-store caching. HTML pages render dynamically so Next.js hydration scripts and JSON-LD receive the nonce. Arbitrary inline scripts and event attributes are blocked. Inline styles remain allowed for charts and motion. Responses also carry framing, MIME, referrer, permissions, and HTTPS transport headers.
 - GitHub contribution data is the only third-party server fetch. It contains no credentials and is not exposed as an open proxy.
-- Git tracks the application, useful documentation, required assets, and current aggregate dashboard JSON. Local environment files, AI-tool settings, raw datasets, Python caches, screenshots, and superseded dashboard payloads are ignored. The linked résumé, portrait, certificates, and contact details are intended public portfolio content; unused résumé copies are excluded.
+- The API rejects foreign browser origins and has a bounded per-process rate guard. Configure the hosting firewall for distributed enforcement. The data Worker has its own CORS policy and native rate limiter.
+- Vercel production builds require `NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL`; dashboard requests verify release hashes and show a retry state on errors. No mock data or silent remote-to-local fallback is used.
+- Git tracks the application, useful methodology documentation, a generic Worker template, required assets, and current aggregate dashboard JSON. Local environment files, deployment receipts, personal setup/audit notes, generated reports, AI-tool settings, raw datasets, Python caches, screenshots, and superseded dashboard payloads are ignored. The linked résumé, portrait, certificates, and contact details are intended public portfolio content; unused résumé copies are excluded.
 
 ## Local checks
 
@@ -64,6 +66,7 @@ For commercial use, obtain the appropriate licenses for the Gavency and Rustic R
 npm run lint
 npx tsc --noEmit
 npm run build
+node --test --test-isolation=none scripts/security-checks.test.mjs
 ```
 
 Keep project claims, dates, metrics, and links evidence-based. Before shipping a design change, check a large desktop, tablet, and narrow mobile viewport, and confirm that reduced-motion preferences still expose all content.

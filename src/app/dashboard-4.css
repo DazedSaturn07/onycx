@@ -1,5 +1,11 @@
 /* The 21st.dev dashboard-4 card grammar, adapted to the project's audited metrics. */
 .analytics-project-page {
+  --dash-series-1: #2563eb;
+  --dash-series-2: #0d9488;
+  --dash-series-3: #7c3aed;
+  --dash-series-4: #c2410c;
+  --dash-series-5: #be185d;
+  --dash-series-6: #0369a1;
   --dash-accent: #181a1d;
   --dash-muted: #667085;
   --dash-line: #e6e8ec;
@@ -107,7 +113,8 @@
 .analytics-project-page .analytics-selection-bar button:hover { border-color: #8e959f; color: #17191d; }
 .analytics-project-page .analytics-selection-bar button b { color: #17191d; }
 .analytics-project-page .analytics-selection-bar .analytics-selection-clear { color: #6b7280; }
-.analytics-project-page .analytics-table-wrap { border-color: #e7e9ed; scrollbar-color: #c9cdd2 #f5f6f7; }
+.analytics-project-page .analytics-table-wrap { max-height: 28rem; overflow: auto; border-color: #e7e9ed; scrollbar-color: #c9cdd2 #f5f6f7; }
+.analytics-project-page .analytics-table thead th { position: sticky; top: 0; z-index: 1; }
 .analytics-project-page .analytics-table { color: #4d5560; font-size: .7rem; }
 .analytics-project-page .analytics-table th, .analytics-project-page .analytics-table td { border-bottom-color: #eceef1; }
 .analytics-project-page .analytics-table th { background: #f6f7f8; color: #69717c; font: 650 .66rem/1.35 var(--font-geist-sans), ui-sans-serif, sans-serif; letter-spacing: 0; text-transform: none; }
@@ -139,7 +146,19 @@ body:has(.analytics-project-page[data-dashboard-theme="light"]) .shatter-nav {
 }
 
 /* Dashboard-only dark palette. The light rules above remain the alternate theme. */
+.analytics-project-page .analytics-chart-legend { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; color: var(--dash-muted); font-size: .7rem; line-height: 1.6; }
+.analytics-project-page .analytics-chart-legend i { width: .65rem; height: .65rem; border-radius: 2px; flex-shrink: 0; }
+.analytics-project-page .analytics-chart-legend i.is-selected { border: 2px solid var(--dash-chart-selected); margin-left: .6rem; }
+.analytics-project-page .analytics-data-status { color: var(--dash-muted); font-size: .75rem; line-height: 1.8; margin: .5rem 0 1rem; }
+.analytics-project-page .analytics-cohort-map td { color: inherit; text-align: center; min-width: 3.5rem; font-variant-numeric: tabular-nums; }
+.analytics-project-page .analytics-cohort-map th { white-space: nowrap; }
 .analytics-project-page[data-dashboard-theme="dark"] {
+  --dash-series-1: #60a5fa;
+  --dash-series-2: #2dd4bf;
+  --dash-series-3: #a78bfa;
+  --dash-series-4: #fb923c;
+  --dash-series-5: #f472b6;
+  --dash-series-6: #38bdf8;
   --dash-accent: #ededed;
   --dash-muted: #a3a3a3;
   --dash-line: #262626;
