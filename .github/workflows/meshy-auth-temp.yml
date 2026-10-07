@@ -1,0 +1,35 @@
+name: ONYCX Meshy Device Auth
+on:
+  push:
+    branches:
+      - meshy-temp-onycx-12
+    paths:
+      - tools/meshy-temp/request-auth.txt
+
+jobs:
+  auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+
+      - name: Install Meshy CLI
+        run: npm install -g meshy-cli@0.4.0
+
+      - name: Start resumable Meshy device flow
+        run: |
+          mkdir -p auth
+          meshy auth login --device --no-wait > auth/device-flow.json
+
+      - name: Upload private device-flow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshy-device-flow
+          path: auth/device-flow.json
+          retention-days: 1
+          if-no-files-found: error
