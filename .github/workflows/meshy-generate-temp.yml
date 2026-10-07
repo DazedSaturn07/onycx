@@ -1,0 +1,55 @@
+name: ONYCX Meshy Generate 12
+on:
+  push:
+    branches:
+      - meshy-temp-onycx-12
+    paths:
+      - tools/meshy-temp/start-generation.txt
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+
+      - name: Install dependencies
+        run: |
+          npm install -g meshy-cli@0.4.0
+          python -m pip install --quiet pillow numpy
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq zip
+
+      - name: Resume authorized Meshy device flow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          AUTH_RUN_ID="$(cat tools/meshy-temp/auth-run-id.txt)"
+          mkdir -p auth
+          gh run download "$AUTH_RUN_ID" -n meshy-device-flow -D auth
+          FLOW_ID="$(jq -r '.flow_id' auth/device-flow.json)"
+          test -n "$FLOW_ID"
+          test "$FLOW_ID" != "null"
+          meshy auth login --device-flow "$FLOW_ID"
+          meshy auth status --format json --no-update-check
+
+      - name: Generate all 12 ONYCX GLBs
+        run: bash tools/meshy-temp/run_models.sh
+
+      - name: Upload final package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ONYCX-Meshy-12-GLBS
+          path: ONYCX_Meshy_12_GLBS.zip
+          if-no-files-found: warn
+          retention-days: 7
