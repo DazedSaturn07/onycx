@@ -1,4 +1,4 @@
-name: Meshy Temp Device Start
+name: ONYCX Meshy 12 Models
 on:
   push:
     branches:
@@ -6,13 +6,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  device-start:
+  generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 180
+    permissions:
+      contents: read
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
-      - run: npm install -g meshy-cli@0.4.0
-      - name: Start Meshy device authorization
-        run: meshy auth login --device --no-wait
+
+      - name: Install dependencies
+        run: |
+          npm install -g meshy-cli@0.4.0
+          python -m pip install --quiet pillow numpy
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq zip
+
+      - name: Authorize Meshy
+        run: meshy auth login --device
+
+      - name: Verify Meshy session
+        run: meshy auth status --format json --no-update-check
+
+      - name: Generate all 12 ONYCX GLBs
+        run: bash tools/meshy-temp/run_models.sh
+
+      - name: Upload final ZIP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ONYCX-Meshy-12-GLBS
+          path: ONYCX_Meshy_12_GLBS.zip
+          if-no-files-found: warn
+          retention-days: 7
