@@ -1,0 +1,60 @@
+name: ONYCX Meshy Final 12
+on:
+  push:
+    branches:
+      - meshy-temp-onycx-12
+    paths:
+      - tools/meshy-temp/final-trigger.txt
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+
+      - name: Install dependencies
+        run: |
+          npm install -g meshy-cli@0.4.0
+          python -m pip install --quiet pillow numpy
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq zip
+
+      - name: Start Meshy authorization
+        run: |
+          mkdir -p auth
+          meshy auth login --device --no-wait > auth/device-flow.json
+
+      - name: Publish authorization handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshy-final-device-flow
+          path: auth/device-flow.json
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Wait for Meshy authorization
+        run: |
+          FLOW_ID="$(jq -r '.flow_id' auth/device-flow.json)"
+          meshy auth login --device-flow "$FLOW_ID"
+          meshy auth status --format json --no-update-check
+
+      - name: Generate 12 ONYCX models
+        run: bash tools/meshy-temp/run_models.sh
+
+      - name: Upload final package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ONYCX-Meshy-12-GLBS-FINAL
+          path: ONYCX_Meshy_12_GLBS.zip
+          if-no-files-found: warn
+          retention-days: 7
