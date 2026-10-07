@@ -1,4 +1,4 @@
-name: Meshy Temp Probe
+name: Meshy Temp Auth
 on:
   push:
     branches:
@@ -6,21 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  probe:
+  auth-help:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
-      - name: Install Meshy CLI
-        run: npm install -g meshy-cli@0.4.0
-      - name: Meshy version and doctor
-        run: |
-          meshy --version
-          meshy doctor || true
-      - name: Image to 3D help
-        run: meshy image-to-3d create --help
-      - name: Auth status
-        run: meshy auth status --format json --no-update-check || true
+      - run: npm install -g meshy-cli@0.4.0
+      - run: meshy auth login --help
