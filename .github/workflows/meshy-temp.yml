@@ -1,4 +1,4 @@
-name: Meshy Temp Auth
+name: Meshy Temp Device Auth
 on:
   push:
     branches:
@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  auth-help:
+  auth:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22.16.0'
       - run: npm install -g meshy-cli@0.4.0
-      - run: meshy auth login --help
+      - name: Authorize Meshy
+        run: meshy auth login --device
