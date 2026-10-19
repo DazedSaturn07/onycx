@@ -3,15 +3,18 @@ export const DASHBOARD_DATA_VERSION = "v2";
 export const analyticsDashboards = {
   "retail-iq": {
     title: "RetailIQ",
-    eyebrow: "Retail intelligence / four linked data studies",
-    summary: "Read positive-line trading alongside shopper profiles, retention, basket affinity, and grocery reorder behaviour.",
+    eyebrow: "Retail intelligence / three independent source populations",
+    summary: "Explore the original report’s executive, customer value, persona, affinity, Instacart, segment detail, and quality analyses with verified source metrics.",
     source: "Online Retail, mall customer records, and an Instacart order sample",
     tabs: [
-      { id: "trading", label: "Trading", files: ["interactions.json"] },
-      { id: "products", label: "Products", files: ["products.json"] },
-      { id: "retention", label: "Retention", files: ["retention.json"] },
-      { id: "baskets", label: "Baskets & reorders", files: ["personas.json", "affinity.json", "instacart.json"] },
-      { id: "quality", label: "Data quality", files: [] },
+      { id: "trading", label: "Executive overview", files: ["interactions.json", "retention.json"] },
+      { id: "retention", label: "Customer value", files: ["retention.json"] },
+      { id: "personas", label: "Personas & tests", files: ["personas.json"] },
+      { id: "affinity", label: "Product affinity", files: ["affinity.json"] },
+      { id: "instacart", label: "Instacart market", files: ["instacart.json"] },
+      { id: "segments", label: "Segment detail", files: ["retention.json"] },
+      { id: "quality", label: "Data quality", files: ["personas.json", "instacart.json"] },
+      { id: "products", label: "Sales products", files: ["products.json"] },
     ],
   },
   shoplens: {

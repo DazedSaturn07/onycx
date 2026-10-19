@@ -32,7 +32,7 @@ export function ProjectShowcase({
 
     if (isRepoProject(project)) {
       return (
-        <FlowSection key={project.id} aria-label={project.title} style={{ backgroundColor: color.bg, color: color.fg }}>
+        <FlowSection key={project.id} id={project.id} aria-label={project.title} style={{ background: color.bg, color: color.fg }}>
           <div className="flex justify-between items-start gap-4">
             <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-2">{indexStr} — {project.category}</p>
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-end sm:items-center">
@@ -80,7 +80,7 @@ export function ProjectShowcase({
       );
     } else {
       return (
-        <FlowSection key={project.id} aria-label={project.title} style={{ backgroundColor: color.bg, color: color.fg }}>
+        <FlowSection key={project.id} id={project.id} aria-label={project.title} style={{ background: color.bg, color: color.fg }}>
           <div className="flex justify-between items-start gap-4">
             <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-2">{indexStr} — {project.category}</p>
             <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 uppercase tracking-wider text-[9px] md:text-[11px] font-bold hover:opacity-75 transition-opacity px-3 py-1.5 border border-current rounded-full whitespace-nowrap">

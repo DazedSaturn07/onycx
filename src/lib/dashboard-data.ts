@@ -79,5 +79,15 @@ export async function loadDashboardAsset(base: string, manifest: DashboardManife
   if (!isJsonAsset(value) || (file === "overview.json" && (value.project !== project || !isJsonAsset(value.metadata) || !Array.isArray(value.metrics)))) {
     throw new Error(`The ${file} file has an invalid dashboard schema.`);
   }
+  if (project === "retail-iq") {
+    const currentSchema = file === "overview.json" || file === "interactions.json"
+      ? Array.isArray(value[file === "overview.json" ? "metrics" : "rollups"]) && (value[file === "overview.json" ? "metrics" : "rollups"] as unknown[]).every((row) => isJsonAsset(row) && typeof row.anonymous_sales_proxy === "number")
+      : file === "personas.json" ? Array.isArray(value.category_mix)
+        : file === "affinity.json" ? Array.isArray(value.rules) && value.rule_count === value.rules.length
+          : file === "instacart.json" ? isJsonAsset(value.summary) && isJsonAsset(value.order_time)
+            : file === "retention.json" ? isJsonAsset(value.rfm) && Array.isArray(value.rfm.profiles) && value.rfm.profiles.every((row: unknown) => isJsonAsset(row) && typeof row.repeat_customers === "number")
+              : true;
+    if (!currentSchema) throw new Error("RetailIQ data predates this report update. Publish the refreshed dashboard release and retry.");
+  }
   return value;
 }

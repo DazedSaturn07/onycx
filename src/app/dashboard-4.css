@@ -303,3 +303,23 @@ body:has(.analytics-project-page[data-dashboard-theme="light"]) .shatter-nav {
   .analytics-project-page .analytics-kpi { min-height: 7.8rem; }
   .analytics-project-page .analytics-page-intro h1 { font-size: 2.25rem; }
 }
+
+.analytics-project-page .analytics-report-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; margin: .9rem 0; color: var(--dash-chart-axis-strong); font-size: .75rem; }
+.analytics-project-page .analytics-report-controls button { padding: .6rem .8rem; border: 1px solid var(--dash-line); border-radius: .5rem; background: transparent; color: inherit; cursor: pointer; }
+.analytics-project-page .analytics-report-controls button:disabled { opacity: .45; cursor: default; }
+.analytics-project-page .analytics-report-controls input[type="search"] { width: min(100%, 20rem); min-height: 2.4rem; padding: .5rem .7rem; border: 1px solid var(--dash-line); border-radius: .5rem; background: transparent; color: inherit; }
+.analytics-project-page .analytics-report-filter { display: grid; width: min(100%, 25rem); margin: 1rem 0; }
+.analytics-project-page .analytics-report-controls button:focus-visible,
+.analytics-project-page .analytics-report-controls input:focus-visible { outline: 2px solid var(--dash-series-2); outline-offset: 3px; }
+.analytics-project-page .analytics-scatter-tooltip { max-width: 20rem; padding: .75rem; border: 1px solid var(--dash-chart-tooltip-border); border-radius: .6rem; background: var(--dash-chart-tooltip); color: var(--dash-chart-tooltip-text); font-size: .75rem; }
+.analytics-project-page .analytics-scatter-tooltip p { margin: .3rem 0 0; }
+.analytics-project-page .analytics-dashboard-retail-iq .analytics-kpi-grid:not(.analytics-kpi-grid-four) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.analytics-project-page .analytics-dashboard-retail-iq .analytics-table td { white-space: normal; min-width: 5rem; }
+.analytics-project-page .analytics-dashboard-retail-iq .analytics-cohort-map td { white-space: nowrap; min-width: 3.4rem; }
+@media (max-width: 700px) {
+  .analytics-project-page .analytics-dashboard-retail-iq .analytics-kpi-grid:not(.analytics-kpi-grid-four) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 390px) {
+  .analytics-project-page .analytics-dashboard-retail-iq .analytics-kpi-grid:not(.analytics-kpi-grid-four),
+  .analytics-project-page .analytics-dashboard-retail-iq .analytics-kpi-grid-four { grid-template-columns: minmax(0, 1fr); }
+}

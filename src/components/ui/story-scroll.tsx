@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -12,6 +12,7 @@ function cx(...parts: Array<string | undefined | false | null>): string {
 }
 
 export interface FlowSectionProps {
+  id?: string;
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
@@ -19,12 +20,14 @@ export interface FlowSectionProps {
 }
 
 export const FlowSection: React.FC<FlowSectionProps> = ({
+  id,
   className,
   style = {},
   children,
   'aria-label': ariaLabel,
 }) => (
   <section
+    id={id}
     data-flow-section
     aria-label={ariaLabel}
     className={cx('relative min-h-screen w-full flex items-center justify-center px-4 py-8 md:p-12', className)}
@@ -33,7 +36,7 @@ export const FlowSection: React.FC<FlowSectionProps> = ({
       data-flow-inner
       className={cx(
         'flow-art-container relative flex flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.5)] w-full max-w-7xl mx-auto',
-        'will-change-transform bg-background',
+        'bg-background',
       )}
       style={{ transformOrigin: 'bottom left', ...style }}
     >
@@ -57,79 +60,46 @@ const FlowArt: React.FC<FlowArtProps> = ({
   className,
   'aria-label': ariaLabel = 'Story scroll',
 }) => {
-  const containerRef = useRef<HTMLElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReducedMotion(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      if (!containerRef.current || reducedMotion) return;
-
-      const sections = Array.from(
-        containerRef.current.querySelectorAll<HTMLElement>('[data-flow-section]'),
-      );
-      if (sections.length === 0) return;
-
-      const triggers: ScrollTrigger[] = [];
-
-      sections.forEach((section, i) => {
-        gsap.set(section, { zIndex: i + 1 });
-
-        const inner = section.querySelector<HTMLElement>('.flow-art-container');
-        if (!inner) return;
-
-        if (i > 0) {
-          gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
-          const tween = gsap.to(inner, {
-            rotation: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'top 25%',
-              scrub: true,
-            },
+      if (!containerRef.current) return;
+      const root = containerRef.current;
+      const media = gsap.matchMedia();
+      media.add({
+        motion: '(prefers-reduced-motion: no-preference)',
+      }, (context) => {
+        if (!context.conditions?.motion) return;
+        const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-flow-section]'));
+        sections.forEach((section, i) => {
+          const inner = section.querySelector<HTMLElement>('.flow-art-container');
+          if (!inner) return;
+          gsap.set(section, { zIndex: i + 1 });
+          if (i > 0) gsap.fromTo(inner, { rotation: 30 }, {
+            rotation: 0, ease: 'none',
+            scrollTrigger: { trigger: section, start: 'top bottom', end: 'top 25%', scrub: true, invalidateOnRefresh: true },
           });
-          if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
-        }
-
-        if (i < sections.length - 1) {
-          triggers.push(
-            ScrollTrigger.create({
-              trigger: section,
-              start: 'bottom bottom',
-              end: 'bottom top',
-              pin: true,
-              pinSpacing: false,
-            }),
-          );
-        }
+          // Pin at the bottom so tall, vertical mobile cards stay readable before the overlap.
+          if (i < sections.length - 1) {
+            ScrollTrigger.create({ trigger: section, start: 'bottom bottom', end: 'bottom top', pin: true, pinSpacing: false, invalidateOnRefresh: true });
+          }
+        });
       });
-
-      ScrollTrigger.refresh();
-
-      return () => {
-        triggers.forEach((t) => t.kill());
-      };
+      return () => media.revert();
     },
-    { scope: containerRef, dependencies: [childCount(children), reducedMotion] },
+    { scope: containerRef, dependencies: [childCount(children)], revertOnUpdate: true },
   );
 
   return (
-    <main
+    <div
       ref={containerRef}
+      role="group"
       aria-label={ariaLabel}
       className={cx('w-full overflow-x-clip', className)}
     >
       {children}
-    </main>
+    </div>
   );
 };
 

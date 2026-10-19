@@ -1,46 +1,86 @@
+# Dependencies, build output, and generated Next.js declarations
 node_modules/
 .venv/
-.next/
-out/
-.vercel/
+venv/
+/.next/
+/out/
+/build/
+/dist/
+/next-env.d.ts
 *.tsbuildinfo
+
+# Keep only the root portfolio README public; other Markdown stays local
+*.[mM][dD]
+!/README.md
+
+# Environment files and credentials; keep the blank setup template public
 .env*
 !.env.example
-npm-debug.log*
-/graphify-out/
-public/*.pdf
-!public/Prashant_res.pdf
-public/*.jpg
-dashboard_datasets/
+.dev.vars*
+.npmrc
+.netrc
+*.pem
+*.key
+*.p12
+*.pfx
 
-.README.md
+# Local deployment configuration; the generic Worker template stays public
+.vercel/
+.wrangler/
+/analytics/cloudflare/wrangler.jsonc
+/analytics/r2-cors.json
 
-# Local tools, private settings, and generated verification output
+# Private source data, deployment receipts, and generated audit reports
+/dashboard_datasets/
+/analytics/reports/
+/analytics/source-manifest.csv
+
+# Local assistant/editor settings
 /.agents/
 /.gemini/
 /.codex/
 /.aws/
 /.vscode/
 /.idea/
-/CLAUDE.md
+
+# Archives, input copies, browser captures, and analysis output
+/archive/
+/new_img/
+/graphify-out/
 artifacts/
-.wrangler/
-# Private deployment settings, receipts, and source audit outputs
-/analytics/CLOUDFLARE_R2_SETUP.md
-/analytics/SECURITY_AUDIT.md
-/analytics/cloudflare/wrangler.jsonc
-/analytics/r2-cors.json
-/analytics/reports/
-/analytics/source-manifest.csv
+playwright-report/
+test-results/
+coverage/
+.nyc_output/
+
+# Runtime logs and tool caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 __pycache__/
 *.py[cod]
-*.log
-*.pem
-*.key
-*.p12
-*.pfx
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Superseded payloads and unused font-package previews
+# OS metadata and temporary editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Keep the linked resume; exclude unused root-level PDF copies
+/public/*.pdf
+!/public/Prashant_res.pdf
+
+# Superseded dashboard payloads and unused font-package previews
 /public/dashboard-data/v1/
 /fonts/rustic-roadway-personal-use/*.png
 /fonts/rustic-roadway-personal-use/*.jpg

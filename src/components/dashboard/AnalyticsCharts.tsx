@@ -9,9 +9,12 @@ import {
   Cell,
   ReferenceLine,
   ResponsiveContainer,
+  Scatter,
+  ScatterChart,
   Tooltip,
   XAxis,
   YAxis,
+  ZAxis,
 } from "recharts";
 import type { RankingDatum } from "@/lib/analytics-dashboards";
 import { useId } from "react";
@@ -29,6 +32,34 @@ function ChartLegend({ distribution = false, selected }: { distribution?: boolea
 
 interface ChartDatum extends RankingDatum {
   selected?: boolean;
+}
+
+export function ReportScatter({ data, xLabel, yLabel, formatX, formatY, formatAxisY, sizeLabel }: {
+  data: Array<{ label: string; x: number; y: number; size: number }>;
+  xLabel: string;
+  yLabel: string;
+  formatX: (value: number) => string;
+  formatY: (value: number) => string;
+  formatAxisY?: (value: number) => string;
+  sizeLabel: string;
+}) {
+  if (!data.length) return <div className="analytics-empty">No observations for this selection.</div>;
+  return <figure className="analytics-chart" aria-label={`${yLabel} versus ${xLabel}`}>
+    <figcaption className="analytics-small-note">X: {xLabel} · Y: {yLabel} · point size: {sizeLabel}. Exact values are in the detail table.</figcaption>
+    <ResponsiveContainer width="100%" height="85%">
+      <ScatterChart margin={{ top: 15, right: 20, bottom: 10, left: 0 }} accessibilityLayer>
+        <CartesianGrid stroke="var(--dash-chart-grid)" />
+        <XAxis type="number" dataKey="x" name={xLabel} tickFormatter={formatX} tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 10 }} />
+        <YAxis type="number" dataKey="y" name={yLabel} tickFormatter={formatAxisY ?? formatY} tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 10 }} width={75} />
+        <ZAxis type="number" dataKey="size" name={sizeLabel} range={[35, 220]} />
+        <Tooltip cursor={{ strokeDasharray: "3 3" }} content={({ active, payload }) => {
+          const point = payload?.[0]?.payload as typeof data[number] | undefined;
+          return active && point ? <div className="analytics-scatter-tooltip"><strong>{point.label}</strong><p>{xLabel}: {formatX(point.x)}</p><p>{yLabel}: {formatY(point.y)}</p><p>{sizeLabel}: {new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 }).format(point.size)}</p></div> : null;
+        }} />
+        <Scatter data={data} fill="var(--dash-series-2)" fillOpacity={0.7} isAnimationActive={false} />
+      </ScatterChart>
+    </ResponsiveContainer>
+  </figure>;
 }
 
 function KeyboardChoices({
@@ -120,6 +151,7 @@ export function TrendChart({
 export function RankingChart({
   data,
   formatValue,
+  formatAxisValue,
   height = 310,
   selectedLabel,
   onSelect,
@@ -127,6 +159,7 @@ export function RankingChart({
 }: {
   data: ChartDatum[];
   formatValue: (value: number) => string;
+  formatAxisValue?: (value: number) => string;
   height?: number;
   selectedLabel?: string;
   onSelect?: (label: string) => void;
@@ -146,7 +179,7 @@ export function RankingChart({
             accessibilityLayer
           >
             <CartesianGrid horizontal={false} stroke="var(--dash-chart-grid)" />
-            <XAxis type="number" tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={(value: number) => new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value)} />
+            <XAxis type="number" tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={formatAxisValue ?? ((value: number) => new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value))} />
             <YAxis type="category" dataKey="label" width={132} tick={{ fill: "var(--dash-chart-axis-strong)", fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip
               cursor={{ fill: "var(--dash-chart-cursor)" }}

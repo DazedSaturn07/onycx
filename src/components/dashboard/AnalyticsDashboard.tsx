@@ -8,6 +8,7 @@ import { useDashboardTheme } from "@/components/dashboard/DashboardThemeShell";
 import { loadDashboardAsset, loadDashboardManifest } from "@/lib/dashboard-data";
 import type { DashboardManifest } from "@/lib/dashboard-data";
 import { DashboardPanel as Panel, DashboardStat as KpiCard } from "@/components/ui/dashboard-4";
+import { RetailIqAffinity, RetailIqCustomerValue, RetailIqInstacart, RetailIqPersonas, RetailIqQuality, RetailIqSegmentValue } from "./RetailIqStudies";
 import {
   analyticsDashboards,
   DASHBOARD_DATA_VERSION,
@@ -430,7 +431,10 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
     );
   }
 
-  const filters = filterControls(options, selectedFilters, setSelected);
+  const retailTrading = activeTab.id === "trading" || activeTab.id === "products";
+  const retailCustomers = activeTab.id === "retention" || activeTab.id === "segments";
+  const visibleOptions = project !== "retail-iq" || retailTrading ? options : retailCustomers && options.country ? { country: options.country } : {};
+  const filters = filterControls(visibleOptions, selectedFilters, setSelected);
   const currencyNote = currency === "GBP"
     ? "GBP · positive-line sales proxy, not profit"
     : currency === "USD"
@@ -454,7 +458,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
 
       <div className="analytics-toolbar" aria-label="Dashboard filters">
         <div className="analytics-filter-list">
-          {filters.length > 0 ? filters : <span className="analytics-no-filters">No dated transaction filter · descriptive customer records</span>}
+          {filters.length > 0 ? filters : <span className="analytics-no-filters">{project === "retail-iq" ? "Full-source study · trading filters do not apply" : "No dated transaction filter · descriptive customer records"}</span>}
         </div>
         <div className="analytics-toolbar-actions">
           <button
@@ -514,7 +518,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
       </nav>
 
       <div id="analytics-tabpanel" className="analytics-tabpanel" role="tabpanel" aria-labelledby={`analytics-tab-${activeTab.id}`} aria-busy={activeTabFilesPending}>
-        {(activeTab.id === "retention" || activeTab.id === "baskets" || activeTab.id === "quality") && <p className="analytics-small-note">{activeTab.id === "retention" ? "Full-history customer snapshot · country filter applies; sales year does not." : activeTab.id === "baskets" ? "Separate full-source studies · trading year and country filters do not apply." : "Full-source quality audit · trading filters do not apply."}</p>}
+        {(activeTab.id === "retention" || activeTab.id === "segments" || activeTab.id === "quality") && <p className="analytics-small-note">{activeTab.id !== "quality" ? "Full-history customer snapshot · country filter applies; sales year does not." : "Full-source quality audit · trading filters do not apply."}</p>}
         {activeTabFileError
           ? <DataError message={errors[activeTabFileError]} onRetry={() => { loaded.current.delete(activeTabFileError); void loadAsset(activeTabFileError, true); }} />
           : activeTabFilesPending
@@ -538,6 +542,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
                   <KpiCard label="Known customers" value={formatNumber(readNumber(metric ?? undefined, "customers"))} note={project === "retail-iq" ? "Anonymous sales lines excluded from this count" : "Rows without a customer ID are excluded"} active={selectedMeasure === "customers"} onClick={() => setSelectedMeasure("customers")} />
                   <KpiCard label="Retained units" value={formatNumber(readNumber(metric ?? undefined, "units"))} note="Sum of retained positive quantities" active={selectedMeasure === "units"} onClick={() => setSelectedMeasure("units")} />
                   <KpiCard label="Average invoice value" value={formatDatasetAmount(readNumber(metric ?? undefined, "invoices") ? readNumber(metric ?? undefined, "sales_proxy") / readNumber(metric ?? undefined, "invoices") : 0, 2)} note="Sales proxy divided by distinct invoices" active={selectedMeasure === "average_invoice"} onClick={() => setSelectedMeasure("average_invoice")} />
+                  {project === "retail-iq" && <KpiCard label="Anonymous sales share" value={readNumber(metric ?? undefined, "sales_proxy") ? formatPercent(readNumber(metric ?? undefined, "anonymous_sales_proxy") / readNumber(metric ?? undefined, "sales_proxy")) : "—"} note="Sales value from missing customer IDs ÷ selected sales" />}
                 </>
               )}
             </div>}
@@ -686,18 +691,20 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
           <ShopLensRetention asset={assets["retention.json"]} country={country} />
         ) : null}
         {activeTab.id === "retention" && project === "retail-iq" ? (
-          <RetailIqRetention asset={assets["retention.json"]} country={country} />
+          <><RetailIqCustomerValue asset={assets["retention.json"]} country={country} /><RetailIqRetention asset={assets["retention.json"]} country={country} /></>
         ) : null}
-        {activeTab.id === "baskets" && project === "retail-iq" ? (
-          <RetailIqBasket persona={assets["personas.json"]} affinity={assets["affinity.json"]} instacart={assets["instacart.json"]} />
-        ) : null}
+        {activeTab.id === "trading" && project === "retail-iq" && assets["retention.json"] && <RetailIqSegmentValue asset={assets["retention.json"]} country={country} />}
+        {activeTab.id === "personas" && project === "retail-iq" && <RetailIqPersonas asset={assets["personas.json"]} />}
+        {activeTab.id === "affinity" && project === "retail-iq" && <RetailIqAffinity asset={assets["affinity.json"]} />}
+        {activeTab.id === "instacart" && project === "retail-iq" && <RetailIqInstacart asset={assets["instacart.json"]} />}
+        {activeTab.id === "segments" && project === "retail-iq" && <RetailIqCustomerValue asset={assets["retention.json"]} country={country} detail />}
         {activeTab.id === "choices" && project === "customer-behaviour" ? (
           <CustomerChoices asset={assets["behavior.json"]} selected={selectedFilters} />
         ) : null}
         {activeTab.id === "quality" && project === "sales-analysis" ? (
           <QualityDetails asset={assets["quality.json"]} project={project} />
         ) : null}
-        {activeTab.id === "quality" && project !== "sales-analysis" ? <SourceQuality overview={overview} /> : null}
+        {activeTab.id === "quality" && project !== "sales-analysis" ? <>{project === "retail-iq" && <RetailIqQuality overview={overview} personas={assets["personas.json"]} instacart={assets["instacart.json"]} />}<SourceQuality overview={overview} /></> : null}
       </div>
 
       <div className="analytics-dashboard-footnote">
@@ -828,87 +835,6 @@ function RetailIqRetention({ asset, country }: { asset: JsonAsset | undefined; c
         <p className="analytics-small-note">{readString(cohort ?? undefined, "suppression")}</p>
       </Panel>
     </div></>
-  );
-}
-
-function RetailIqBasket({ persona, affinity, instacart }: {
-  persona: JsonAsset | undefined;
-  affinity: JsonAsset | undefined;
-  instacart: JsonAsset | undefined;
-}) {
-  if (!persona || !affinity || !instacart) return null;
-  const personaCategories = assetRows<JsonAsset>(persona, "categories").slice().sort((a, b) => readNumber(b, "sales_proxy") - readNumber(a, "sales_proxy"));
-  const clusters = assetRows<JsonAsset>(persona, "cluster_profiles");
-  const agePayment = assetRows<JsonAsset>(persona, "age_payment")
-    .slice().sort((a, b) => readNumber(b, "customer_records") - readNumber(a, "customer_records")).slice(0, 10);
-  const modelMetadata = assetObject(persona, "metadata");
-  const rules = assetRows<JsonAsset>(affinity, "rules").slice(0, 8);
-  const departments = assetRows<JsonAsset>(instacart, "departments").slice().sort((a, b) => readNumber(b, "ordered_units") - readNumber(a, "ordered_units")).slice(0, 8);
-  const reorderProducts = assetRows<JsonAsset>(instacart, "high_reorder_products").slice(0, 8);
-  const quality = assetObject(instacart, "quality");
-  return (
-    <>
-      <div className="analytics-source-separation">
-        <strong>Separate populations, shown side by side</strong>
-        <p>RetailIQ combines independent Online Retail transactions, mall customer records, and an Instacart order sample. No person or order key connects these sources.</p>
-      </div>
-      <div className="analytics-content-grid analytics-content-grid-main">
-        <Panel title="Mall customer categories" eyebrow={`${formatNumber(readNumber(modelMetadata ?? undefined, "source_rows"))} source records · source purchase units`}>
-          <CategoryChart data={personaCategories.map((row) => ({ label: readString(row, "category"), value: readNumber(row, "sales_proxy") }))} dataKey="Source purchase amount" formatValue={(value) => formatMoney(value, undefined)} />
-          <p className="analytics-small-note">These are source purchase amounts; a currency unit is not documented in the supplied project. Category test priority is descriptive, not measured discount lift.</p>
-        </Panel>
-        <Panel title="Modelled shopper profiles" eyebrow={`K-means · selected k = ${readNumber(modelMetadata ?? undefined, "selected_k")}`}>
-          <div className="analytics-persona-list">
-            {clusters.map((row) => (
-              <article key={readString(row, "persona")}>
-                <span>{readString(row, "persona")}</span>
-                <strong>{formatNumber(readNumber(row, "customer_records"))} records</strong>
-                <small>Mean age {formatNumber(readNumber(row, "average_age"), 1)} · mean purchase {formatMoney(readNumber(row, "average_purchase"), undefined)} · {readString(row, "top_mall")}</small>
-              </article>
-            ))}
-          </div>
-        </Panel>
-      </div>
-      <div className="analytics-content-grid analytics-content-grid-secondary">
-        <Panel title="Frequently co-purchased items" eyebrow={`Association rules · ${formatNumber(readNumber(affinity, "transaction_count"))} baskets`}>
-          <DataTable
-            headers={["Observed pair", "Support", "Confidence", "Lift", "Pair count"]}
-            rows={rules.map((row) => [
-              <span key="pair">{readString(row, "antecedent")} → {readString(row, "consequent")}</span>,
-              <span key="support">{formatPercent(readNumber(row, "support"), 2)}</span>,
-              <span key="confidence">{formatPercent(readNumber(row, "confidence"), 1)}</span>,
-              <span key="lift">{formatNumber(readNumber(row, "lift"), 1)}</span>,
-              <span key="count">{formatNumber(readNumber(row, "pair_count"))}</span>,
-            ])}
-          />
-          <p className="analytics-small-note">Co-occurrence does not show that one item causes another to be purchased.</p>
-        </Panel>
-        <Panel title="Instacart reorder and department mix" eyebrow={`${formatPercent(readNumber(quality ?? undefined, "matched_share"), 1)} of order-product lines join to supplied orders`}>
-          <CategoryChart data={departments.map((row) => ({ label: readString(row, "department"), value: readNumber(row, "ordered_units") }))} dataKey="Ordered lines" formatValue={formatNumber} />
-          <DataTable
-            headers={["Product", "Orders", "Observed reorder"]}
-            rows={reorderProducts.map((row) => [
-              <span key="name">{readString(row, "product_name")}</span>,
-              <span key="orders">{formatNumber(readNumber(row, "orders"))}</span>,
-              <span key="rate">{formatPercent(readNumber(row, "reorder_rate"))}</span>,
-            ])}
-          />
-          <p className="analytics-small-note">User and time metrics use matched IDs only; product and department counts use all supplied order-product lines.</p>
-        </Panel>
-      </div>
-      <Panel title="Largest mall customer slices" eyebrow="Age band × payment method · top source record counts">
-        <DataTable
-          headers={["Age band", "Payment method", "Records", "Purchase amount", "Mean purchase"]}
-          rows={agePayment.map((row) => [
-            <span key="age">{readString(row, "age_band")}</span>,
-            <span key="payment">{readString(row, "payment_method")}</span>,
-            <span key="count">{formatNumber(readNumber(row, "customer_records"))}</span>,
-            <span key="amount">{formatMoney(readNumber(row, "sales_proxy"), undefined)}</span>,
-            <span key="mean">{formatMoney(readNumber(row, "average_purchase"), undefined)}</span>,
-          ])}
-        />
-      </Panel>
-    </>
   );
 }
 

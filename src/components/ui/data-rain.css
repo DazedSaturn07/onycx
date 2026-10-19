@@ -1,0 +1,11 @@
+.dr-root { position: fixed; inset: 0; overflow: hidden; pointer-events: none; background: #000; }
+.dr-root--contained { position: absolute; }
+.dr-main,.dr-bloom,.dr-vignette,.dr-grain { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dr-main { opacity: .58; }
+.dr-bloom { opacity: .3; filter: blur(10px); }
+.dr-vignette { background: radial-gradient(ellipse at 70% 50%,transparent 5%,rgba(0,0,0,.65) 85%),linear-gradient(90deg,rgba(0,0,0,.6),transparent 75%); }
+.dr-grain { background: url('/grain.svg'); opacity: .035; }
+/* Keep the supplied trails visible while the copy sits over the dark side. */
+.projects-hero .dr-main { opacity: .9; }
+.projects-hero .dr-bloom { opacity: .5; }
+.projects-hero .dr-vignette { background: radial-gradient(ellipse at 75% 45%,transparent 20%,rgba(0,0,0,.4) 95%),linear-gradient(90deg,rgba(0,0,0,.65),transparent 75%); }

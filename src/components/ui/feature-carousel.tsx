@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence, MotionConfig, useInView, useReducedMotion } from "motion/react";
 import {
   Analytics01Icon,
   ChartLineData01Icon,
@@ -64,6 +64,9 @@ const wrap = (min: number, max: number, v: number) => {
 };
 
 export function FeatureCarousel() {
+  const region = useRef<HTMLDivElement>(null);
+  const inView = useInView(region, { amount: .15 });
+  const reducedMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -80,10 +83,10 @@ export function FeatureCarousel() {
   };
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !inView || reducedMotion) return;
     const interval = setInterval(nextStep, AUTO_PLAY_INTERVAL);
     return () => clearInterval(interval);
-  }, [nextStep, isPaused]);
+  }, [nextStep, isPaused, inView, reducedMotion]);
 
   const getCardStatus = (index: number) => {
     const diff = index - currentIndex;
@@ -97,7 +100,9 @@ export function FeatureCarousel() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div
+      ref={region}
       role="region"
       aria-label="Featured projects"
       aria-roledescription="carousel"
@@ -269,6 +274,7 @@ export function FeatureCarousel() {
         </div>
       </div>
     </div>
+    </MotionConfig>
   );
 }
 

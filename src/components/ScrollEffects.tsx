@@ -39,7 +39,7 @@ export default function ScrollEffects() {
 
       gsap.utils.toArray<HTMLElement>("[data-scroll-highlight]").forEach((text) => {
         gsap.fromTo(text.querySelectorAll(".scroll-highlight-word"),
-          { opacity: .4 },
+          { opacity: .62 },
           { opacity: 1, stagger: .12, ease: "none", scrollTrigger: {
             trigger: text, start: "top 82%", end: "bottom 42%", scrub: .5,
           } },
@@ -48,15 +48,16 @@ export default function ScrollEffects() {
 
       gsap.utils.toArray<HTMLElement>(".portfolio-home > .portfolio-about,.portfolio-home > .portfolio-capabilities").forEach((section) => {
         gsap.fromTo(section,
-          { scale: 1 },
+          { scale: context.conditions?.compact ? .994 : .985, y: 24 },
           {
-            scale: context.conditions?.compact ? .972 : .965,
+            scale: 1,
+            y: 0,
             ease: "none",
             scrollTrigger: {
               trigger: section,
               start: "top 98%",
-              end: "top 18%",
-              scrub: .5,
+              end: "top 35%",
+              scrub: .7,
               invalidateOnRefresh: true,
               onToggle: (self) => { section.style.willChange = self.isActive ? "transform" : "auto"; },
             },
@@ -121,14 +122,10 @@ export default function ScrollEffects() {
     });
 
     const refresh = () => ScrollTrigger.refresh();
-    const footer = document.querySelector(".cinematic-footer");
-    const loopObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => entry.target.classList.toggle("is-visible", entry.isIntersecting));
-    });
-    if (footer) loopObserver.observe(footer);
     let mounted = true;
     const refreshFrame = requestAnimationFrame(refresh);
     window.addEventListener("load", refresh, { once: true });
+    document.addEventListener("toggle", refresh, true);
     document.fonts?.ready.then(() => {
       if (mounted) refresh();
     });
@@ -136,7 +133,7 @@ export default function ScrollEffects() {
       mounted = false;
       cancelAnimationFrame(refreshFrame);
       window.removeEventListener("load", refresh);
-      loopObserver.disconnect();
+      document.removeEventListener("toggle", refresh, true);
       media.revert();
     };
   }, []);

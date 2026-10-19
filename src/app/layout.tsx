@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import "lenis/dist/lenis.css";
 import "./site.css";
+import "./refinement.css";
 
 import SmoothScrolling from "@/components/SmoothScrolling";
 import { siteUrl } from "@/lib/site-config";
@@ -14,6 +15,23 @@ const chillax = localFont({
   weight: "200 700",
   variable: "--font-body",
   display: "swap",
+  fallback: ["Arial"],
+});
+const orbitron = localFont({
+  src: "../../fonts/orbitron/Orbitron-Variable.ttf",
+  weight: "400 900",
+  variable: "--font-orbitron",
+  display: "swap",
+  fallback: ["Arial"],
+});
+const axel = localFont({
+  src: [
+    { path: "../../fonts/axel/AxelRegular.ttf", weight: "400", style: "normal" },
+    { path: "../../fonts/axel/AxelBold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-editorial",
+  display: "swap",
+  preload: false,
   fallback: ["Arial"],
 });
 const gavency = localFont({
@@ -33,6 +51,14 @@ const signature = localFont({
   preload: true,
   fallback: ["cursive"],
 });
+const scriptina = localFont({
+  src: "../../fonts/scriptina/SCRIPTIN.ttf",
+  weight: "400",
+  variable: "--font-scriptina",
+  display: "swap",
+  preload: false,
+  fallback: ["cursive"],
+});
 const boska = localFont({
   src: "../../fonts/boska/Boska-Black.woff2",
   weight: "900",
@@ -45,7 +71,7 @@ const title = "Prashant Yadav — Data Analyst & Creative Developer";
 const description = "Prashant Yadav turns complex data and ambitious ideas into clear analytics, practical machine learning, and polished digital experiences.";
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#171819",
   width: "device-width",
   initialScale: 1,
 };
@@ -84,7 +110,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   };
 
   return (
-    <html lang="en" className={`${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${scriptina.variable} ${axel.variable} ${orbitron.variable} ${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <SmoothScrolling>
           <a className="skip-to-content" href="#main-content">Skip to content</a>

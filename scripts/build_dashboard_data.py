@@ -242,6 +242,7 @@ def rollup_records(
                 row: dict[str, Any] = {
                     "line_count": int(len(group)),
                     "sales_proxy": float(group[amount_column].sum()),
+                    "anonymous_sales_proxy": float(group.loc[group["customer_id"].isna(), amount_column].sum()),
                     "units": float(group["quantity"].sum()),
                     "invoices": int(group["invoice_no"].nunique()),
                     "customers": int(group["customer_id"].nunique()),
@@ -260,6 +261,7 @@ def rollup_records(
                     "country": "All",
                     "line_count": int(len(frame)),
                     "sales_proxy": float(frame[amount_column].sum()),
+                    "anonymous_sales_proxy": float(frame.loc[frame["customer_id"].isna(), amount_column].sum()),
                     "units": float(frame["quantity"].sum()),
                     "invoices": int(frame["invoice_no"].nunique()),
                     "customers": int(frame["customer_id"].nunique()),
@@ -276,12 +278,14 @@ def build_invoice_interactions(
     amount_column: str = "line_sales_proxy",
 ) -> pd.DataFrame:
     """Build a small anonymous cube for linked period and basket-value filters."""
+    invoice_frame = frame.assign(anonymous_line_sales=frame[amount_column].where(frame["customer_id"].isna(), 0))
     invoices = (
-        frame.groupby(["invoice_no", "year", "country", "period"], as_index=False, sort=False, dropna=False)
+        invoice_frame.groupby(["invoice_no", "year", "country", "period"], as_index=False, sort=False, dropna=False)
         .agg(
             quantity=("quantity", "sum"),
             line_count=(amount_column, "size"),
             invoice_sales=(amount_column, "sum"),
+            anonymous_sales=("anonymous_line_sales", "sum"),
             customer_id=("customer_id", "first"),
         )
     )
@@ -308,6 +312,7 @@ def build_invoice_interactions(
                 row: dict[str, Any] = {
                     "line_count": int(group["line_count"].sum()),
                     "sales_proxy": float(group["invoice_sales"].sum()),
+                    "anonymous_sales_proxy": float(group["anonymous_sales"].sum()),
                     "units": float(group["quantity"].sum()),
                     "invoices": int(group["invoice_no"].nunique()),
                     "customers": int(group["customer_id"].nunique()),
@@ -991,6 +996,7 @@ def retail_iq_rfm(sales: pd.DataFrame) -> dict[str, Any]:
         average_invoice_frequency=("frequency", "mean"),
         average_sales_proxy=("monetary", "mean"),
         total_sales_proxy=("monetary", "sum"),
+        repeat_customers=("frequency", lambda values: int(values.gt(1).sum())),
     )
     overall = rfm.groupby("segment", as_index=False).agg(
         customers=("customer_id", "nunique"),
@@ -998,6 +1004,7 @@ def retail_iq_rfm(sales: pd.DataFrame) -> dict[str, Any]:
         average_invoice_frequency=("frequency", "mean"),
         average_sales_proxy=("monetary", "mean"),
         total_sales_proxy=("monetary", "sum"),
+        repeat_customers=("frequency", lambda values: int(values.gt(1).sum())),
     ).assign(country="All")
     summary = pd.concat([overall, summary.loc[summary["customers"].ge(5)]], ignore_index=True)
     customer_counts_by_country = rfm.groupby("country")["customer_id"].nunique().to_dict()
@@ -1112,7 +1119,9 @@ def build_market_basket(sales: pd.DataFrame) -> dict[str, Any]:
         "transaction_count": transaction_count,
         "minimum_support": min_support,
         "minimum_confidence": min_confidence,
-        "rules": rules[:25],
+        "rule_count": len(rules),
+        "reliable_rule_count": sum(row["confidence"] >= 0.20 and row["pair_count"] >= 50 for row in rules),
+        "rules": rules,
     }
 
 
@@ -1221,6 +1230,9 @@ def build_retail_iq_personas(data_root: Path) -> tuple[dict[str, Any], dict[str,
     profiles["persona"] = profiles.apply(
         lambda row: f"Persona {int(row.cluster)} | {row.top_category} | {row.top_payment}", axis=1
     )
+    model_frame = model_frame.merge(profiles[["cluster", "persona"]], on="cluster", how="left", validate="many_to_one")
+    category_mix = model_frame.groupby(["persona", "category"], as_index=False).agg(records=("invoice_no", "nunique"))
+    category_mix["share"] = category_mix["records"] / category_mix.groupby("persona")["records"].transform("sum")
 
     priority = category.copy()
     priority["demand_index"] = priority["units"].rank(pct=True)
@@ -1271,6 +1283,7 @@ def build_retail_iq_personas(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "age_payment": json_records(age_payment),
         "cluster_profiles": json_records(profiles.sort_values("sales_proxy", ascending=False)),
         "cluster_selection": silhouettes,
+        "category_mix": json_records(category_mix),
         "discount_test_priority": json_records(priority),
         "definitions": {
             "purchase_amount": "quantity × price in the supplied dataset; no accounting revenue or profit field is available.",
@@ -1340,6 +1353,8 @@ def build_instacart(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     aisle_perf["reorder_rate"] = aisle_perf["reorder_count"] / aisle_perf["reorder_observations"]
     day_perf = matched_orders.groupby("order_dow", as_index=False).agg(orders=("order_id", "nunique"))
     hour_perf = matched_orders.groupby("order_hour_of_day", as_index=False).agg(orders=("order_id", "nunique"))
+    def order_time_rows(source: pd.DataFrame) -> list[dict[str, Any]]:
+        return json_records(source.groupby(["order_dow", "order_hour_of_day"], as_index=False).agg(orders=("order_id", "nunique")))
     basket = lines.groupby("order_id").size().rename("products_per_order").reset_index()
     matched_basket = matched.groupby(["order_id", "order_dow"]).size().rename("products_per_order").reset_index()
     matched_day_basket = (
@@ -1366,7 +1381,7 @@ def build_instacart(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
         "repaired_malformed_product_rows": int(repaired_rows),
         "missing_reorder_flags": int(order_products["reordered"].isna().sum()),
         "reorder_rate_denominator": "Non-null reordered observations only.",
-        "scope": "Product, aisle, department, reorder, and basket-size measures use all order_products_train rows. User, weekday, hour, and order-gap measures use only rows that match the supplied orders extract.",
+        "scope": "Product, aisle, department, reorder, and basket-size measures use all order_products_train rows. The selectable order-time matrix distinguishes all supplied orders from the matched basket subset; user and order-gap measures use matched orders only.",
     }
     report = write_parquet("retail-iq/instacart-product-performance-internal.parquet", product_perf)
     payload = {
@@ -1376,6 +1391,14 @@ def build_instacart(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
             "departments": int(catalog["department_id"].nunique()),
             "products": int(catalog["product_id"].nunique()),
         },
+        "summary": {
+            "distinct_basket_orders": int(lines["order_id"].nunique()),
+            "supplied_orders": int(orders["order_id"].nunique()),
+            "reorder_count": int(lines["reordered"].sum()),
+            "reorder_observations": int(lines["reordered"].count()),
+            "average_products_per_order": float(basket["products_per_order"].mean()),
+        },
+        "order_time": {"supplied": order_time_rows(orders), "matched": order_time_rows(matched_orders)},
         "departments": json_records(department_perf.sort_values("ordered_units", ascending=False)),
         "aisles": json_records(aisle_perf.sort_values("ordered_units", ascending=False)),
         "top_products": json_records(product_perf.sort_values(["units", "orders"], ascending=False).head(50)),
@@ -1600,10 +1623,7 @@ def build_customer_behaviour(data_root: Path) -> tuple[dict[str, Any], dict[str,
     }
 
 
-def build_all(data_root: Path) -> dict[str, Any]:
-    manifest_rows = create_source_manifest()
-    manifest_path = ROOT / "analytics" / "source-manifest.csv"
-    shop_sales_report, shop_sales_validation = write_shoplens_and_sales(data_root)
+def build_retail_iq_assets(data_root: Path) -> dict[str, Any]:
     retail_overview, retail_quality, retail_clean, retail_interactions = retail_iq_online(data_root)
     personas, persona_quality = build_retail_iq_personas(data_root)
     affinity = build_market_basket(retail_clean)
@@ -1632,6 +1652,17 @@ def build_all(data_root: Path) -> dict[str, Any]:
     write_json(PUBLIC_ROOT / VERSION / "retail-iq" / "retention.json", retention)
     write_json(PUBLIC_ROOT / VERSION / "retail-iq" / "affinity.json", affinity)
     write_json(PUBLIC_ROOT / VERSION / "retail-iq" / "instacart.json", instacart)
+    return {
+        "quality": {"online_retail": retail_quality, "customer_personas": persona_quality, "instacart": instacart_quality},
+        "validation": validate_summary(retail_clean, rollup_records(retail_clean, amount_column="line_revenue"), "line_revenue"),
+    }
+
+
+def build_all(data_root: Path) -> dict[str, Any]:
+    manifest_rows = create_source_manifest()
+    manifest_path = ROOT / "analytics" / "source-manifest.csv"
+    shop_sales_report, shop_sales_validation = write_shoplens_and_sales(data_root)
+    retail_result = build_retail_iq_assets(data_root)
 
     customer, customer_validation = build_customer_behaviour(data_root)
     write_json(PUBLIC_ROOT / VERSION / "customer-behaviour" / "overview.json", customer["overview"])
@@ -1640,11 +1671,7 @@ def build_all(data_root: Path) -> dict[str, Any]:
         "built_at_utc": datetime.now(timezone.utc).isoformat(),
         "source_manifest": str(manifest_path.relative_to(ROOT)),
         "source_pairs_verified_unchanged": len(manifest_rows),
-        "retail_iq": {
-            "online_retail": retail_quality,
-            "customer_personas": persona_quality,
-            "instacart": instacart_quality,
-        },
+        "retail_iq": retail_result["quality"],
         "shoplens_and_sales_analysis": shop_sales_report["quality"],
         "customer_behaviour": customer["quality"],
         "source_profiles": source_profiles,
@@ -1659,17 +1686,14 @@ def build_all(data_root: Path) -> dict[str, Any]:
         "built_at_utc": datetime.now(timezone.utc).isoformat(),
         "online_retail_ii": shop_sales_validation,
         "customer_behaviour": customer_validation,
-        "retail_iq_online_retail": validate_summary(
-            retail_clean,
-            rollup_records(retail_clean, amount_column="line_revenue"),
-            "line_revenue",
-        ),
+        "retail_iq_online_retail": retail_result["validation"],
         "instacart": {
-            "all_order_product_rows": instacart_quality["order_product_rows"],
-            "matched_order_product_rows": instacart_quality["matched_order_product_rows"],
-            "coverage": instacart_quality["matched_share"],
-            "product_catalog_repaired_rows": instacart_quality["repaired_malformed_product_rows"],
-            "user_time_metrics_use_matched_rows_only": True,
+            "all_order_product_rows": retail_result["quality"]["instacart"]["order_product_rows"],
+            "matched_order_product_rows": retail_result["quality"]["instacart"]["matched_order_product_rows"],
+            "coverage": retail_result["quality"]["instacart"]["matched_share"],
+            "product_catalog_repaired_rows": retail_result["quality"]["instacart"]["repaired_malformed_product_rows"],
+            "user_metrics_use_matched_rows_only": True,
+            "order_time_matrix_populations": "All supplied orders and the matched basket subset are separate selectable populations.",
         },
     }
     (REPORT_ROOT / "metric-validation.json").write_text(
@@ -1771,6 +1795,9 @@ def main() -> int:
         description="Build privacy-minimized dashboard JSON from the staged, read-only source copies."
     )
     parser.add_argument(
+        "--project", choices=["all", "retail-iq"], default="all", help="Refresh one project without rebuilding unrelated dashboards.",
+    )
+    parser.add_argument(
         "--datasets-dir",
         type=Path,
         default=DATA_ROOT,
@@ -1782,14 +1809,23 @@ def main() -> int:
     PROCESSED_ROOT = GENERATED_ROOT / "processed"
     print(f"Read-only staged inputs: {DATA_ROOT}")
     print("Source copies will be SHA-256 checked against the four original project folders.")
-    result = build_all(DATA_ROOT)
+    if args.project == "retail-iq":
+        result = {"manifest_rows": create_source_manifest()}
+        retail_result = build_retail_iq_assets(DATA_ROOT)
+        REPORT_ROOT.mkdir(parents=True, exist_ok=True)
+        write_json(REPORT_ROOT / "retail-iq-validation.json", retail_result)
+    else:
+        result = build_all(DATA_ROOT)
     manifest = build_manifest()
     payload = payload_report(manifest)
     print(f"Verified source pairs: {len(result['manifest_rows'])}")
     print(f"Versioned dashboard JSON files: {len(manifest['files'])}")
     print(f"Payload report: {payload}")
-    print(f"Data quality report: {ROOT / 'analytics' / 'reports' / 'data-quality-report.json'}")
-    print(f"Metric validation: {ROOT / 'analytics' / 'reports' / 'metric-validation.json'}")
+    if args.project == "retail-iq":
+        print(f"RetailIQ quality and metric validation: {REPORT_ROOT / 'retail-iq-validation.json'}")
+    else:
+        print(f"Data quality report: {REPORT_ROOT / 'data-quality-report.json'}")
+        print(f"Metric validation: {REPORT_ROOT / 'metric-validation.json'}")
     return 0
 
 

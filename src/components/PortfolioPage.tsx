@@ -8,8 +8,9 @@ import GitHubContributions from "@/components/GitHubContributions";
 import Navigation from "@/components/Navigation";
 import CertificateCarousel from "@/components/CertificateCarousel";
 import ScrollHighlight from "@/components/ScrollHighlight";
-import { capabilityGroups } from "@/data/portfolio";
+import Capabilities from "@/components/Capabilities";
 import FeatureCarousel from "@/components/ui/feature-carousel";
+import WorkLight from "@/components/ui/work-light";
 export default function PortfolioPage() {
   return (
     <>
@@ -19,24 +20,40 @@ export default function PortfolioPage() {
         <Hero />
 
         <section id="about" className="portfolio-section portfolio-about" aria-labelledby="about-heading">
+          <div className="portfolio-about-topline">
+            <p className="portfolio-section-kicker">01 / The person behind the work</p>
+            <span>Analytics first. Always exploring.</span>
+          </div>
           <div className="portfolio-section-inner portfolio-about-inner">
-          <div className="portfolio-about-photo" data-reveal data-reveal-side="left">
-            <Image src="/photo.png" alt="Prashant Yadav" fill sizes="(max-width: 760px) 84vw, (max-width: 1100px) 42vw, 520px" className="portfolio-about-image" />
-            <span className="portfolio-about-stamp" aria-hidden="true">Based in India<br />Working everywhere</span>
+          <div className="portfolio-about-identity" data-reveal data-reveal-side="left">
+            <div className="portfolio-about-portrait">
+              <Image src="/images/about-portrait.png" alt="Prashant Yadav in profile, looking upwards" fill sizes="(max-width: 760px) 90vw, 46vw" className="portfolio-about-image" />
+            </div>
+            <span className="portfolio-about-availability">Open to opportunities</span>
+            <h2 id="about-heading">PRASHANT<br /><span>YADAV</span></h2>
+            <p>Data analyst.<br />Curious by nature.</p>
           </div>
           <div className="portfolio-about-copy" data-reveal data-reveal-side="right">
-            <p className="portfolio-section-kicker">01 / A little about me</p>
-            <h2 id="about-heading">Curiosity,<br />made <em>useful.</em></h2>
-            <p><ScrollHighlight text="I bring data analysis, applied machine learning, and frontend craft together to make complex ideas clearer and easier to act on." /></p>
+            <p className="portfolio-about-lead">I&apos;m Prashant Yadav, a Chandigarh University graduate looking for my next opportunity in data analytics.</p>
+            <div className="portfolio-about-story">
+              <p><ScrollHighlight text="I like working through a question, finding the story in the data, and making the answer easy to understand." /></p>
+              <p><ScrollHighlight text="On the creative side, I build websites and templates with AI-assisted development, experiment with design, and learn by making." /></p>
+            </div>
+            <p className="portfolio-about-invitation">Open to freelance projects, creative opportunities, and building something together.</p>
             <div className="portfolio-about-actions">
               <a href="/Prashant_res.pdf" download="Prashant_Yadav_Resume.pdf" className="portfolio-text-link">Download résumé <Download size={16} aria-hidden="true" /></a>
-              <span>Data · Products · Experiences</span>
+              <a href="#contact" className="portfolio-text-link">Let&apos;s connect <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
           </div>
           </div>
+          <dl className="portfolio-about-details">
+            <div><dt>Education</dt><dd>Chandigarh University graduate</dd></div>
+            <div><dt>Main focus</dt><dd>Data analytics</dd></div>
+            <div><dt>Creative practice</dt><dd>AI-assisted websites &amp; templates</dd></div>
+          </dl>
         </section>
 
-        <section className="portfolio-signature-section" aria-label="Prashant signature">
+        <section id="signature" className="portfolio-signature-section" aria-label="Prashant signature">
           <div className="portfolio-signature-stage">
             <p className="portfolio-signature-kicker">The person behind the work</p>
             <p className="portfolio-signature-name">
@@ -56,7 +73,10 @@ export default function PortfolioPage() {
                 <span>My core work starts with a business question, follows the evidence, and makes the answer clear enough to use.</span>
               </div>
             </div>
-            <FeatureCarousel />
+            <div className="selected-work-stage">
+              <WorkLight />
+              <FeatureCarousel />
+            </div>
 
             <div className="featured-project-footer">
               <span>Data analytics · machine learning · thoughtful software</span>
@@ -65,19 +85,7 @@ export default function PortfolioPage() {
           </div>
         </section>
 
-        <section id="capabilities" className="portfolio-section portfolio-capabilities" aria-labelledby="capabilities-heading">
-          <div className="portfolio-section-inner">
-          <div className="portfolio-heading"><p className="portfolio-section-kicker" data-reveal data-reveal-side="left">03 / Capabilities</p><div data-reveal data-reveal-side="right"><h2 id="capabilities-heading">Useful<br /><em>systems.</em></h2><span><ScrollHighlight text="From the first question to the final interface, I focus on work that is clear, maintainable, and ready to use." /></span></div></div>
-          <div className="portfolio-capability-list">
-            {capabilityGroups.map((group) => (
-              <article key={group.index} className="portfolio-capability" data-reveal data-reveal-side={Number(group.index) % 2 === 1 ? "left" : "right"}>
-                <span className="portfolio-capability-index">{group.index}</span><h3>{group.title}</h3><p>{group.copy}</p>
-                <ul>{group.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul>
-              </article>
-            ))}
-          </div>
-          </div>
-        </section>
+        <Capabilities />
 
         <GitHubContributions />
 
