@@ -15,6 +15,19 @@ const navItems = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  if (pathname.startsWith("/projects/") && pathname.endsWith("/dashboard")) {
+    return (
+      <nav className="report-navigation" aria-label="Report navigation">
+        <div>
+          <Link href="/" className="report-navigation-brand">Prashant Yadav <span>/ Analytics</span></Link>
+          <div className="report-navigation-links">
+            <Link href="/projects#analytics">Projects</Link>
+            <Link href="/#contact">Contact <ArrowUpRight size={13} aria-hidden="true" /></Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
   return <RouteNavigation key={pathname} />;
 }
 

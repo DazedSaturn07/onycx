@@ -9,10 +9,10 @@ export interface DashboardManifest {
   files: ManifestFile[];
 }
 
-async function request(url: string, cache: RequestCache) {
+async function request(url: string, cache: RequestCache, signal?: AbortSignal) {
   const response = await fetch(url, {
     cache, mode: "cors", credentials: "omit", redirect: "error",
-    signal: AbortSignal.timeout(15000),
+    signal: signal ?? AbortSignal.timeout(15000),
   });
   if (!response.ok) throw new Error(`Data request returned HTTP ${response.status}. Please retry.`);
   if (!response.headers.get("content-type")?.includes("application/json")) {
@@ -55,27 +55,34 @@ export async function loadDashboardManifest(base: string): Promise<DashboardMani
     || !Array.isArray(value.files) || value.files.length > 100
     || !value.files.every((file: unknown) => isJsonAsset(file)
       && typeof file.path === "string" && /^v2\/[a-z-]+\/[a-z-]+\.json$/.test(file.path)
-      && typeof file.bytes === "number" && Number.isInteger(file.bytes) && file.bytes > 0 && file.bytes < 5_000_000
+      && typeof file.bytes === "number" && Number.isInteger(file.bytes) && file.bytes > 0 && file.bytes < 12_000_000
       && typeof file.sha256 === "string" && /^[a-f0-9]{64}$/.test(file.sha256))) {
     throw new Error("Dashboard manifest is invalid or incompatible. Publish the current release and retry.");
   }
   return value as unknown as DashboardManifest;
 }
 
-export async function loadDashboardAsset(base: string, manifest: DashboardManifest, project: AnalyticsDashboardSlug, file: string): Promise<JsonAsset> {
-  const allowed = new Set<string>(["overview.json", ...analyticsDashboards[project].tabs.flatMap((tab) => [...tab.files])]);
-  if (!allowed.has(file)) throw new Error("Unsupported dashboard asset.");
+export async function loadPublishedJson(base: string, manifest: DashboardManifest, project: string, file: string, signal?: AbortSignal): Promise<JsonAsset> {
+  if (!/^[a-z-]+$/.test(project) || !/^[a-z-]+\.json$/.test(file)) throw new Error("Unsupported dashboard asset.");
   const path = `${DASHBOARD_DATA_VERSION}/${project}/${file}`;
   const record = manifest.files.find((entry) => entry.path === path);
   if (!record) throw new Error(`The release is missing ${file}. Publish a complete release and retry.`);
   const url = base ? `${base}/${manifest.r2_release_prefix}/${path}` : `/dashboard-data/${path}?v=${record.sha256}`;
-  const response = await request(url, base ? "force-cache" : "no-cache");
+  const response = await request(url, base ? "force-cache" : "no-cache", signal);
   const buffer = await boundedBytes(response, record.bytes);
   const hash = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", buffer)), (byte) => byte.toString(16).padStart(2, "0")).join("");
   if (buffer.byteLength !== record.bytes || hash !== record.sha256) {
     throw new Error(`The ${file} file does not match the published release. Refresh after the upload finishes.`);
   }
   const value: unknown = JSON.parse(new TextDecoder().decode(buffer));
+  if (!isJsonAsset(value)) throw new Error(`The ${file} file has an invalid dashboard schema.`);
+  return value;
+}
+
+export async function loadDashboardAsset(base: string, manifest: DashboardManifest, project: AnalyticsDashboardSlug, file: string): Promise<JsonAsset> {
+  const allowed = new Set<string>(["overview.json", ...analyticsDashboards[project].tabs.flatMap((tab) => [...tab.files])]);
+  if (!allowed.has(file)) throw new Error("Unsupported dashboard asset.");
+  const value = await loadPublishedJson(base, manifest, project, file);
   if (!isJsonAsset(value) || (file === "overview.json" && (value.project !== project || !isJsonAsset(value.metadata) || !Array.isArray(value.metrics)))) {
     throw new Error(`The ${file} file has an invalid dashboard schema.`);
   }

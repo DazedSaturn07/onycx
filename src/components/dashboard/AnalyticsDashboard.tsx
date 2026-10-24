@@ -1,10 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowUpRight, Moon, RotateCcw, Sun } from "lucide-react";
+import { ArrowUpRight, Moon, RotateCcw, Sun } from "lucide-react";
 import { useDashboardTheme } from "@/components/dashboard/DashboardThemeShell";
+import { DashboardProjectLinks } from "./DashboardProjectLinks";
 import { loadDashboardAsset, loadDashboardManifest } from "@/lib/dashboard-data";
 import type { DashboardManifest } from "@/lib/dashboard-data";
 import { DashboardPanel as Panel, DashboardStat as KpiCard } from "@/components/ui/dashboard-4";
@@ -446,8 +446,8 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
   return (
     <section className={`analytics-dashboard analytics-dashboard-${project}`} aria-label={`${config.title} dashboard`}>
       <div className="analytics-dashboard-topline">
-        <Link href="/projects" className="analytics-back-link"><ArrowLeft size={14} aria-hidden="true" /> Project studies</Link>
         <span className="analytics-source-tag"><i aria-hidden="true" /> {config.source}</span>
+        <DashboardProjectLinks project={project} />
       </div>
       <p className="analytics-data-status">
         {remoteBase ? "Cloudflare R2 release" : "Bundled source-derived data"} · Prepared {manifest ? new Date(manifest.built_at_utc).toLocaleDateString("en-GB", { timeZone: "UTC" }) : "—"}

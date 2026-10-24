@@ -1,1 +1,129 @@
-{"data_version":"v2","built_at_utc":"2026-10-11T15:06:35.782539+00:00","local_base_path":"/dashboard-data","r2_object_prefix":"analytics","r2_release_prefix":"analytics/releases/aeb8409e06f37f3055e3ede8d9aab9966da6bad2c9c99368db0c94d300a3ad40","files":[{"path":"v2/customer-behaviour/behavior.json","bytes":359129,"sha256":"92c1d44b33efa5a53b10610f8fdf6ae0dbe9fb809e2aa8267596a6941ef024ee","load":"lazy"},{"path":"v2/customer-behaviour/overview.json","bytes":23833,"sha256":"7bead714c12c42b411107916e4d3b9e2f93d3e1d7a16587436611890d478548f","load":"initial"},{"path":"v2/retail-iq/affinity.json","bytes":144826,"sha256":"6ab9273cad14b671a658adc81848d4d04a34cda24fb2618578d690b9299b45b5","load":"lazy"},{"path":"v2/retail-iq/instacart.json","bytes":75392,"sha256":"84f00fa1bf39bba9063463e001ed2c6f60e38403015e99ccdb3d98080e1cb5f2","load":"lazy"},{"path":"v2/retail-iq/interactions.json","bytes":495519,"sha256":"854eec06228bb0a9fe8a7924ffd1220de1b4094e92ef4b9065b85756b32b93d7","load":"lazy"},{"path":"v2/retail-iq/overview.json","bytes":110681,"sha256":"be2695e4f0e945ba989cd3a04cec43dddf4d9436986704cd6283501fb32afd89","load":"initial"},{"path":"v2/retail-iq/personas.json","bytes":10909,"sha256":"945170076bd3864e2e31a4f000bfe6bbe64e58edc312196d112485d797f2ba4d","load":"lazy"},{"path":"v2/retail-iq/products.json","bytes":288249,"sha256":"8145f992f5d78b0f85c2d66d58ca531f5cd5442d4150c973e360a0d4b1237919","load":"lazy"},{"path":"v2/retail-iq/retention.json","bytes":42427,"sha256":"ba1f782ef84cc27bd639b5a7fa3069b103d5529fc250adcf69db3dc4607c0359","load":"lazy"},{"path":"v2/sales-analysis/interactions.json","bytes":899638,"sha256":"d3fbc616fe39a36f756dc5349ac17a3eb3a0fdb94e7f1fcaa3c403feb93f860f","load":"lazy"},{"path":"v2/sales-analysis/overview.json","bytes":395373,"sha256":"7fb8bd843670db1a62c36f81e365c7df6b7ab6e7edcf456e8adaed9de85b7ac0","load":"initial"},{"path":"v2/sales-analysis/products.json","bytes":489076,"sha256":"76f2407ea8291c89c0b5aa9344c7216da0fccf414e1866aa8d7f210b701b8313","load":"lazy"},{"path":"v2/sales-analysis/quality.json","bytes":1201,"sha256":"57fcbba6bce2d4497c0bb7668afbbf1d7d7570bab860ef00e40758fdd08f5095","load":"lazy"},{"path":"v2/shoplens/interactions.json","bytes":901981,"sha256":"c340514bec396c3253c0a1ae7661ae1ea305c82b24aa3ac0a4acc7948a4ee21b","load":"lazy"},{"path":"v2/shoplens/overview.json","bytes":396450,"sha256":"f98cf449b5253ebe68ccdc1a8e9933518e3a0db0654fbfc5dc146b861ed79f9f","load":"initial"},{"path":"v2/shoplens/products.json","bytes":494516,"sha256":"b9a38862c4830bf85bbc7eac326472e41d3517ef9d9b63ad398e9ca78a492825","load":"lazy"},{"path":"v2/shoplens/retention.json","bytes":94466,"sha256":"3f21e10ed7e95210b3248da80b6bd3a417ca335ad9af68a154134a67b4432b0e","load":"lazy"}]}
+{
+  "data_version": "v2",
+  "built_at_utc": "2026-10-24T06:47:10.928174+00:00",
+  "local_base_path": "/dashboard-data",
+  "r2_object_prefix": "analytics",
+  "r2_release_prefix": "analytics/releases/b729117a4f2933d872e5b8f21e74f242b46d21e42336c4488601b6ef1eb79840",
+  "files": [
+    {
+      "path": "v2/airops/crossfilter.json",
+      "bytes": 4894538,
+      "sha256": "f3a0fbe014d0863935ad5a8914183b90475b7eb3b81868d1106d8ee7618c00c5"
+    },
+    {
+      "path": "v2/airops/hourly.json",
+      "bytes": 8557793,
+      "sha256": "faf58cb945b3a7606491ca2a2ead9bd8274fc212a920999a71bfa5e234c9b99a"
+    },
+    {
+      "path": "v2/airops/overview.json",
+      "bytes": 774379,
+      "sha256": "b9473dbaa598d6ae1de9050c40ae11d86e0a5494340fa06152ba0908faacb5e4"
+    },
+    {
+      "path": "v2/customer-behaviour/behavior.json",
+      "bytes": 359129,
+      "sha256": "92c1d44b33efa5a53b10610f8fdf6ae0dbe9fb809e2aa8267596a6941ef024ee"
+    },
+    {
+      "path": "v2/customer-behaviour/overview.json",
+      "bytes": 23833,
+      "sha256": "7bead714c12c42b411107916e4d3b9e2f93d3e1d7a16587436611890d478548f"
+    },
+    {
+      "path": "v2/job-market/crossfilter.json",
+      "bytes": 5934631,
+      "sha256": "355dfd7aa16e54da35d3d7797e36aed516f4e7295f10f28121fb8f5cbf8a3a40"
+    },
+    {
+      "path": "v2/job-market/overview.json",
+      "bytes": 192730,
+      "sha256": "81044c1180497a0896d7e06f2237df12a9239f46b71d686c8caf3549e86838ca"
+    },
+    {
+      "path": "v2/loanflow/crossfilter.json",
+      "bytes": 4429237,
+      "sha256": "3401827b17660bbf05c3066d73916e2d219e2a0b43464b32fc36678486e6466b"
+    },
+    {
+      "path": "v2/loanflow/overview.json",
+      "bytes": 433446,
+      "sha256": "9bbb817bc4886b3c41205eb4bd05c6434c431426d1c253c8a952edd26188c2f8"
+    },
+    {
+      "path": "v2/retail-iq/affinity.json",
+      "bytes": 144826,
+      "sha256": "6ab9273cad14b671a658adc81848d4d04a34cda24fb2618578d690b9299b45b5"
+    },
+    {
+      "path": "v2/retail-iq/instacart.json",
+      "bytes": 75392,
+      "sha256": "84f00fa1bf39bba9063463e001ed2c6f60e38403015e99ccdb3d98080e1cb5f2"
+    },
+    {
+      "path": "v2/retail-iq/interactions.json",
+      "bytes": 495519,
+      "sha256": "854eec06228bb0a9fe8a7924ffd1220de1b4094e92ef4b9065b85756b32b93d7"
+    },
+    {
+      "path": "v2/retail-iq/overview.json",
+      "bytes": 110681,
+      "sha256": "be2695e4f0e945ba989cd3a04cec43dddf4d9436986704cd6283501fb32afd89"
+    },
+    {
+      "path": "v2/retail-iq/personas.json",
+      "bytes": 10909,
+      "sha256": "945170076bd3864e2e31a4f000bfe6bbe64e58edc312196d112485d797f2ba4d"
+    },
+    {
+      "path": "v2/retail-iq/products.json",
+      "bytes": 288249,
+      "sha256": "8145f992f5d78b0f85c2d66d58ca531f5cd5442d4150c973e360a0d4b1237919"
+    },
+    {
+      "path": "v2/retail-iq/retention.json",
+      "bytes": 42427,
+      "sha256": "ba1f782ef84cc27bd639b5a7fa3069b103d5529fc250adcf69db3dc4607c0359"
+    },
+    {
+      "path": "v2/sales-analysis/interactions.json",
+      "bytes": 899638,
+      "sha256": "d3fbc616fe39a36f756dc5349ac17a3eb3a0fdb94e7f1fcaa3c403feb93f860f"
+    },
+    {
+      "path": "v2/sales-analysis/overview.json",
+      "bytes": 395373,
+      "sha256": "7fb8bd843670db1a62c36f81e365c7df6b7ab6e7edcf456e8adaed9de85b7ac0"
+    },
+    {
+      "path": "v2/sales-analysis/products.json",
+      "bytes": 489076,
+      "sha256": "76f2407ea8291c89c0b5aa9344c7216da0fccf414e1866aa8d7f210b701b8313"
+    },
+    {
+      "path": "v2/sales-analysis/quality.json",
+      "bytes": 1201,
+      "sha256": "57fcbba6bce2d4497c0bb7668afbbf1d7d7570bab860ef00e40758fdd08f5095"
+    },
+    {
+      "path": "v2/shoplens/interactions.json",
+      "bytes": 901981,
+      "sha256": "c340514bec396c3253c0a1ae7661ae1ea305c82b24aa3ac0a4acc7948a4ee21b"
+    },
+    {
+      "path": "v2/shoplens/overview.json",
+      "bytes": 396450,
+      "sha256": "f98cf449b5253ebe68ccdc1a8e9933518e3a0db0654fbfc5dc146b861ed79f9f"
+    },
+    {
+      "path": "v2/shoplens/products.json",
+      "bytes": 494516,
+      "sha256": "b9a38862c4830bf85bbc7eac326472e41d3517ef9d9b63ad398e9ca78a492825"
+    },
+    {
+      "path": "v2/shoplens/retention.json",
+      "bytes": 94466,
+      "sha256": "3f21e10ed7e95210b3248da80b6bd3a417ca335ad9af68a154134a67b4432b0e"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "projects": {
+    "job-market": {
+      "path": "v1/job-market.json",
+      "bytes": 192363,
+      "sha256": "59ebcf814583496380988b63ab8f177a1c259aa974b9f9a52a5cde5bddd123dc"
+    },
+    "loanflow": {
+      "path": "v1/loanflow.json",
+      "bytes": 433046,
+      "sha256": "3f909a51a9f651c784fc8cf9e492e67029a51579e83a4031c92ee5ac3e8ccfc5"
+    },
+    "airops": {
+      "path": "v1/airops.json",
+      "bytes": 774053,
+      "sha256": "8bed565a9d87c621d613622628583ccf73afabd2b1f1cd1674b806e815df7c3d"
+    }
+  }
+}

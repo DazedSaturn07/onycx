@@ -14,6 +14,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import GithubIcon from "@/components/ui/github-icon";
 import { cn } from "@/lib/utils";
 import {
   analyticsProjects,
@@ -28,28 +29,31 @@ const allProjects = [
   ...productProjects,
 ];
 
-const projectIcons = [
-  Analytics01Icon,
-  GlobalSearchIcon,
-  Store01Icon,
-  ChartLineData01Icon,
-  FaceIdIcon,
-  SourceCodeCircleIcon,
-];
+const projectIcons: Record<string, typeof Analytics01Icon> = {
+  "job-market": GlobalSearchIcon, loanflow: Analytics01Icon,
+  airops: ChartLineData01Icon, "retail-iq": Store01Icon,
+  shoplens: GlobalSearchIcon, "customer-behaviour": Analytics01Icon,
+  "sales-analysis": ChartLineData01Icon, "face-mask-detection": FaceIdIcon,
+  retainai: Analytics01Icon, reviewpilot: SourceCodeCircleIcon,
+};
 
 const cardGradients: Record<RepositoryProject["id"], string> = {
+  "job-market": "linear-gradient(145deg, #15102e 0%, #433896 50%, #272443 100%)",
+  loanflow: "linear-gradient(145deg, #091a18 0%, #125146 50%, #1f7261 100%)",
+  airops: "linear-gradient(145deg, #09172a 0%, #213c87 50%, #4358ae 100%)",
   "retail-iq": "linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
   shoplens: "linear-gradient(145deg, #091221 0%, #0c2b4a 50%, #1a5c6e 100%)",
   "customer-behaviour": "linear-gradient(145deg, #160a1f 0%, #3d154a 50%, #681f5c 100%)",
   "sales-analysis": "linear-gradient(145deg, #1c0e05 0%, #4a2107 50%, #7d370b 100%)",
   "face-mask-detection": "linear-gradient(145deg, #071512 0%, #123d33 50%, #1f6b57 100%)",
+  retainai: "linear-gradient(145deg, #0b1820 0%, #154d54 50%, #327b75 100%)",
   reviewpilot: "linear-gradient(145deg, #050608 0%, #191f26 50%, #313d4a 100%)",
 };
 
-const FEATURES = allProjects.map((project, index) => ({
+const FEATURES = allProjects.map((project) => ({
   id: project.id,
   label: project.title,
-  icon: projectIcons[index % projectIcons.length] ?? DashboardSquare01Icon,
+  icon: projectIcons[project.id] ?? DashboardSquare01Icon,
   description: project.summary,
   project,
   gradient: cardGradients[project.id],
@@ -69,6 +73,7 @@ export function FeatureCarousel() {
   const reducedMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const currentIndex =
     ((step % FEATURES.length) + FEATURES.length) % FEATURES.length;
@@ -83,10 +88,10 @@ export function FeatureCarousel() {
   };
 
   useEffect(() => {
-    if (isPaused || !inView || reducedMotion) return;
+    if (isPaused || isFocused || !inView || reducedMotion) return;
     const interval = setInterval(nextStep, AUTO_PLAY_INTERVAL);
     return () => clearInterval(interval);
-  }, [nextStep, isPaused, inView, reducedMotion]);
+  }, [nextStep, isPaused, isFocused, inView, reducedMotion]);
 
   const getCardStatus = (index: number) => {
     const diff = index - currentIndex;
@@ -103,6 +108,10 @@ export function FeatureCarousel() {
     <MotionConfig reducedMotion="user">
     <div
       ref={region}
+      onFocusCapture={() => setIsFocused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsFocused(false);
+      }}
       role="region"
       aria-label="Featured projects"
       aria-roledescription="carousel"
@@ -241,6 +250,18 @@ export function FeatureCarousel() {
                               </li>
                             ))}
                           </ul>
+                          <div className="flex items-center gap-3">
+                          <a
+                            href={feature.project.repoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Open ${feature.project.title} GitHub repository`}
+                            onFocus={() => setIsPaused(true)}
+                            onBlur={() => setIsPaused(false)}
+                            className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-black/50 text-white transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                          >
+                            <GithubIcon size={21} />
+                          </a>
                           <Link
                             href={`/projects#${feature.project.id}`}
                             aria-label={`View ${feature.project.title} project details`}
@@ -251,6 +272,7 @@ export function FeatureCarousel() {
                             View project
                             <ArrowUpRight size={16} aria-hidden="true" />
                           </Link>
+                          </div>
                         </div>
                       </motion.div>
                     )}

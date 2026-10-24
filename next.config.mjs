@@ -45,6 +45,10 @@ const nextConfig = {
         source: "/dashboard-data/manifest.json",
         headers: [{ key: "Cache-Control", value: "public, max-age=60, stale-while-revalidate=300" }],
       },
+      {
+        source: "/study-data/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
+      },
     ];
   },
 };

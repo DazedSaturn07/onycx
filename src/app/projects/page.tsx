@@ -34,11 +34,11 @@ export default function ProjectsPage() {
           <div className="portfolio-heading">
             <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">01 / Core discipline</p>
             <div data-reveal data-reveal-side="right">
-              <h2 id="analytics-projects-title">Retail &<br /><em>customer insight.</em></h2>
-              <span>Different business questions across transaction, customer, and order data. Methods and figures are grounded in each repository.</span>
+              <h2 id="analytics-projects-title">Data &<br /><em>business insight.</em></h2>
+              <span>Job-market quality, lending processes, airline operations and customer studies. Explore each project’s source-grounded interactive dashboard.</span>
             </div>
           </div>
-          <ProjectShowcase projects={analyticsProjects} title="Retail & customer insight projects" />
+          <ProjectShowcase projects={analyticsProjects} title="Data and business analysis projects" />
         </section>
 
         <section id="machine-learning" className="portfolio-section project-catalog-section" aria-labelledby="machine-learning-title">
@@ -46,7 +46,7 @@ export default function ProjectsPage() {
             <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">02 / Applied machine learning</p>
             <div data-reveal data-reveal-side="right">
               <h2 id="machine-learning-title">Models with<br /><em>a purpose.</em></h2>
-              <span>A computer-vision project that makes its model flow and evaluation claim explicit.</span>
+              <span>Computer vision and telecom churn studies, with model choices, evaluation methods and limits stated explicitly.</span>
             </div>
           </div>
           <ProjectShowcase projects={machineLearningProjects} title="Machine learning projects" />

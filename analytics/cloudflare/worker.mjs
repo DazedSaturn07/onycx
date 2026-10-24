@@ -4,6 +4,9 @@ const assets = {
   shoplens: ["overview", "interactions", "products", "retention"],
   "sales-analysis": ["overview", "interactions", "products", "quality"],
   "customer-behaviour": ["overview", "behavior"],
+  "job-market": ["overview", "crossfilter"],
+  loanflow: ["overview", "crossfilter"],
+  airops: ["overview", "crossfilter", "hourly"],
 };
 
 const worker = {

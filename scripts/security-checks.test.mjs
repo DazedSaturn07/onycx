@@ -108,7 +108,7 @@ test("Loader verifies content hashes and rejects corrupt JSON, missing releases 
     await assert.rejects(data.loadDashboardAsset("https://data.example.com", manifest, "shoplens", "overview.json"), /size limit/);
   } finally { globalThis.fetch = previousFetch; }
 });
-test("All 17 real aggregate assets load through Worker and pass browser integrity verification", async () => {
+test("All published analytics assets load through Worker and pass browser integrity verification", async () => {
   const manifest = JSON.parse(await readFile(new URL("../public/dashboard-data/manifest.json", import.meta.url), "utf8"));
   const realEnv = environment();
   realEnv.DASHBOARD_DATA.get = async (key) => {
@@ -120,10 +120,10 @@ test("All 17 real aggregate assets load through Worker and pass browser integrit
   try {
     globalThis.fetch = async (url, options = {}) => worker.fetch(new Request(url, { ...options, headers: { Origin: origin } }), realEnv);
     const release = await data.loadDashboardManifest("https://data.example.com");
-    assert.equal(release.files.length, 17);
+    assert.equal(release.files.length, 24);
     for (const file of release.files) {
       const [, project, name] = file.path.split("/");
-      assert.ok(await data.loadDashboardAsset("https://data.example.com", release, project, name));
+      assert.ok(await (project in analytics.module.analyticsDashboards ? data.loadDashboardAsset("https://data.example.com", release, project, name) : data.loadPublishedJson("https://data.example.com", release, project, name)));
     }
   } finally { globalThis.fetch = previousFetch; }
 });

@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
-import type { AnalyticsDashboardSlug } from "@/lib/analytics-dashboards";
 
 type DashboardTheme = "dark" | "light";
 
@@ -38,7 +37,7 @@ export function useDashboardTheme() {
 }
 
 export function DashboardThemeShell({ project, children }: {
-  project: AnalyticsDashboardSlug;
+  project: string;
   children: ReactNode;
 }) {
   const theme = useSyncExternalStore(subscribe, getTheme, () => "dark" as const);

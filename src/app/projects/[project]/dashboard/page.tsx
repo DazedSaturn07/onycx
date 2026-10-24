@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import AnalyticsDashboard from "@/components/dashboard/AnalyticsDashboard";
+import { studyDashboards } from "@/lib/study-dashboards";
+import type { StudySlug } from "@/lib/study-dashboards";
 import { DashboardThemeShell } from "@/components/dashboard/DashboardThemeShell";
 import { CinematicFooter } from "@/components/ui/motion-footer";
 import Navigation from "@/components/Navigation";
@@ -9,19 +11,24 @@ import { analyticsDashboards } from "@/lib/analytics-dashboards";
 import type { AnalyticsDashboardSlug } from "@/lib/analytics-dashboards";
 import { siteUrl } from "@/lib/site-config";
 import "@/app/dashboard-4.css";
+import "@/app/finance-bento.css";
+
+const dashboards = { ...analyticsDashboards, ...studyDashboards };
+const AnalyticsDashboard = dynamic(() => import("@/components/dashboard/AnalyticsDashboard"));
+const StudyDashboard = dynamic(() => import("@/components/dashboard/StudyDashboard"));
 
 interface DashboardPageProps {
   params: Promise<{ project: string }>;
 }
 
 export function generateStaticParams() {
-  return Object.keys(analyticsDashboards).map((project) => ({ project }));
+  return Object.keys(dashboards).map((project) => ({ project }));
 }
 
 export async function generateMetadata({ params }: DashboardPageProps): Promise<Metadata> {
   const { project } = await params;
-  if (!(project in analyticsDashboards)) notFound();
-  const dashboard = analyticsDashboards[project as AnalyticsDashboardSlug];
+  if (!Object.hasOwn(dashboards, project)) notFound();
+  const dashboard = dashboards[project as keyof typeof dashboards];
   const title = `${dashboard.title} Dashboard — Prashant Yadav`;
   const canonical = `/projects/${project}/dashboard`;
   return {
@@ -42,9 +49,9 @@ export async function generateMetadata({ params }: DashboardPageProps): Promise<
 
 export default async function AnalyticsProjectDashboardPage({ params }: DashboardPageProps) {
   const { project } = await params;
-  if (!(project in analyticsDashboards)) notFound();
-  const slug = project as AnalyticsDashboardSlug;
-  const dashboard = analyticsDashboards[slug];
+  if (!Object.hasOwn(dashboards, project)) notFound();
+  const slug = project as keyof typeof dashboards;
+  const dashboard = dashboards[slug];
 
   return (
     <>
@@ -52,7 +59,7 @@ export default async function AnalyticsProjectDashboardPage({ params }: Dashboar
       <DashboardThemeShell project={slug}>
         <header className="analytics-page-intro">
           <div className="analytics-page-intro-inner">
-            <Link href="/projects#analytics" className="analytics-project-return">← All retail & customer studies</Link>
+            <Link href="/projects#analytics" className="analytics-project-return">← All analytics & business studies</Link>
             <p className="analytics-page-eyebrow"><span />{dashboard.eyebrow}</p>
             <h1>{dashboard.title} <em>Interactive dashboard</em></h1>
             <p className="analytics-page-summary">{dashboard.summary}</p>
@@ -64,11 +71,12 @@ export default async function AnalyticsProjectDashboardPage({ params }: Dashboar
         </header>
 
         <div className="analytics-project-dashboard-wrap">
-          <AnalyticsDashboard key={slug} project={slug} />
+          <nav className="study-project-nav" aria-label="Project dashboards">{Object.entries(dashboards).map(([id, item]) => <Link key={id} href={`/projects/${id}/dashboard`} aria-current={id === slug ? "page" : undefined}>{item.title}</Link>)}</nav>
+          {Object.hasOwn(studyDashboards, slug) ? <StudyDashboard key={slug} project={slug as StudySlug} /> : <AnalyticsDashboard key={slug} project={slug as AnalyticsDashboardSlug} />}
           <details className="analytics-methodology">
             <summary>Methodology and source limits</summary>
             <p>
-              Dashboard calculations use the project’s documented cleaning rules where they are reproducible. The accompanying quality panel and reporting files list exclusions, saved-output differences, missing values, and scope limits. Records are pre-aggregated; customer IDs and transaction-level rows are not shipped to the browser.
+              Dashboard calculations use the project’s documented cleaning rules where they are reproducible. The accompanying quality panel and reporting files list exclusions, saved-output differences, missing values, and scope limits. Browser datasets contain aggregates or minimized analytical records. Source identifiers, customer and application IDs, descriptions and staff resources are omitted.
             </p>
           </details>
         </div>

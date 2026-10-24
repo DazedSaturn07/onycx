@@ -1,4 +1,4 @@
-export type ProjectVisual = "retail-iq" | "shoplens" | "sales" | "customer" | "mask" | "reviewpilot";
+export type ProjectVisual = "retail-iq" | "shoplens" | "sales" | "customer" | "mask" | "reviewpilot" | "job-market" | "loanflow" | "airops" | "retainai";
 
 export interface RepositoryProject {
   id: string;
@@ -14,6 +14,33 @@ export interface RepositoryProject {
 }
 
 export const analyticsProjects: RepositoryProject[] = [
+  {
+    id: "job-market", title: "Job Market Quality", category: "Job market & information quality",
+    summary: "A historical LinkedIn snapshot of 123,849 posting observations reveals pay disclosure, experience expectations and exact text repetition across 119,041 text groups.",
+    question: "How clearly do postings describe pay and requirements, and how much does repeated text inflate observation counts?",
+    approach: "Python prepares a dimensional model with transparent review rules; MySQL reconciles the counts, Excel supports review, and Power BI presents the evidence.",
+    technologies: ["Python", "Pandas", "MySQL", "Excel", "Power BI", "DAX"],
+    repoUrl: "https://github.com/DazedSaturn07/FakeJob-Analysis", visual: "job-market",
+    note: "March–April 2024 historical information quality; not a validated fake-job detector or a measure of today's vacancies.",
+  },
+  {
+    id: "loanflow", title: "LoanFlow", category: "Business analysis & process investigation",
+    summary: "An investigation of 31,509 loan applications connects resolution time, repeated completed work and process variation to a transparent pilot decision exercise.",
+    question: "Which lending-process patterns deserve case review, and do the modeled pilot assumptions justify the implementation cost?",
+    approach: "Python extracts case and path metrics from the BPI Challenge 2017 event log; MySQL reconciles them, Excel validates formulas, and Power BI links cohorts to case histories and scenarios.",
+    technologies: ["Python", "Pandas", "MySQL", "Excel", "Power BI", "Business Analysis"],
+    repoUrl: "https://github.com/DazedSaturn07/LoanFlow", visual: "loanflow",
+    note: "Calendar gaps are not proven queue time. Repeated work is an investigation proxy; scenario capacity value is hypothetical, not achieved savings.",
+  },
+  {
+    id: "airops", title: "AirOps", category: "Airline operations & disruption analytics",
+    summary: "A full-population analysis of 5,819,079 US flight observations compares arrival reliability, cancellations, route and airport patterns, and recorded delay attribution.",
+    question: "Which carriers, routes and departure patterns warrant investigation after checking eligible outcomes and observation volume?",
+    approach: "Python retains lineage and missing outcomes, MySQL independently reconciles the metrics, Excel validates a sample, and Power BI supports operational comparisons and route investigation.",
+    technologies: ["Python", "Pandas", "MySQL", "Excel", "Power BI", "DAX"],
+    repoUrl: "https://github.com/DazedSaturn07/AirOps", visual: "airops",
+    note: "Historical 2015 records; custom on-time boundary ≤15 minutes. October numeric airport identifiers are unresolved and preserved.",
+  },
   {
     id: "retail-iq",
     title: "RetailIQ",
@@ -76,6 +103,15 @@ export const machineLearningProjects: RepositoryProject[] = [
     repoUrl: "https://github.com/DazedSaturn07/Face_Mask_Detection",
     visual: "mask",
     note: "The README reports about 98% validation accuracy; this is a repository-reported result, not an independent benchmark.",
+  },
+  {
+    id: "retainai", title: "RetainAI", category: "Applied machine learning · telecom churn",
+    summary: "An offline churn study on 3,150 anonymous telecom records compares two models, ranks a campaign contact list and checks distribution drift.",
+    question: "Which customers have higher churn risk, and how should a limited contact capacity be ranked under explicit campaign assumptions?",
+    approach: "Four notebooks prepare profile-grouped splits, compare logistic regression with calibrated histogram gradient boosting, score a batch and inspect PSI drift. Identical predictor profiles stay together during splitting and calibration.",
+    technologies: ["Python", "Pandas", "scikit-learn", "Jupyter", "Calibration", "PSI"],
+    repoUrl: "https://github.com/DazedSaturn07/RetainAi", visual: "retainai",
+    note: "GitHub reference run: test average precision 0.8978 and ROC-AUC 0.9807. Repository-reported results; campaign benefits are hypothetical, with no deployed prediction service or measured retention uplift.",
   },
 ];
 
