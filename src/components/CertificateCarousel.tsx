@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,154 +9,163 @@ import { certificates } from "@/data/portfolio";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
 export default function CertificateCarousel() {
+  const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
-  const scrollSequence = useRef<ScrollTrigger | null>(null);
+  const axis = useRef<HTMLDivElement>(null);
+  const center = useRef<HTMLDivElement>(null);
+  const detail = useRef<HTMLDivElement>(null);
+  const cards = useRef<(HTMLAnchorElement | null)[]>([]);
+  const rail = useRef<HTMLOListElement>(null);
+  const sequence = useRef<ScrollTrigger | null>(null);
   const activeIndex = useRef(0);
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const root = stage.current;
-    if (!root) return;
+    const section = root.current;
+    const surface = stage.current;
+    if (!section || !surface) return;
     const media = gsap.matchMedia();
-    media.add("(min-height: 550px) and (prefers-reduced-motion: no-preference)", () => {
-      root.dataset.motion = "true";
-      const cards = gsap.utils.toArray<HTMLElement>(".certificate-slide", root);
-      const links = cards.map((card) => card.querySelector("a"));
-      const transforms = cards.map((card) => (value: string) => { card.style.transform = value; });
-      const opacities = cards.map((card) => (value: number) => { card.style.opacity = String(value); });
-      const visibleCards = cards.map(() => false);
-      const position = { value: 0 };
-      let previousNearest = -1;
-      let cardWidth = cards[0]?.offsetWidth ?? 0;
-      let verticalStep = root.clientWidth < 760 ? 17 : 29;
-      gsap.set(cards, { autoAlpha: 0 });
+    // The ring-to-drum geometry follows Dyvoult's Works Wheel.
+    media.add("(min-width: 800px) and (min-height: 620px) and (prefers-reduced-motion: no-preference)", () => {
+      section.dataset.motion = "true";
+      const model = { turn: 0 };
+      let disposed = false;
+      let cardHeight = 0;
+      let cardWidth = 0;
       const draw = () => {
-        const nearest = Math.round(position.value);
-        if (nearest !== activeIndex.current) {
-          activeIndex.current = nearest;
-          setActive(nearest);
-        }
-        const changedSelection = nearest !== previousNearest;
-        cards.forEach((card, index) => {
-          const delta = index - position.value;
-          const distance = Math.abs(delta);
-          const visible = distance < 3.2;
-          if (visible !== visibleCards[index] || previousNearest === -1) {
-            card.style.visibility = visible ? "visible" : "hidden";
-            card.setAttribute("aria-hidden", String(!visible));
-            if (!visible) opacities[index](0);
-            visibleCards[index] = visible;
-          }
-          if (changedSelection) {
-            card.style.zIndex = String(10 - Math.round(distance * 2));
-            if (links[index]) links[index]!.tabIndex = index === nearest ? 0 : -1;
-          }
-          if (!visible) return;
-          const x = delta * cardWidth * .84;
-          const y = Math.pow(Math.min(distance, 4), 1.6) * verticalStep;
-          transforms[index](`translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${(delta * 11).toFixed(2)}deg) rotateY(${(delta * -5).toFixed(2)}deg) scale(${Math.max(.64, 1 - distance * .07).toFixed(4)})`);
-          opacities[index](Math.max(.22, 1 - distance * .23));
+        const morph = clamp(model.turn, 0, 1);
+        const position = Math.max(0, model.turn - 1);
+        const drumRadius = cardHeight * 2.22;
+        const ringRadius = cardHeight * 1.14;
+        const ringScale = clamp((2 * Math.PI * ringRadius / certificates.length) * .82 / (cardWidth || 1), .16, 1);
+        surface.dataset.mode = morph < .5 ? "ring" : "drum";
+        if (axis.current) axis.current.style.transform = `translateZ(${-morph * drumRadius}px)`;
+        cards.current.forEach((card, index) => {
+          if (!card) return;
+          const delta = index - position;
+          const degrees = delta * 40;
+          const radians = degrees * Math.PI / 180;
+          const culled = morph > .5 && Math.abs(delta) > 1.6;
+          Object.assign(card.style, {
+            transform: `translateX(${-morph * cardHeight * 1.82 * (1 - Math.cos(radians))}px) rotateZ(${(1 - morph) * delta * 360 / certificates.length}deg) translateY(${-(1 - morph) * ringRadius}px) rotateX(${morph * degrees}deg) translateZ(${morph * drumRadius}px)`,
+            visibility: culled ? "hidden" : "visible",
+            zIndex: String(Math.round(100 - Math.abs(delta) * 2)),
+          });
+          card.tabIndex = morph < .5 || Math.round(position) === index ? 0 : -1;
+          card.setAttribute("aria-hidden", String(culled));
+          const face = card.firstElementChild as HTMLElement | null;
+          if (face) face.style.transform = `scale(${ringScale + (1 - ringScale) * morph})`;
         });
-        previousNearest = nearest;
+        if (center.current) center.current.style.opacity = String(1 - morph);
+        if (detail.current) {
+          detail.current.style.opacity = String(morph);
+          detail.current.style.visibility = morph > .5 ? "visible" : "hidden";
+        }
+        const next = clamp(Math.round(position), 0, certificates.length - 1);
+        if (next !== activeIndex.current) {
+          activeIndex.current = next;
+          setActive(next);
+        }
       };
-      draw();
-      const tween = gsap.to(position, {
-        value: certificates.length - 1,
+      const resize = () => {
+        cardHeight = Math.min(surface.clientHeight * .33, surface.clientWidth * .22);
+        cardWidth = cardHeight * 1.45;
+        surface.style.perspective = `${cardHeight * 2.7}px`;
+        cards.current.forEach((card) => {
+          if (card) Object.assign(card.style, { width: `${cardWidth}px`, height: `${cardHeight}px`, marginLeft: `${-cardWidth / 2}px`, marginTop: `${-cardHeight / 2}px` });
+        });
+        draw();
+      };
+      const tween = gsap.to(model, {
+        turn: certificates.length,
         ease: "none",
         onUpdate: draw,
-        scrollTrigger: {
-          trigger: root,
-          start: "top top+=96",
-          end: () => `+=${(certificates.length - 1) * Math.max(260, window.innerHeight * .42)}`,
-          pin: true,
-          scrub: .6,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onToggle: (self) => cards.forEach((card) => { card.style.willChange = self.isActive ? "transform, opacity" : "auto"; }),
-          onRefresh: () => {
-            cardWidth = cards[0]?.offsetWidth ?? 0;
-            verticalStep = root.clientWidth < 760 ? 17 : 29;
-            draw();
-          },
-        },
+        scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: .65, invalidateOnRefresh: true, onRefresh: resize },
       });
-      scrollSequence.current = tween.scrollTrigger ?? null;
+      sequence.current = tween.scrollTrigger ?? null;
+      const observer = new ResizeObserver(resize);
+      observer.observe(surface);
+      resize();
+      void document.fonts.ready.then(() => {
+        if (!disposed) { resize(); ScrollTrigger.refresh(); }
+      });
       return () => {
-        scrollSequence.current = null;
-        delete root.dataset.motion;
-        cards.forEach((card) => {
-          card.style.removeProperty("transform");
-          card.style.removeProperty("opacity");
-          card.style.removeProperty("visibility");
-          card.style.removeProperty("z-index");
-          card.style.removeProperty("will-change");
+        disposed = true;
+        observer.disconnect();
+        sequence.current = null;
+        delete section.dataset.motion;
+        delete surface.dataset.mode;
+        surface.style.removeProperty("perspective");
+        axis.current?.style.removeProperty("transform");
+        cards.current.forEach((card) => {
+          if (!card) return;
+          card.removeAttribute("style");
           card.removeAttribute("aria-hidden");
-          const link = card.querySelector("a");
-          if (link) link.tabIndex = 0;
+          card.tabIndex = 0;
+          card.firstElementChild?.removeAttribute("style");
         });
+        center.current?.removeAttribute("style");
+        detail.current?.removeAttribute("style");
       };
     });
     return () => media.revert();
   }, []);
 
   const navigate = (index: number) => {
-    const next = Math.max(0, Math.min(certificates.length - 1, index));
-    const sequence = scrollSequence.current;
-    if (sequence) {
-      const y = sequence.start + (sequence.end - sequence.start) * next / (certificates.length - 1);
-      window.dispatchEvent(new CustomEvent("portfolio:scroll-to", { detail: y }));
+    const next = clamp(index, 0, certificates.length - 1);
+    const trigger = sequence.current;
+    if (trigger) {
+      window.dispatchEvent(new CustomEvent("portfolio:scroll-to", { detail: trigger.start + (trigger.end - trigger.start) * (next + 1) / certificates.length }));
     } else {
-      stage.current?.querySelectorAll<HTMLElement>(".certificate-slide")[next]?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      const list = rail.current;
+      const card = list?.children[next] as HTMLElement | undefined;
+      if (list && card) list.scrollTo({ left: card.offsetLeft - list.offsetLeft, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
       activeIndex.current = next;
       setActive(next);
     }
   };
 
   return (
-    <div ref={stage} className="certificate-carousel" role="region" aria-roledescription="carousel" aria-label="Certification collection"
-      onKeyDown={(event) => {
-        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+    <section ref={root} id="credentials" className="portfolio-section portfolio-credentials certificate-wheel-section" aria-labelledby="credentials-heading">
+      <div className="certificate-wheel-sticky" onKeyDown={(event) => {
+        if ((event.key === "ArrowRight" || event.key === "ArrowLeft") && !(event.target instanceof HTMLButtonElement)) {
           event.preventDefault();
           navigate(activeIndex.current + (event.key === "ArrowRight" ? 1 : -1));
         }
-      }}
-      onTouchStart={(event) => { touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
-      onTouchEnd={(event) => {
-        if (touchStart.current !== null && scrollSequence.current) {
-          const delta = event.changedTouches[0].clientX - touchStart.current.x;
-          const vertical = event.changedTouches[0].clientY - touchStart.current.y;
-          if (Math.abs(delta) > 45 && Math.abs(delta) > Math.abs(vertical)) navigate(activeIndex.current + (delta < 0 ? 1 : -1));
-        }
-        touchStart.current = null;
       }}>
-      <div className="certificate-carousel-label"><span>Learning, in motion</span><a href="#contact">Continue to contact <ArrowUpRight size={14} aria-hidden="true" /></a></div>
-      <div className="certificate-carousel-cards" onScroll={(event) => {
-        if (scrollSequence.current) return;
-        const rail = event.currentTarget;
-        const cards = Array.from(rail.querySelectorAll<HTMLElement>(".certificate-slide"));
-        const nearest = cards.reduce((best, card, index) => Math.abs(card.offsetLeft - rail.scrollLeft) < Math.abs(cards[best].offsetLeft - rail.scrollLeft) ? index : best, 0);
-        if (nearest !== activeIndex.current) { activeIndex.current = nearest; setActive(nearest); }
-      }}>
-        {certificates.map((certificate, index) => (
-          <article className="certificate-slide" key={certificate.title} aria-roledescription="slide" aria-label={`${index + 1} of ${certificates.length}: ${certificate.title}`}>
-            <a href={certificate.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${certificate.title} credential`} onClick={(event) => {
-              if (scrollSequence.current && index !== activeIndex.current) { event.preventDefault(); navigate(index); }
-            }}>
-              <Image src={certificate.image} alt={`${certificate.title} certificate`} fill sizes="(max-width: 760px) 70vw, 420px" />
-              <span className="certificate-slide-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <div className="certificate-slide-copy"><span>{certificate.issuer} · {certificate.year}</span><h3>{certificate.title}</h3><span className="certificate-slide-link">View credential <ArrowUpRight size={15} aria-hidden="true" /></span></div>
-            </a>
-          </article>
-        ))}
+        <div className="certificate-wheel-top">
+          <div><p className="portfolio-section-kicker">05 / Credentials</p><h2 id="credentials-heading">Learning in <span>motion.</span></h2></div>
+          <a href="#contact">Continue to contact <ArrowUpRight size={17} aria-hidden="true" /></a>
+        </div>
+        <div ref={stage} className="certificate-wheel-stage" role="region" aria-label="Scroll-driven certification collection">
+          <div ref={axis} className="certificate-wheel-axis">
+            {certificates.map((certificate, index) => (
+              <a key={certificate.title} ref={(node) => { cards.current[index] = node; }} className="certificate-wheel-card" href={certificate.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${certificate.title} credential`}>
+                <span className="certificate-wheel-face"><Image src={certificate.image} alt={`${certificate.title} certificate`} fill sizes="(max-width: 1100px) 34vw, 500px" /><span className="certificate-wheel-hover">View credential <ArrowUpRight size={14} aria-hidden="true" /></span></span>
+              </a>
+            ))}
+          </div>
+          <div ref={center} className="certificate-wheel-center">Always curious.<br /><span>Always learning.</span><small>Scroll to turn <ArrowDown size={13} aria-hidden="true" /></small></div>
+          <div ref={detail} className="certificate-wheel-detail">
+            <span>{String(active + 1).padStart(2, "0")} / {String(certificates.length).padStart(2, "0")}</span>
+            <h3>{certificates[active].title}</h3><p>{certificates[active].issuer} · {certificates[active].year}</p>
+            <a href={certificates[active].url} target="_blank" rel="noopener noreferrer">View credential <ArrowUpRight size={16} aria-hidden="true" /></a>
+          </div>
+          <ol className="certificate-wheel-index" aria-label="Choose a certificate">{certificates.map((certificate, index) => <li key={certificate.title}><button type="button" onClick={() => navigate(index)} aria-current={index === active ? "true" : undefined}><span>{String(index + 1).padStart(2, "0")}</span>{certificate.title}</button></li>)}</ol>
+        </div>
+        <ol ref={rail} className="certificate-wheel-mobile" aria-label="Certification collection" data-lenis-prevent-wheel onScroll={(event) => {
+          const list = event.currentTarget;
+          const items = Array.from(list.children) as HTMLElement[];
+          const nearest = items.reduce((best, card, index) => Math.abs(card.offsetLeft - list.offsetLeft - list.scrollLeft) < Math.abs(items[best].offsetLeft - list.offsetLeft - list.scrollLeft) ? index : best, 0);
+          if (nearest !== activeIndex.current) { activeIndex.current = nearest; setActive(nearest); }
+        }}>
+          {certificates.map((certificate, index) => <li key={certificate.title}><a href={certificate.url} target="_blank" rel="noopener noreferrer"><div className="certificate-mobile-art"><Image src={certificate.image} alt={`${certificate.title} certificate`} fill sizes="(max-width: 799px) 80vw, 600px" /></div><span>{String(index + 1).padStart(2, "0")} / {certificate.issuer} · {certificate.year}</span><h3>{certificate.title}</h3><span className="certificate-mobile-link">View credential <ArrowUpRight size={16} aria-hidden="true" /></span></a></li>)}
+        </ol>
+        <div className="certificate-wheel-bottom"><p>Courses, curiosity &amp; continued practice.</p><div className="certificate-wheel-controls"><button type="button" aria-label="Previous certificate" disabled={active === 0} onClick={() => navigate(activeIndex.current - 1)}><ArrowLeft size={18} aria-hidden="true" /></button><p aria-live="polite" aria-atomic="true"><span>{String(active + 1).padStart(2, "0")}</span> / {String(certificates.length).padStart(2, "0")}</p><button type="button" aria-label="Next certificate" disabled={active === certificates.length - 1} onClick={() => navigate(activeIndex.current + 1)}><ArrowRight size={18} aria-hidden="true" /></button></div></div>
       </div>
-      <div className="certificate-carousel-controls">
-        <button type="button" aria-label="Previous certificate" disabled={active === 0} onClick={() => navigate(activeIndex.current - 1)}><ArrowLeft size={18} aria-hidden="true" /></button>
-        <p aria-live="polite" aria-atomic="true"><span>{String(active + 1).padStart(2, "0")}</span> / {String(certificates.length).padStart(2, "0")}</p>
-        <button type="button" aria-label="Next certificate" disabled={active === certificates.length - 1} onClick={() => navigate(activeIndex.current + 1)}><ArrowRight size={18} aria-hidden="true" /></button>
-      </div>
-      <p className="certificate-carousel-hint">Scroll to explore · Swipe or use the arrows</p>
-    </div>
+    </section>
   );
 }

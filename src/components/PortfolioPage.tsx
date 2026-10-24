@@ -89,12 +89,7 @@ export default function PortfolioPage() {
 
         <GitHubContributions />
 
-        <section id="credentials" className="portfolio-section portfolio-credentials" aria-labelledby="credentials-heading">
-          <div className="portfolio-section-inner">
-          <div className="portfolio-heading"><p className="portfolio-section-kicker" data-reveal data-reveal-side="left">05 / Credentials</p><div data-reveal data-reveal-side="right"><h2 id="credentials-heading">Keep<br /><em>learning.</em></h2><span>Courses and certifications that document a steady investment in analytical and technical foundations.</span></div></div>
-          <CertificateCarousel />
-          </div>
-        </section>
+        <CertificateCarousel />
 
         <CinematicFooter />
       </main>
