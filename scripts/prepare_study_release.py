@@ -23,7 +23,7 @@ for project in ["job-market", "loanflow", "airops"]:
         value["attribution"] = credits[project]
         file.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False), encoding="utf-8")
 entries = []
-for project in ["retail-iq", "shoplens", "customer-behaviour", "sales-analysis", "job-market", "loanflow", "airops"]:
+for project in ["retail-iq", "shoplens", "customer-behaviour", "novamart", "job-market", "loanflow", "airops"]:
     for file in sorted((root / "v2" / project).glob("*.json")):
         payload = file.read_bytes()
         if not 0 < len(payload) < 12_000_000:

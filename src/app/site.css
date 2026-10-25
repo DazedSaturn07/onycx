@@ -646,7 +646,7 @@ button { color: inherit; font: inherit; }
 .analytics-methodology p { max-width: 66rem; margin: .75rem 0 .1rem; color: #8d8f88; font-size: .68rem; line-height: 1.7; }
 .analytics-dashboard-customer-behaviour { --dash-accent: #d99b91; }
 .analytics-dashboard-shoplens { --dash-accent: #acb99a; }
-.analytics-dashboard-sales-analysis { --dash-accent: #9cb8c0; }
+.analytics-dashboard-novamart { --dash-accent: #9cb8c0; }
 @keyframes analytics-shimmer { to { background-position: -200% 0; } }
 
 @media (max-width: 900px) {

@@ -1,9 +1,9 @@
 {
   "data_version": "v2",
-  "built_at_utc": "2026-10-24T06:47:10.928174+00:00",
+  "built_at_utc": "2026-10-25T07:22:32.144399+00:00",
   "local_base_path": "/dashboard-data",
   "r2_object_prefix": "analytics",
-  "r2_release_prefix": "analytics/releases/b729117a4f2933d872e5b8f21e74f242b46d21e42336c4488601b6ef1eb79840",
+  "r2_release_prefix": "analytics/releases/547998930db96f735a0444f2b68c210180b533a3fb82a1dd2743b2ad4dcc06e5",
   "files": [
     {
       "path": "v2/airops/crossfilter.json",
@@ -51,6 +51,21 @@
       "sha256": "9bbb817bc4886b3c41205eb4bd05c6434c431426d1c253c8a952edd26188c2f8"
     },
     {
+      "path": "v2/novamart/items.json",
+      "bytes": 2877140,
+      "sha256": "23e9e815c24101f2807375b217be4db0ef1b92caa14734f0fb50f53ef8a6d431"
+    },
+    {
+      "path": "v2/novamart/orders.json",
+      "bytes": 5885947,
+      "sha256": "ee9f4ae6e2194e4e08f15f74c12faca4b55a8914d19aa2fc7b5f9858e31dfab6"
+    },
+    {
+      "path": "v2/novamart/overview.json",
+      "bytes": 18913,
+      "sha256": "697d69716d734d66162b8d4d7848762ed5bfbc6443bd40f23c2101a2179356fb"
+    },
+    {
       "path": "v2/retail-iq/affinity.json",
       "bytes": 144826,
       "sha256": "6ab9273cad14b671a658adc81848d4d04a34cda24fb2618578d690b9299b45b5"
@@ -86,34 +101,14 @@
       "sha256": "ba1f782ef84cc27bd639b5a7fa3069b103d5529fc250adcf69db3dc4607c0359"
     },
     {
-      "path": "v2/sales-analysis/interactions.json",
-      "bytes": 899638,
-      "sha256": "d3fbc616fe39a36f756dc5349ac17a3eb3a0fdb94e7f1fcaa3c403feb93f860f"
-    },
-    {
-      "path": "v2/sales-analysis/overview.json",
-      "bytes": 395373,
-      "sha256": "7fb8bd843670db1a62c36f81e365c7df6b7ab6e7edcf456e8adaed9de85b7ac0"
-    },
-    {
-      "path": "v2/sales-analysis/products.json",
-      "bytes": 489076,
-      "sha256": "76f2407ea8291c89c0b5aa9344c7216da0fccf414e1866aa8d7f210b701b8313"
-    },
-    {
-      "path": "v2/sales-analysis/quality.json",
-      "bytes": 1201,
-      "sha256": "57fcbba6bce2d4497c0bb7668afbbf1d7d7570bab860ef00e40758fdd08f5095"
-    },
-    {
       "path": "v2/shoplens/interactions.json",
       "bytes": 901981,
       "sha256": "c340514bec396c3253c0a1ae7661ae1ea305c82b24aa3ac0a4acc7948a4ee21b"
     },
     {
       "path": "v2/shoplens/overview.json",
-      "bytes": 396450,
-      "sha256": "f98cf449b5253ebe68ccdc1a8e9933518e3a0db0654fbfc5dc146b861ed79f9f"
+      "bytes": 396395,
+      "sha256": "2b2f1ec15c87eb8033c5c63b065e90fe92cc74f2b8fa50ceaa0faeb4e409d0da"
     },
     {
       "path": "v2/shoplens/products.json",

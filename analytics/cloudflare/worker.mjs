@@ -2,7 +2,7 @@
 const assets = {
   "retail-iq": ["overview", "interactions", "products", "retention", "personas", "affinity", "instacart"],
   shoplens: ["overview", "interactions", "products", "retention"],
-  "sales-analysis": ["overview", "interactions", "products", "quality"],
+  novamart: ["overview", "orders", "items"],
   "customer-behaviour": ["overview", "behavior"],
   "job-market": ["overview", "crossfilter"],
   loanflow: ["overview", "crossfilter"],

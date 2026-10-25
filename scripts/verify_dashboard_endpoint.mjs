@@ -12,7 +12,7 @@ assert.equal(manifest.data_version, "v2");
 assert.match(manifest.r2_release_prefix, /^analytics\/releases\/[a-f0-9]{64}$/);
 assert.ok(Array.isArray(manifest.files) && manifest.files.length > 0);
 for (const file of manifest.files) {
-  assert.match(file.path, /^v2\/(retail-iq|shoplens|customer-behaviour|sales-analysis|job-market|loanflow|airops)\/[a-z-]+\.json$/);
+  assert.match(file.path, /^v2\/(retail-iq|shoplens|customer-behaviour|novamart|job-market|loanflow|airops)\/[a-z-]+\.json$/);
   const asset = await get(`${manifest.r2_release_prefix}/${file.path}`);
   assert.equal(asset.status, 200, file.path);
   assert.equal(asset.headers.get("access-control-allow-origin"), origin);

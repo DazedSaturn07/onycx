@@ -99,12 +99,14 @@ export function TrendChart({
   data,
   valueLabel,
   formatValue,
+  formatAxisValue,
   selectedLabel,
   onSelect,
 }: {
   data: ChartDatum[];
   valueLabel: string;
   formatValue: (value: number) => string;
+  formatAxisValue?: (value: number) => string;
   selectedLabel?: string;
   onSelect?: (label: string) => void;
 }) {
@@ -131,7 +133,7 @@ export function TrendChart({
             </defs>
             <CartesianGrid vertical={false} stroke="var(--dash-chart-grid)" />
             <XAxis dataKey="label" tick={{ fill: "var(--dash-chart-axis)", fontSize: 10 }} axisLine={false} tickLine={false} minTickGap={28} tickFormatter={(value: string) => value.slice(2)} />
-            <YAxis width={48} tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={(value: number) => new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value)} />
+            <YAxis width={formatAxisValue ? 65 : 48} tick={{ fill: "var(--dash-chart-axis-muted)", fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={formatAxisValue ?? ((value: number) => new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value))} />
             <Tooltip
               cursor={{ stroke: "var(--dash-chart-cursor-line)", strokeDasharray: "3 4" }}
               contentStyle={{ background: "var(--dash-chart-tooltip)", border: "1px solid var(--dash-chart-tooltip-border)", borderRadius: 10, color: "var(--dash-chart-tooltip-text)", fontSize: 12 }}

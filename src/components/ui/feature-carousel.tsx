@@ -33,7 +33,7 @@ const projectIcons: Record<string, typeof Analytics01Icon> = {
   "job-market": GlobalSearchIcon, loanflow: Analytics01Icon,
   airops: ChartLineData01Icon, "retail-iq": Store01Icon,
   shoplens: GlobalSearchIcon, "customer-behaviour": Analytics01Icon,
-  "sales-analysis": ChartLineData01Icon, "face-mask-detection": FaceIdIcon,
+  "novamart": ChartLineData01Icon, "face-mask-detection": FaceIdIcon,
   retainai: Analytics01Icon, reviewpilot: SourceCodeCircleIcon,
 };
 
@@ -44,7 +44,7 @@ const cardGradients: Record<RepositoryProject["id"], string> = {
   "retail-iq": "linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
   shoplens: "linear-gradient(145deg, #091221 0%, #0c2b4a 50%, #1a5c6e 100%)",
   "customer-behaviour": "linear-gradient(145deg, #160a1f 0%, #3d154a 50%, #681f5c 100%)",
-  "sales-analysis": "linear-gradient(145deg, #1c0e05 0%, #4a2107 50%, #7d370b 100%)",
+  "novamart": "linear-gradient(145deg, #1c0e05 0%, #4a2107 50%, #7d370b 100%)",
   "face-mask-detection": "linear-gradient(145deg, #071512 0%, #123d33 50%, #1f6b57 100%)",
   retainai: "linear-gradient(145deg, #0b1820 0%, #154d54 50%, #327b75 100%)",
   reviewpilot: "linear-gradient(145deg, #050608 0%, #191f26 50%, #313d4a 100%)",

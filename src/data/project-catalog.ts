@@ -1,4 +1,4 @@
-export type ProjectVisual = "retail-iq" | "shoplens" | "sales" | "customer" | "mask" | "reviewpilot" | "job-market" | "loanflow" | "airops" | "retainai";
+export type ProjectVisual = "retail-iq" | "shoplens" | "novamart" | "customer" | "mask" | "reviewpilot" | "job-market" | "loanflow" | "airops" | "retainai";
 
 export interface RepositoryProject {
   id: string;
@@ -78,16 +78,16 @@ export const analyticsProjects: RepositoryProject[] = [
     note: "The supplied file contains 3,900 customer records and has no dated transaction column.",
   },
   {
-    id: "sales-analysis",
-    title: "Retail Sales Analysis",
-    category: "Sales performance",
-    summary: "A sales reporting project that examines transaction quality, revenue trends, product performance, customer value, and geography.",
-    question: "Where are sales concentrated, when do they peak, and which products and customers contribute most?",
-    approach: "Python data cleaning and exploratory work support a broad set of SQL analyses and a Power BI dashboard with trend, product, customer, and location views.",
-    technologies: ["Python", "Pandas", "MySQL", "SQL", "Power BI", "DAX", "RFM"],
-    repoUrl: "https://github.com/DazedSaturn07/Sales_Analysis_Dashboard",
-    visual: "sales",
-    note: "The supplied Online Retail II data is denominated in GBP; dashboard totals are labeled as a retained positive-line sales proxy.",
+    id: "novamart",
+    title: "NovaMart",
+    category: "Marketplace commerce & fulfillment",
+    summary: "An analysis of 99,441 Olist orders connects BRL 13.22 million in delivered item value with delivery reliability, seller and category performance, and repeat purchases.",
+    question: "Where does the marketplace generate delivered item value, and which delivery patterns deserve investigation?",
+    approach: "Python aggregates items, payments and reviews to their correct grain; MySQL independently reconciles the analysis, Excel validates the controls, and five Power BI pages support investigation.",
+    technologies: ["Python", "Pandas", "MySQL", "Excel", "Power BI", "DAX"],
+    repoUrl: "https://github.com/DazedSaturn07/NovaMart",
+    visual: "novamart",
+    note: "Historical Brazilian marketplace data in BRL. Item value is a GMV proxy, not revenue or profit. Delivery rates exclude eight delivered orders without actual delivery dates; timestamp and calendar-date lateness differ.",
   },
 ];
 

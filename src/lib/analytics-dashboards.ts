@@ -40,17 +40,6 @@ export const analyticsDashboards = {
       { id: "quality", label: "Data quality", files: [] },
     ],
   },
-  "sales-analysis": {
-    title: "Retail Sales Analysis",
-    eyebrow: "Sales performance / product and time patterns",
-    summary: "Review the project cleaner’s retained positive lines by month, market, product, weekday, and hour.",
-    source: "UCI Online Retail II, CSV copy",
-    tabs: [
-      { id: "performance", label: "Performance", files: ["interactions.json"] },
-      { id: "products", label: "Products", files: ["products.json"] },
-      { id: "quality", label: "Data quality", files: ["quality.json"] },
-    ],
-  },
 } as const;
 
 export type AnalyticsDashboardSlug = keyof typeof analyticsDashboards;

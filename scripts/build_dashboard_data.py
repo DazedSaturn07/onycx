@@ -39,7 +39,6 @@ SOURCE_PAIRS = [
     ("Customer Behaviour", r"Customer Behaviour/data/raw/customer_shopping_behavior.csv", "customer_behaviour dataset/raw/customer_shopping_behavior.csv"),
     ("Customer Behaviour", r"Customer Behaviour/data/processed/customer_shopping_cleaned.csv", "customer_behaviour dataset/processed/customer_shopping_cleaned.csv"),
     ("Customer Behaviour", r"Customer Behaviour/data/processed/customer_shopping_sql.csv", "customer_behaviour dataset/processed/customer_shopping_sql.csv"),
-    ("Retail Sales Analysis", r"Sales-Analytics Dashboard/online_retail_II.csv", "sales_analytics_dataset/online_retail_II.csv"),
     ("ShopLens Analytics", r"ShopLens/data/raw/online_retail_II.xlsx", "shoplens_dataset/online_retail_II.xlsx"),
 ]
 
@@ -357,23 +356,7 @@ def top_by_filters(grouped: pd.DataFrame, limit: int = 20) -> pd.DataFrame:
     )
 
 
-def sales_quality(raw: pd.DataFrame, frame: pd.DataFrame, exclusions: dict[str, int], duplicate_count: int) -> dict[str, Any]:
-    return {
-        "source_rows": int(len(raw)),
-        "source_duplicate_rows": int(duplicate_count),
-        "retained_rows": int(len(frame)),
-        "exclusions_by_step": exclusions,
-        "missing_customer_rows": int(raw["Customer ID"].isna().sum()),
-        "missing_description_rows": int(raw["Description"].isna().sum()),
-        "cancellation_rows": int(raw["Invoice"].astype(str).str.upper().str.startswith("C").sum()),
-        "negative_quantity_rows": int((pd.to_numeric(raw["Quantity"], errors="coerce") < 0).sum()),
-        "nonpositive_price_rows": int((pd.to_numeric(raw["Price"], errors="coerce") <= 0).sum()),
-        "duplicate_rows_preserved": True,
-        "duplicate_policy": "Repeated source rows are preserved because the source project does not remove them and the row grain has no unique line identifier.",
-    }
-
-
-def clean_online_retail_ii(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict[str, Any]]:
+def clean_online_retail_ii(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any]]:
     renamed = raw.rename(
         columns={
             "Invoice": "invoice_no",
@@ -422,25 +405,6 @@ def clean_online_retail_ii(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFram
     shop["hour"] = shop["invoice_date"].dt.hour.astype("int8")
     shop["invoice_month"] = shop["invoice_date"].dt.to_period("M").astype(str)
 
-    sales = renamed.copy()
-    exclusions_sales: dict[str, int] = {}
-    start = len(sales)
-    sales = sales.dropna(subset=["customer_id"]).copy()
-    exclusions_sales["missing_customer_id"] = start - len(sales)
-    start = len(sales)
-    sales = sales.loc[~sales["invoice_no"].astype(str).str.startswith("C")].copy()
-    exclusions_sales["cancellation_invoice"] = start - len(sales)
-    start = len(sales)
-    sales = sales.loc[sales["quantity"].gt(0) & sales["unit_price"].gt(0)].copy()
-    exclusions_sales["nonpositive_or_invalid_quantity_price"] = start - len(sales)
-    sales["quantity"] = sales["quantity"].astype("int64")
-    sales["line_sales_proxy"] = (sales["quantity"] * sales["unit_price"]).round(2)
-    sales["description"] = sales["description"].fillna("Unknown Product").str.strip()
-    sales["year"] = sales["invoice_date"].dt.year.astype(str)
-    sales["period"] = sales["invoice_date"].dt.to_period("M").astype(str)
-    sales["weekday_index"] = sales["invoice_date"].dt.dayofweek.astype("int8")
-    sales["hour"] = sales["invoice_date"].dt.hour.astype("int8")
-
     duplicate_count = int(raw.duplicated().sum())
     quality = {
         "source_rows": int(len(raw)),
@@ -459,15 +423,9 @@ def clean_online_retail_ii(raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFram
             "duplicate_rows_preserved": int(shop.duplicated().sum()),
             "policy": "Known-customer positive sales only; excludes cancellations, nonpositive quantity or price, and rows without a usable product, date, or country. Exact repeated source rows are retained.",
         },
-        "sales_analysis": {
-            "retained_rows": int(len(sales)),
-            "exclusions_by_step": exclusions_sales,
-            "unknown_product_rows": int(sales["description"].eq("Unknown Product").sum()),
-            "duplicate_rows_preserved": int(sales.duplicated().sum()),
-            "policy": "Follows the project cleaner: excludes anonymous customers, cancellation invoices, and nonpositive quantity or price; missing descriptions are labeled Unknown Product. Exact repeated source rows are retained.",
-        },
+
     }
-    return shop, sales, renamed, quality
+    return shop, quality
 
 
 def add_dimension_fields(frame: pd.DataFrame) -> pd.DataFrame:
@@ -499,27 +457,18 @@ def build_hour_series(frame: pd.DataFrame) -> pd.DataFrame:
     return rollup_records(frame, ("hour",)).sort_values(["year", "country", "hour"])
 
 
-def write_shoplens_and_sales(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
-    csv_path = data_root / "sales_analytics_dataset" / "online_retail_II.csv"
-    raw = read_csv(csv_path)
-    sheet_clean, sales_clean, normalized, quality = clean_online_retail_ii(raw)
+def write_shoplens(data_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    workbook = data_root / "shoplens_dataset/online_retail_II.xlsx"
+    raw = pd.concat(pd.read_excel(workbook, sheet_name=None).values(), ignore_index=True)
+    sheet_clean, quality = clean_online_retail_ii(raw)
     shop_parquet = write_parquet("shoplens/clean-transactions.parquet", sheet_clean)
-    sales_parquet = write_parquet("sales-analysis/clean-transactions.parquet", sales_clean)
     shop_metrics = rollup_records(sheet_clean)
-    sales_metrics = rollup_records(sales_clean, amount_column="line_sales_proxy")
     shop_interactions = build_invoice_interactions(sheet_clean)
-    sales_interactions = build_invoice_interactions(sales_clean, amount_column="line_sales_proxy")
     shop_monthly = build_timeline(sheet_clean)
-    sales_monthly = build_timeline(sales_clean)
     shop_countries = build_country_series(sheet_clean)
-    sales_countries = build_country_series(sales_clean)
     shop_products = build_product_series(sheet_clean)
-    sales_products = build_product_series(sales_clean)
     shop_weekday = build_weekday_series(sheet_clean)
-    sales_weekday = build_weekday_series(sales_clean)
     shop_hours = build_hour_series(sheet_clean)
-    sales_hours = build_hour_series(sales_clean)
-
     raw_span = pd.to_datetime(raw["InvoiceDate"], errors="coerce", format="mixed")
     metadata = {
         "currency": "GBP",
@@ -527,9 +476,9 @@ def write_shoplens_and_sales(data_root: Path) -> tuple[dict[str, Any], dict[str,
         "period_start": raw_span.min().strftime("%Y-%m-%d"),
         "period_end": raw_span.max().strftime("%Y-%m-%d"),
         "source_rows": int(len(raw)),
-        "source_bytes": int(csv_path.stat().st_size),
+        "source_bytes": int(workbook.stat().st_size),
         "source_columns": [str(column) for column in raw.columns],
-        "cross_format_audit": "The staged ShopLens workbook and Retail Sales CSV were compared as normalized row multisets; all 1,067,371 rows matched.",
+        "source_format": "ShopLens Online Retail II workbook; both supplied worksheets retained.",
         "customer_ids_public": False,
     }
     overview_shop = {
@@ -564,51 +513,8 @@ def write_shoplens_and_sales(data_root: Path) -> tuple[dict[str, Any], dict[str,
     retention["project"] = "shoplens"
     write_json(PUBLIC_ROOT / VERSION / "shoplens" / "retention.json", retention)
 
-    overview_sales = {
-        "project": "sales-analysis",
-        "metadata": {**metadata, "retained_rows": int(len(sales_clean)), "cleaned_bytes": sales_parquet["bytes"]},
-        "filters": {
-            "year": ["All", *sorted(sales_clean["year"].unique().tolist())],
-            "country": ["All", *sorted(sales_clean["country"].dropna().astype(str).unique().tolist())],
-        },
-        "metrics": json_records(sales_metrics),
-        "timeline": json_records(sales_monthly),
-        "countries": json_records(sales_countries),
-        "weekday": json_records(sales_weekday),
-        "hours": json_records(sales_hours),
-        "quality": quality["sales_analysis"],
-        "definitions": {
-            "sales_proxy": "Sum of quantity × unit price for the project cleaner's retained rows, in GBP. It is not profit or net recognized revenue.",
-            "average_order_value": "Retained sales proxy divided by distinct retained invoice numbers; the dashboard does not use a per-line mean as AOV.",
-        },
-    }
-    write_json(PUBLIC_ROOT / VERSION / "sales-analysis" / "overview.json", overview_sales)
-    write_json(
-        PUBLIC_ROOT / VERSION / "sales-analysis" / "interactions.json",
-        {"project": "sales-analysis", "rollups": json_records(sales_interactions)},
-    )
-    write_json(
-        PUBLIC_ROOT / VERSION / "sales-analysis" / "products.json",
-        {"project": "sales-analysis", "currency": "GBP", "products": json_records(sales_products)},
-    )
-    write_json(
-        PUBLIC_ROOT / VERSION / "sales-analysis" / "quality.json",
-        {"project": "sales-analysis", "quality": quality},
-    )
-
-    validation = {
-        "shoplens": validate_summary(sheet_clean, shop_metrics, "line_sales_proxy"),
-        "sales_analysis": validate_summary(sales_clean, sales_metrics, "line_sales_proxy"),
-    }
-    report = {
-        "source_rows": int(len(raw)),
-        "source_bytes_csv": int(csv_path.stat().st_size),
-        "source_bytes_xlsx": int((data_root / "shoplens_dataset" / "online_retail_II.xlsx").stat().st_size),
-        "cleaned_outputs": {"shoplens": shop_parquet, "sales_analysis": sales_parquet},
-        "quality": quality,
-        "validation": validation,
-    }
-    return report, validation
+    validation = {"shoplens": validate_summary(sheet_clean, shop_metrics, "line_sales_proxy")}
+    return {"quality": quality, "validation": validation}, validation
 
 
 def validate_summary(frame: pd.DataFrame, metrics: pd.DataFrame, amount_column: str) -> dict[str, Any]:
@@ -1661,7 +1567,8 @@ def build_retail_iq_assets(data_root: Path) -> dict[str, Any]:
 def build_all(data_root: Path) -> dict[str, Any]:
     manifest_rows = create_source_manifest()
     manifest_path = ROOT / "analytics" / "source-manifest.csv"
-    shop_sales_report, shop_sales_validation = write_shoplens_and_sales(data_root)
+    shop_report, shop_validation = write_shoplens(data_root)
+    source_profiles = profile_staged_sources()
     retail_result = build_retail_iq_assets(data_root)
 
     customer, customer_validation = build_customer_behaviour(data_root)
@@ -1672,7 +1579,7 @@ def build_all(data_root: Path) -> dict[str, Any]:
         "source_manifest": str(manifest_path.relative_to(ROOT)),
         "source_pairs_verified_unchanged": len(manifest_rows),
         "retail_iq": retail_result["quality"],
-        "shoplens_and_sales_analysis": shop_sales_report["quality"],
+        "shoplens": shop_report["quality"],
         "customer_behaviour": customer["quality"],
         "source_profiles": source_profiles,
     }
@@ -1684,7 +1591,7 @@ def build_all(data_root: Path) -> dict[str, Any]:
 
     validations = {
         "built_at_utc": datetime.now(timezone.utc).isoformat(),
-        "online_retail_ii": shop_sales_validation,
+        "online_retail_ii": shop_validation,
         "customer_behaviour": customer_validation,
         "retail_iq_online_retail": retail_result["validation"],
         "instacart": {
@@ -1765,7 +1672,6 @@ def payload_report(manifest: dict[str, Any]) -> dict[str, Any]:
         "retail-iq": lambda name: name.lower().startswith("retailiq"),
         "shoplens": lambda name: name.lower().startswith("shoplens"),
         "customer-behaviour": lambda name: name.lower().startswith("customer behaviour"),
-        "sales-analysis": lambda name: name.lower().startswith("retail sales analysis"),
     }
     source_rows = pd.read_csv(ROOT / "analytics" / "source-manifest.csv").to_dict(orient="records")
     for project, matcher in project_names.items():
@@ -1808,7 +1714,7 @@ def main() -> int:
     GENERATED_ROOT = DATA_ROOT / "generated"
     PROCESSED_ROOT = GENERATED_ROOT / "processed"
     print(f"Read-only staged inputs: {DATA_ROOT}")
-    print("Source copies will be SHA-256 checked against the four original project folders.")
+    print("Source copies will be SHA-256 checked against the original project folders.")
     if args.project == "retail-iq":
         result = {"manifest_rows": create_source_manifest()}
         retail_result = build_retail_iq_assets(DATA_ROOT)

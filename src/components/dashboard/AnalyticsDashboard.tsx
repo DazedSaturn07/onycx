@@ -366,7 +366,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
   const changeTab = (tabId: string) => {
     setActiveTabId(tabId);
     setSelectedProduct("");
-    if (tabId !== "trading" && tabId !== "performance") clearCrossFilters();
+    if (tabId !== "trading") clearCrossFilters();
   };
   const hasFilters = Object.keys(options).length > 0 || crossFilters.period !== "All" || crossFilters.value_band !== "All";
   const hasChartSelections = commerceDashboard && (country !== "All" || crossFilters.period !== "All" || crossFilters.value_band !== "All");
@@ -525,7 +525,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
             ? <div className="analytics-lazy-state" role="status"><div className="analytics-chart-loading" /><span>Opening this analysis from its summarized dataset…</span></div>
             : null}
 
-        {activeTab.id === "trading" || activeTab.id === "performance" || activeTab.id === "profile" ? (
+        {activeTab.id === "trading" || activeTab.id === "profile" ? (
           <>
             {!metricMissing && <div className="analytics-kpi-grid" aria-label="Key performance indicators">
               {project === "customer-behaviour" ? (
@@ -615,7 +615,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
                 )}
 
                 <div className="analytics-content-grid analytics-content-grid-secondary">
-                  {(project === "sales-analysis" || project === "shoplens") && <>
+                  {project === "shoplens" && <>
                     <Panel title="Sales proxy by weekday" eyebrow="Year and country slice · independent of month and invoice band">
                       <RankingChart data={filteredRollups(assetRows<RollupRecord>(overview, "weekday"), selectedFilters).map((row) => ({ label: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][readNumber(row, "weekday_index")], value: readNumber(row, "sales_proxy") }))} formatValue={formatDatasetAmount} height={270} />
                     </Panel>
@@ -701,10 +701,7 @@ export default function AnalyticsDashboard({ project }: { project: AnalyticsDash
         {activeTab.id === "choices" && project === "customer-behaviour" ? (
           <CustomerChoices asset={assets["behavior.json"]} selected={selectedFilters} />
         ) : null}
-        {activeTab.id === "quality" && project === "sales-analysis" ? (
-          <QualityDetails asset={assets["quality.json"]} project={project} />
-        ) : null}
-        {activeTab.id === "quality" && project !== "sales-analysis" ? <>{project === "retail-iq" && <RetailIqQuality overview={overview} personas={assets["personas.json"]} instacart={assets["instacart.json"]} />}<SourceQuality overview={overview} /></> : null}
+        {activeTab.id === "quality" ? <>{project === "retail-iq" && <RetailIqQuality overview={overview} personas={assets["personas.json"]} instacart={assets["instacart.json"]} />}<SourceQuality overview={overview} /></> : null}
       </div>
 
       <div className="analytics-dashboard-footnote">
@@ -874,43 +871,5 @@ function CustomerChoices({ asset, selected }: { asset: JsonAsset | undefined; se
         </Panel>
       </div>
     </>
-  );
-}
-
-function QualityDetails({ asset, project }: { asset: JsonAsset | undefined; project: AnalyticsDashboardSlug }) {
-  if (!asset) return null;
-  const quality = assetObject(asset, "quality");
-  const salesQuality = assetObject(quality, "sales_analysis");
-  const exclusions = assetObject(salesQuality, "exclusions_by_step");
-  const rawRows = readNumber(quality ?? undefined, "source_rows");
-  const duplicates = readNumber(quality ?? undefined, "source_duplicate_rows");
-  const missingCustomers = readNumber(quality ?? undefined, "missing_customer_rows");
-  const missingDescriptions = readNumber(quality ?? undefined, "missing_description_rows");
-  const duplicateRows = readNumber(salesQuality ?? undefined, "duplicate_rows_preserved");
-  const policy = readString(salesQuality ?? undefined, "policy");
-  return (
-    <div className="analytics-content-grid analytics-content-grid-main">
-      <Panel title="Source quality" eyebrow="Online Retail II · audited raw rows">
-        <div className="analytics-quality-grid">
-          <div><span>Source rows</span><strong>{formatNumber(rawRows)}</strong></div>
-          <div><span>Exact duplicate rows</span><strong>{formatNumber(duplicates)}</strong></div>
-          <div><span>Missing customer IDs</span><strong>{formatNumber(missingCustomers)}</strong></div>
-          <div><span>Missing descriptions</span><strong>{formatNumber(missingDescriptions)}</strong></div>
-          <div><span>Duplicates retained by project cleaner</span><strong>{formatNumber(duplicateRows)}</strong></div>
-          <div><span>Current filter scope</span><strong>{projectLabel(project)}</strong></div>
-        </div>
-      </Panel>
-      <Panel title="Applied exclusions" eyebrow="Source project cleaning behavior">
-        <DataTable
-          headers={["Rule", "Rows removed"]}
-          rows={Object.entries(exclusions ?? {}).map(([name, count]) => [
-            <span key="rule">{projectLabel(name.replaceAll("_", "-"))}</span>,
-            <span key="count">{formatNumber(asNumber(count))}</span>,
-          ])}
-        />
-        <p className="analytics-panel-copy">{policy}</p>
-        <p className="analytics-small-note">The current report follows the source project’s existing cleaner and does not deduplicate retained transaction lines.</p>
-      </Panel>
-    </div>
   );
 }
