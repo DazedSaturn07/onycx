@@ -120,7 +120,7 @@ test("All published analytics assets load through Worker and pass browser integr
   try {
     globalThis.fetch = async (url, options = {}) => worker.fetch(new Request(url, { ...options, headers: { Origin: origin } }), realEnv);
     const release = await data.loadDashboardManifest("https://data.example.com");
-    assert.equal(release.files.length, 23);
+    assert.equal(release.files.length, manifest.files.length);
     for (const file of release.files) {
       const [, project, name] = file.path.split("/");
       assert.ok(await (project in analytics.module.analyticsDashboards ? data.loadDashboardAsset("https://data.example.com", release, project, name) : data.loadPublishedJson("https://data.example.com", release, project, name)));

@@ -843,3 +843,12 @@ button { color: inherit; font: inherit; }
   .hero-sculpture-object,.hero-sculpture-core,.hero-sculpture-orbit-one,.hero-sculpture-orbit-two,.hero-sculpture-orbit-three { animation: none; transition: none; }
   .analytics-kpi-selectable { transition: none; }
 }
+
+.project-outcome-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.1rem; margin-bottom: 1.6rem; padding-block: 1rem; border-block: 1px solid currentColor; }
+.project-outcome-grid > div { min-width: 0; }
+.project-outcome-grid span { display: block; font: 600 .65rem/1.6 var(--body); letter-spacing: .045em; text-transform: uppercase; opacity: .65; margin-bottom: .45rem; }
+.project-outcome-grid strong { display: block; font-size: clamp(1rem,2.6vw,2.5rem); font-weight: 500; line-height: 1.2; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.project-evidence-note { font-size: .72rem; line-height: 1.8; opacity: .7; max-width: 100ch; margin-top: .9rem; }
+.project-web-section .project-outcome-grid { grid-template-columns: minmax(0,1fr); }
+.project-web-section .project-outcome-grid strong { font-size: clamp(.95rem,1.3vw,1.2rem); line-height: 1.6; letter-spacing: -.01em; }
+@media(max-width:600px) { .project-outcome-grid { grid-template-columns: minmax(0,1fr); } .project-evidence-note { font-size: .7rem; } }

@@ -52,7 +52,7 @@ $seen = @{}
 # publish arbitrary extra JSON placed under the public folder.
 foreach ($entry in $manifest.files) {
     $relativePath = [string]$entry.path
-    if ($relativePath -notmatch "^$version/(retail-iq|shoplens|customer-behaviour|novamart|job-market|loanflow|airops)/(overview|interactions|products|retention|personas|affinity|instacart|behavior|quality|crossfilter|hourly|orders|items)\.json$" -or $seen.ContainsKey($relativePath)) {
+    if ($relativePath -notmatch "^$version/(retail-iq|shoplens|customer-behaviour|novamart|civicpulse|freightflow|job-market|loanflow|airops)/(overview|interactions|products|retention|personas|affinity|instacart|behavior|quality|crossfilter|hourly|orders|items|priorities|requests-[a-c]|lanes-[a-c]|commodity-[a-z]+(?:-[a-z]+)?)\.json$" -or $seen.ContainsKey($relativePath)) {
         throw "Invalid or duplicate manifest path: $relativePath"
     }
     $seen[$relativePath] = $true

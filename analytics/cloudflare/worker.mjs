@@ -1,5 +1,7 @@
 // Public aggregate reads through a private R2 binding. No write or listing API.
+import operationsAssets from "./operations-assets.json" with { type: "json" };
 const assets = {
+  ...operationsAssets,
   "retail-iq": ["overview", "interactions", "products", "retention", "personas", "affinity", "instacart"],
   shoplens: ["overview", "interactions", "products", "retention"],
   novamart: ["overview", "orders", "items"],

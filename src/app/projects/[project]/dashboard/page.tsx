@@ -11,6 +11,9 @@ import { analyticsDashboards } from "@/lib/analytics-dashboards";
 import type { AnalyticsDashboardSlug } from "@/lib/analytics-dashboards";
 import { siteUrl } from "@/lib/site-config";
 import { novaMart } from "@/lib/novamart";
+import { operationDashboards } from "@/lib/operations-data";
+import type { OperationsSlug } from "@/lib/operations-data";
+import { dashboardProjects } from "@/data/project-catalog";
 import "@/app/dashboard-4.css";
 import "@/app/finance-bento.css";
 
@@ -18,7 +21,11 @@ const dashboards = {
   ...analyticsDashboards,
   ...studyDashboards,
   novamart: novaMart,
+  ...operationDashboards,
 };
+const OperationsDashboard = dynamic(
+  () => import("@/components/dashboard/OperationsDashboard"),
+);
 const NovaMartDashboard = dynamic(
   () => import("@/components/dashboard/NovaMartDashboard"),
 );
@@ -80,10 +87,14 @@ export default async function AnalyticsProjectDashboardPage({
         <header className="analytics-page-intro">
           <div className="analytics-page-intro-inner">
             <Link
-              href="/projects#analytics"
+              href={
+                slug === "freightflow" || slug === "airops"
+                  ? "/projects#supply-chain"
+                  : "/projects#analytics"
+              }
               className="analytics-project-return"
             >
-              ← All analytics & business studies
+              ← All analytics & operations projects
             </Link>
             <p className="analytics-page-eyebrow">
               <span />
@@ -108,17 +119,24 @@ export default async function AnalyticsProjectDashboardPage({
 
         <div className="analytics-project-dashboard-wrap">
           <nav className="study-project-nav" aria-label="Project dashboards">
-            {Object.entries(dashboards).map(([id, item]) => (
-              <Link
-                key={id}
-                href={`/projects/${id}/dashboard`}
-                aria-current={id === slug ? "page" : undefined}
-              >
-                {item.title}
-              </Link>
-            ))}
+            {dashboardProjects
+              .map(
+                ({ id }) =>
+                  [id, dashboards[id as keyof typeof dashboards]] as const,
+              )
+              .map(([id, item]) => (
+                <Link
+                  key={id}
+                  href={`/projects/${id}/dashboard`}
+                  aria-current={id === slug ? "page" : undefined}
+                >
+                  {item.title}
+                </Link>
+              ))}
           </nav>
-          {slug === "novamart" ? (
+          {Object.hasOwn(operationDashboards, slug) ? (
+            <OperationsDashboard project={slug as OperationsSlug} />
+          ) : slug === "novamart" ? (
             <NovaMartDashboard />
           ) : Object.hasOwn(studyDashboards, slug) ? (
             <StudyDashboard key={slug} project={slug as StudySlug} />

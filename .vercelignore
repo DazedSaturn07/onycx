@@ -25,7 +25,7 @@ graphify-out/
 scripts/
 archive/
 new_img/
-public/dashboard-data/v1/
+public/dashboard-data/
 public/study-data/
 playwright-report/
 test-results/

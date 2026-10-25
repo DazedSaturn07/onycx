@@ -1,9 +1,9 @@
 {
   "data_version": "v2",
-  "built_at_utc": "2026-10-25T07:22:32.144399+00:00",
+  "built_at_utc": "2026-10-25T15:11:02.240686+00:00",
   "local_base_path": "/dashboard-data",
   "r2_object_prefix": "analytics",
-  "r2_release_prefix": "analytics/releases/547998930db96f735a0444f2b68c210180b533a3fb82a1dd2743b2ad4dcc06e5",
+  "r2_release_prefix": "analytics/releases/5466f6c9d499b3c3b6f1c6b5f3e47b56c39ef94e0f0727f335dadbb36e89cd4b",
   "files": [
     {
       "path": "v2/airops/crossfilter.json",
@@ -21,6 +21,26 @@
       "sha256": "b9473dbaa598d6ae1de9050c40ae11d86e0a5494340fa06152ba0908faacb5e4"
     },
     {
+      "path": "v2/civicpulse/overview.json",
+      "bytes": 7093,
+      "sha256": "fe225e2167cce7fb78065381df97d71fe4ea689e30df62fca5cb816e76ad99a1"
+    },
+    {
+      "path": "v2/civicpulse/requests-a.json",
+      "bytes": 4782696,
+      "sha256": "73c0e028f93b890c0e088099cc543e67a09b78c55b6ab3ed111cebbcb45fe5bc"
+    },
+    {
+      "path": "v2/civicpulse/requests-b.json",
+      "bytes": 4864324,
+      "sha256": "b6b612f442f817367586ed5ff1d6b61a8c5ab32ed99f3a446fb6d085c595acd5"
+    },
+    {
+      "path": "v2/civicpulse/requests-c.json",
+      "bytes": 4883714,
+      "sha256": "380519888cc68de7b38198b5e2c0646f7a0e0ca7e1b30aeae505a46838e3fe0b"
+    },
+    {
       "path": "v2/customer-behaviour/behavior.json",
       "bytes": 359129,
       "sha256": "92c1d44b33efa5a53b10610f8fdf6ae0dbe9fb809e2aa8267596a6941ef024ee"
@@ -29,6 +49,301 @@
       "path": "v2/customer-behaviour/overview.json",
       "bytes": 23833,
       "sha256": "7bead714c12c42b411107916e4d3b9e2f93d3e1d7a16587436611890d478548f"
+    },
+    {
+      "path": "v2/freightflow/commodity-a.json",
+      "bytes": 543578,
+      "sha256": "809df010ab620043fb7f45d72f6198d75d1c7e75a2eb6f6475e5c974a57ecadb"
+    },
+    {
+      "path": "v2/freightflow/commodity-aa.json",
+      "bytes": 1888526,
+      "sha256": "a0a785bc6023d0a93a966c37f67908d6ca7ac0fe26042207cb0e11bdd1043ed3"
+    },
+    {
+      "path": "v2/freightflow/commodity-ab.json",
+      "bytes": 1955784,
+      "sha256": "2b252e7a74e08e74e6f5c740e4dfe91dd0a0bd0eb8969fead0049f824ff7c418"
+    },
+    {
+      "path": "v2/freightflow/commodity-ac.json",
+      "bytes": 2417901,
+      "sha256": "ee09d4c2febfe621072acbba8432986bf94677e4583d5665e7eaae289ace2ef4"
+    },
+    {
+      "path": "v2/freightflow/commodity-ad-a.json",
+      "bytes": 1715287,
+      "sha256": "4562954f61a596ab57b8115e73e65f1d0c25053b90eb14839db2cad95fd34eec"
+    },
+    {
+      "path": "v2/freightflow/commodity-ad-b.json",
+      "bytes": 1753809,
+      "sha256": "98357acff0276fa6966a3f69dbdb002d302dc5ede3e2159cde583f783d1a0218"
+    },
+    {
+      "path": "v2/freightflow/commodity-ae.json",
+      "bytes": 2650679,
+      "sha256": "7ba6f420bef3f73bf23909ae69a0fd4a0993d4cb235abea75db8296336eeec88"
+    },
+    {
+      "path": "v2/freightflow/commodity-af.json",
+      "bytes": 2760381,
+      "sha256": "98e96624f95cd6d3f9302e3bf3ce57547ca9501cddfb2246b2c98a3fab5eb134"
+    },
+    {
+      "path": "v2/freightflow/commodity-ag-a.json",
+      "bytes": 1807217,
+      "sha256": "72915f0b497ce10999c68fad1cc8f2d048e74c770f4b6e9c2477790b0fe079ac"
+    },
+    {
+      "path": "v2/freightflow/commodity-ag-b.json",
+      "bytes": 1854215,
+      "sha256": "c966a0dfdb74c7ebdfa6e5121d301b2e8142134ee4ca4509fc06fae2c1af1ce0"
+    },
+    {
+      "path": "v2/freightflow/commodity-ah-a.json",
+      "bytes": 2069994,
+      "sha256": "2461c62bc43da2b5d1dd38cecb091d90c6663ada8ef9fbf86dffe46538ffa872"
+    },
+    {
+      "path": "v2/freightflow/commodity-ah-b.json",
+      "bytes": 2111574,
+      "sha256": "efd2c97d2319ef255bbec5191950f69a413904b69435c116fab262b2534da7f9"
+    },
+    {
+      "path": "v2/freightflow/commodity-ai-a.json",
+      "bytes": 2312891,
+      "sha256": "4e14cf38556ebfef0f5d28b09fe4384ec1d761599f05e00460f0a1723dff8f72"
+    },
+    {
+      "path": "v2/freightflow/commodity-ai-b.json",
+      "bytes": 2352605,
+      "sha256": "67a72d3bb4e1e924aaa7d7465d9c59623e5a4c0efbdddd1c1528426e33b4d5cc"
+    },
+    {
+      "path": "v2/freightflow/commodity-aj-a.json",
+      "bytes": 1907121,
+      "sha256": "e5f571c53ca205d16a8b9dd7254d69767a65595630d484e59c1498cddb656cae"
+    },
+    {
+      "path": "v2/freightflow/commodity-aj-b.json",
+      "bytes": 1912146,
+      "sha256": "f68efbd379f9fb59f882a15133762e7b0297af33fe69ae156d624525ac78599a"
+    },
+    {
+      "path": "v2/freightflow/commodity-ak-a.json",
+      "bytes": 1441675,
+      "sha256": "6a87745cb5addce03b9660e56cd43ac54f7f364ccce5dadcacdb8614e21c0f90"
+    },
+    {
+      "path": "v2/freightflow/commodity-ak-b.json",
+      "bytes": 1441152,
+      "sha256": "6833a520ff3fc9c19a8066076a3d162e6eedfda2222fa627065ea20889cfd530"
+    },
+    {
+      "path": "v2/freightflow/commodity-al-a.json",
+      "bytes": 1652754,
+      "sha256": "e57312ecda04b114571a567dba2aebcff9673c0acb49aa89f786afe620ee7a56"
+    },
+    {
+      "path": "v2/freightflow/commodity-al-b.json",
+      "bytes": 1668589,
+      "sha256": "4f80ff21f3f3bd5fcecdd2c8b9d01d767db3f7e40f04799d9cc72f75fb81740a"
+    },
+    {
+      "path": "v2/freightflow/commodity-am-a.json",
+      "bytes": 1585424,
+      "sha256": "0297434fb9e208d37a4251d0c66f904deed9b91bc9fa783310e73f187a9056da"
+    },
+    {
+      "path": "v2/freightflow/commodity-am-b.json",
+      "bytes": 1615727,
+      "sha256": "2ba35e6f80d4e432f331a4e59b752144f57fab12678732cdfad7372519e2c773"
+    },
+    {
+      "path": "v2/freightflow/commodity-an-a.json",
+      "bytes": 2035276,
+      "sha256": "3221b16063d85e9f7986352a9e9c4d8731c4fd95bea58c57e54de999162f442c"
+    },
+    {
+      "path": "v2/freightflow/commodity-an-b.json",
+      "bytes": 2078149,
+      "sha256": "12b1fccf6598ec70b2dd6a56948472299974c6445fee998c2c293fefa9029900"
+    },
+    {
+      "path": "v2/freightflow/commodity-ao.json",
+      "bytes": 1348971,
+      "sha256": "3c6c197a89d6ccc38eb99e84271d525d6675f37e4445d7365fa0d731c64f1590"
+    },
+    {
+      "path": "v2/freightflow/commodity-ap-a.json",
+      "bytes": 1507513,
+      "sha256": "53f320a7ac9282762dd661d4efd924b2735398d16aa0e2ca4971fc866348f2a3"
+    },
+    {
+      "path": "v2/freightflow/commodity-ap-b.json",
+      "bytes": 1535782,
+      "sha256": "58b7c81d2bb8aa0d29ff1d946edb48fb2378e40ebc8a56a70d3a853a435f386b"
+    },
+    {
+      "path": "v2/freightflow/commodity-b.json",
+      "bytes": 706417,
+      "sha256": "80e7d74afbd5d4d50091caa3643158758c6125e024515d34cefbd3f695e3fc1e"
+    },
+    {
+      "path": "v2/freightflow/commodity-c.json",
+      "bytes": 1712827,
+      "sha256": "90d22b9d578505e82804c9a31d81897a7c99bb6f0bd6e71065bb2d2085f948f7"
+    },
+    {
+      "path": "v2/freightflow/commodity-d.json",
+      "bytes": 1438242,
+      "sha256": "45ed0315b104b0a93e9dc59fd12a3364da2fe881a32c689fdb73c551266f52cc"
+    },
+    {
+      "path": "v2/freightflow/commodity-e.json",
+      "bytes": 1438896,
+      "sha256": "9ce0ff10eefb607f28b3efed03864a78e7b6e93781cd8e6bd74ec1657bf2c84e"
+    },
+    {
+      "path": "v2/freightflow/commodity-f.json",
+      "bytes": 1498465,
+      "sha256": "4c2f44ecf950127ed069542d02eca54b6b8b9f68ba925885ae3d9031b59724c3"
+    },
+    {
+      "path": "v2/freightflow/commodity-g.json",
+      "bytes": 2591750,
+      "sha256": "4a89ccf01538fd50809e7b37555326ebbe62c13c24f2b0fad7c06cb21c9f6895"
+    },
+    {
+      "path": "v2/freightflow/commodity-h.json",
+      "bytes": 1120096,
+      "sha256": "fc0a82e5b6233b46e285c12f296e763189c510fd42424d770b81ae06dfc1e214"
+    },
+    {
+      "path": "v2/freightflow/commodity-i.json",
+      "bytes": 396952,
+      "sha256": "83d746c8b0dde6f94ff1a4a8d30efce1f38ba8c9afbb144232556569b80e453c"
+    },
+    {
+      "path": "v2/freightflow/commodity-j.json",
+      "bytes": 256245,
+      "sha256": "28bd12b998d597a47c4b43a8660d3013371d5c15a0fd34fc35dc14eaec3ab75e"
+    },
+    {
+      "path": "v2/freightflow/commodity-k.json",
+      "bytes": 443712,
+      "sha256": "633b9e88b0c0092d83f349d665bf22f34c3bdc0c53b0ec450bd62c07c6d8a096"
+    },
+    {
+      "path": "v2/freightflow/commodity-l.json",
+      "bytes": 402777,
+      "sha256": "6961561c3a44e53c8508e26e66acabe9b976f366a794c0b21656d24244179874"
+    },
+    {
+      "path": "v2/freightflow/commodity-m.json",
+      "bytes": 1169865,
+      "sha256": "23b58067fdfcbd115ccb1b2ba9d51f6ef06c080201e65ea034969dac3d9d2390"
+    },
+    {
+      "path": "v2/freightflow/commodity-n.json",
+      "bytes": 378452,
+      "sha256": "b5d1f8969fea2a0d91ca848999639447c20e8528c4c5fbea4ec128a64d9e01d3"
+    },
+    {
+      "path": "v2/freightflow/commodity-o.json",
+      "bytes": 199793,
+      "sha256": "276c0ca1a175ec09de459cb8c6a6e84cfa4c47a751035e49792b3077ce6c70f9"
+    },
+    {
+      "path": "v2/freightflow/commodity-p.json",
+      "bytes": 176107,
+      "sha256": "f0c8dc9559041d6faec2f02a90ba9440efacc351b38179828697cd9e195789ca"
+    },
+    {
+      "path": "v2/freightflow/commodity-q.json",
+      "bytes": 482661,
+      "sha256": "f00131532b4d0dc436ede069b7b9a0da2814538e56c2d98af114df87ac7cfe25"
+    },
+    {
+      "path": "v2/freightflow/commodity-r.json",
+      "bytes": 644275,
+      "sha256": "0e1a5532d7d1c4b5860c8e5916aa5ef7b309fb0f3ccdfcd2e9b90d20e6ada1ca"
+    },
+    {
+      "path": "v2/freightflow/commodity-s.json",
+      "bytes": 1419705,
+      "sha256": "c52400bdbe54472a10cbc0a25e2a7d60ea13c140d5088a00cbfb1dfb04e2c6d0"
+    },
+    {
+      "path": "v2/freightflow/commodity-t.json",
+      "bytes": 2637072,
+      "sha256": "33eaf763261fe04cd8f75f6e859e381a028acd8cd95bb3ede6f43c35964ddb44"
+    },
+    {
+      "path": "v2/freightflow/commodity-u.json",
+      "bytes": 2177866,
+      "sha256": "a0014c807c0885614b1ae2bd09048b71a99956f0dc341b5863f9eb177c536ac3"
+    },
+    {
+      "path": "v2/freightflow/commodity-v.json",
+      "bytes": 974225,
+      "sha256": "813c971380f9f9659770d83eaa2cbca63586f70bf00d2a95d0ab92db043a59de"
+    },
+    {
+      "path": "v2/freightflow/commodity-w-a.json",
+      "bytes": 1548514,
+      "sha256": "151c8e38e31ab68aee124d6eee21325249448644b9bf0470bfee0f99052ade9d"
+    },
+    {
+      "path": "v2/freightflow/commodity-w-b.json",
+      "bytes": 1587188,
+      "sha256": "a9549455321356fd6a43f38a654e2353c30b67d7c7a8b79cb5154e5f8a1e7677"
+    },
+    {
+      "path": "v2/freightflow/commodity-x-a.json",
+      "bytes": 1918000,
+      "sha256": "9ce388d7ab2648bfd4acfcaceeae3e74bb170bd4991b2526c006491f6ec09241"
+    },
+    {
+      "path": "v2/freightflow/commodity-x-b.json",
+      "bytes": 1972268,
+      "sha256": "5d0c0524153a1d0265ae79a3194eadfb04c128aa29b6dee58644ec1c0fac92c1"
+    },
+    {
+      "path": "v2/freightflow/commodity-y.json",
+      "bytes": 456170,
+      "sha256": "1f39a4d6740756a4ad8a52de992f9eabaad14625a850636867d7daee66cb2fee"
+    },
+    {
+      "path": "v2/freightflow/commodity-z.json",
+      "bytes": 2222861,
+      "sha256": "1ace338ab2f998e457e53bbb966fe4b65af060a3f3e5b09cf72b9dcfd499957a"
+    },
+    {
+      "path": "v2/freightflow/lanes-a.json",
+      "bytes": 2819679,
+      "sha256": "a759728f32f2bbbd3cf244a098d0a8a22bc0ff3aa2cacecdbd0f5d5c800f5ace"
+    },
+    {
+      "path": "v2/freightflow/lanes-b.json",
+      "bytes": 2840147,
+      "sha256": "216404f3277e798ada6f87e9579379408b543c9df405ba9df683c9838895284a"
+    },
+    {
+      "path": "v2/freightflow/lanes-c.json",
+      "bytes": 2874347,
+      "sha256": "079e599d707a6b4d573a65003f108a1af9988dc865ccd91c3f7bccbe634d5b71"
+    },
+    {
+      "path": "v2/freightflow/overview.json",
+      "bytes": 107403,
+      "sha256": "810c9503928237ec463d4c72cc14b4ffd24ad64274c93f2ecc1143cc79ca8ff3"
+    },
+    {
+      "path": "v2/freightflow/priorities.json",
+      "bytes": 197054,
+      "sha256": "a428fa962438f87280512a8cce7404f8cbbea9cb54cc12ac5bb539936c157938"
     },
     {
       "path": "v2/job-market/crossfilter.json",
