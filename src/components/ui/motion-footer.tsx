@@ -1,5 +1,6 @@
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 import { profile } from "@/data/portfolio";
+import ResumeDownload from "@/components/ResumeDownload";
 
 export function CinematicFooter() {
   return <HalftoneWordmarkFooter
@@ -18,8 +19,8 @@ export function CinematicFooter() {
     crop={0}
     columns={[
       { title: "Work", links: [{ label: "All projects", href: "/projects" }, { label: "Data analytics", href: "/projects#analytics" }, { label: "Web experiences", href: "/projects#web-experiences" }] },
-      { title: "Practice", links: [{ label: "About", href: "/#about" }, { label: "Capabilities", href: "/#capabilities" }, { label: "Résumé", href: profile.resume }] },
-      { title: "Connect", links: [{ label: "Email me", href: `mailto:${profile.email}` }, { label: "LinkedIn", href: profile.linkedin }, { label: "GitHub", href: profile.github }] },
+      { title: "Practice", links: [{ label: "About", href: "/#about" }, { label: "Capabilities", href: "/#capabilities" }, { label: "Résumé", content: <ResumeDownload className="hwf-link" label="Résumé" showIcon={false} /> }] },
+      { title: "Connect", links: [{ label: "LinkedIn", href: profile.linkedin }, { label: "Instagram · 0nycx.dev", href: profile.instagram }, { label: "GitHub", href: profile.github }] },
     ]}
   />;
 }

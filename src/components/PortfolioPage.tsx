@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Download } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import ResumeDownload from "@/components/ResumeDownload";
 import Hero from "@/components/sections/Hero";
 import ScrollEffects from "@/components/ScrollEffects";
 import { CinematicFooter } from "@/components/ui/motion-footer";
@@ -41,7 +42,7 @@ export default function PortfolioPage() {
             </div>
             <p className="portfolio-about-invitation">Open to freelance projects, creative opportunities, and building something together.</p>
             <div className="portfolio-about-actions">
-              <a href="/Prashant_res.pdf" download="Prashant_Yadav_Resume.pdf" className="portfolio-text-link">Download résumé <Download size={16} aria-hidden="true" /></a>
+              <ResumeDownload />
               <a href="#contact" className="portfolio-text-link">Let&apos;s connect <ArrowUpRight size={16} aria-hidden="true" /></a>
             </div>
           </div>

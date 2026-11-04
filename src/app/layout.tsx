@@ -6,6 +6,7 @@ import { GeistSans } from "geist/font/sans";
 import "lenis/dist/lenis.css";
 import "./site.css";
 import "./refinement.css";
+import "./resumes.css";
 
 import SmoothScrolling from "@/components/SmoothScrolling";
 import { siteUrl } from "@/lib/site-config";
@@ -104,9 +105,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     "@type": "Person",
     name: "Prashant Yadav",
     url: siteUrl,
-    email: "mailto:prashants0325@gmail.com",
     jobTitle: "Data Analyst and Creative Developer",
-    sameAs: ["https://www.linkedin.com/in/onycx/", "https://github.com/DazedSaturn07"],
+    sameAs: ["https://www.linkedin.com/in/onycx/", "https://www.instagram.com/0nycx.dev/", "https://github.com/DazedSaturn07"],
   };
 
   return (

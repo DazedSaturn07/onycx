@@ -38,6 +38,10 @@ const nextConfig = {
         headers: securityHeaders,
       },
       {
+        source: "/resumes/:filename",
+        headers: [{ key: "Content-Disposition", value: 'attachment; filename=":filename"' }],
+      },
+      {
         source: "/dashboard-data/v2/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },

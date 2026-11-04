@@ -76,9 +76,8 @@ Desktop.ini
 *.tmp
 *.bak
 
-# Keep the linked resume; exclude unused root-level PDF copies
+# Role resumes live in public/resumes; exclude obsolete root-level PDF copies
 /public/*.pdf
-!/public/Prashant_res.pdf
 
 # Superseded dashboard payloads and unused font-package previews
 /public/dashboard-data/v1/

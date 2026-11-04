@@ -4,7 +4,7 @@ import * as React from "react";
 
 export interface HalftonePalette { background: string; ink: string; warm: string }
 export type HalftonePreset = "night" | "paper" | "ember" | "cobalt";
-export interface FooterLink { label: string; href?: string }
+export interface FooterLink { label: string; href?: string; content?: React.ReactNode }
 export interface FooterColumn { title: string; links: FooterLink[] }
 export interface HalftoneWordmarkFooterProps {
   id?: string; wordmark?: string; label?: string; meta?: string; columns?: FooterColumn[];
@@ -205,7 +205,7 @@ export default function HalftoneWordmarkFooter({
       <div className="hwf-top">
         <div className="hwf-brand"><strong>{label}</strong><span>{meta}</span></div>
         {columns.map(col => <nav className="hwf-col" key={col.title} aria-label={`Footer ${col.title}`}>
-          <h3>{col.title}</h3><ul>{col.links.map(link => <li key={link.label}>{link.href ? <a href={link.href}>{link.label}</a> : <span>{link.label}</span>}</li>)}</ul>
+          <h3>{col.title}</h3><ul>{col.links.map(link => <li key={link.label}>{link.content ?? (link.href ? <a href={link.href}>{link.label}</a> : <span>{link.label}</span>)}</li>)}</ul>
         </nav>)}
       </div>
       <div className="hwf-rule"><span>© {new Date().getFullYear()} {label}</span>{backToTop && <a className="hwf-up" href="#main-content">Back to top ↑</a>}</div>

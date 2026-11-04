@@ -225,8 +225,7 @@ export const profile = {
   githubUsername: "DazedSaturn07",
   role: "Data analyst & creative developer",
   location: "India · open to remote and relocation",
-  email: process.env.NEXT_PUBLIC_EMAIL || "prashants0325@gmail.com",
   linkedin: "https://www.linkedin.com/in/onycx/",
+  instagram: "https://www.instagram.com/0nycx.dev/",
   github: "https://github.com/DazedSaturn07",
-  resume: "/Prashant_res.pdf",
 };
