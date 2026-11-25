@@ -52,13 +52,13 @@ const signature = localFont({
   preload: true,
   fallback: ["cursive"],
 });
-const scriptina = localFont({
-  src: "../../fonts/scriptina/SCRIPTIN.ttf",
+const dune = localFont({
+  src: "../../fonts/dune/Dune_Rise.ttf",
   weight: "400",
-  variable: "--font-scriptina",
+  variable: "--font-dune",
   display: "swap",
   preload: false,
-  fallback: ["cursive"],
+  fallback: ["Arial", "sans-serif"],
 });
 const boska = localFont({
   src: "../../fonts/boska/Boska-Black.woff2",
@@ -110,7 +110,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   };
 
   return (
-    <html lang="en" className={`${scriptina.variable} ${axel.variable} ${orbitron.variable} ${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${dune.variable} ${axel.variable} ${orbitron.variable} ${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <SmoothScrolling>
           <a className="skip-to-content" href="#main-content">Skip to content</a>

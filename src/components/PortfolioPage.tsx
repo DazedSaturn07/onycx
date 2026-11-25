@@ -11,7 +11,7 @@ import CertificateCarousel from "@/components/CertificateCarousel";
 import ScrollHighlight from "@/components/ScrollHighlight";
 import Capabilities from "@/components/Capabilities";
 import FeatureCarousel from "@/components/ui/feature-carousel";
-import WorkLight from "@/components/ui/work-light";
+import AetherSpineBackground from "@/components/ui/aether-spine-background";
 export default function PortfolioPage() {
   return (
     <>
@@ -28,7 +28,7 @@ export default function PortfolioPage() {
           <div className="portfolio-section-inner portfolio-about-inner">
           <div className="portfolio-about-identity" data-reveal data-reveal-side="left">
             <div className="portfolio-about-portrait">
-              <Image src="/images/about-portrait.png" alt="Prashant Yadav in profile, looking upwards" fill sizes="(max-width: 760px) 90vw, 46vw" className="portfolio-about-image" />
+              <Image src="/images/about-portrait.png" alt="Prashant Yadav in profile, looking upwards" fill sizes="(max-width: 760px) 90vw, 46vw" loading="eager" className="portfolio-about-image" />
             </div>
             <span className="portfolio-about-availability">Open to opportunities</span>
             <h2 id="about-heading">PRASHANT<br /><span>YADAV</span></h2>
@@ -66,6 +66,7 @@ export default function PortfolioPage() {
         </section>
 
         <section id="work" className="portfolio-section portfolio-work" aria-labelledby="work-heading">
+          <AetherSpineBackground />
           <div className="portfolio-section-inner">
             <div className="portfolio-heading">
               <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">02 / Selected work</p>
@@ -75,7 +76,6 @@ export default function PortfolioPage() {
               </div>
             </div>
             <div className="selected-work-stage">
-              <WorkLight />
               <FeatureCarousel />
             </div>
 

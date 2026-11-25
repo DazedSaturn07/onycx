@@ -1,3 +1,4 @@
+import { networkInterfaces } from "node:os";
 import { analyticsDataOrigin, contentSecurityPolicy } from "./src/lib/security-policy.mjs";
 
 const configuredDataOrigin = analyticsDataOrigin(process.env.NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL);
@@ -5,11 +6,26 @@ if (process.env.VERCEL_ENV === "production" && !configuredDataOrigin) {
   throw new Error("Set NEXT_PUBLIC_ANALYTICS_DATA_BASE_URL in the Vercel Production build environment before deploying.");
 }
 
+function resolveAllowedDevOrigins() {
+  const configured = process.env.ALLOWED_DEV_ORIGINS
+    ? process.env.ALLOWED_DEV_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+    : [];
+  if (process.env.NODE_ENV === "production") {
+    return configured.length > 0 ? configured : undefined;
+  }
+  const lanIps = Object.values(networkInterfaces())
+    .flat()
+    .filter((iface) => iface && iface.family === "IPv4" && !iface.internal)
+    .map((iface) => iface.address);
+  const origins = [...new Set([...configured, ...lanIps])];
+  return origins.length > 0 ? origins : undefined;
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS ? process.env.ALLOWED_DEV_ORIGINS.split(',') : undefined,
+  allowedDevOrigins: resolveAllowedDevOrigins(),
   turbopack: {
     root: process.cwd(),
   },

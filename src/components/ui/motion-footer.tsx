@@ -5,14 +5,14 @@ import ResumeDownload from "@/components/ResumeDownload";
 export function CinematicFooter() {
   return <HalftoneWordmarkFooter
     id="contact"
-    wordmark="onycx"
+    wordmark="Prashant"
     label={profile.name}
     meta="Data analyst & creative developer · India"
     preset="night"
     palette={{ background: "#0b0c0c", ink: "#d9dcd8", warm: "#e98b53" }}
-    fontFamily="GeistSans, Arial, sans-serif"
-    monoFamily="GeistMono, Consolas, monospace"
-    height="clamp(680px, 54vw, 900px)"
+    fontFamily="var(--font-geist-sans), Arial, sans-serif"
+    monoFamily="var(--font-geist-mono), Consolas, monospace"
+    height="clamp(540px, 46vw, 780px)"
     dotGap={5}
     radius={95}
     grain={0.3}
