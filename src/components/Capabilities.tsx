@@ -51,25 +51,25 @@ const CAPABILITY_METADATA: Record<
 > = {
   "01": {
     id: "data",
-    stageLabel: "Find the signal",
-    pipeline: ["QUESTION", "INSIGHT"],
-    telemetryBadge: "SIGNAL · 98.4%",
+    stageLabel: "Analytics",
+    pipeline: ["RAW DATA", "INSIGHTS"],
+    telemetryBadge: "SQL · BI",
     ctaLabel: "Explore data projects",
     href: "/projects#analytics",
   },
   "02": {
     id: "ml",
-    stageLabel: "Explore the possibilities",
-    pipeline: ["EXPLORE", "EVALUATE"],
-    telemetryBadge: "MODEL · 0.96 F1",
+    stageLabel: "Predictive modeling",
+    pipeline: ["FEATURES", "MODELS"],
+    telemetryBadge: "ML · PYTHON",
     ctaLabel: "Explore ML projects",
     href: "/projects#machine-learning",
   },
   "03": {
     id: "engineering",
-    stageLabel: "Make it tangible",
-    pipeline: ["DESIGN", "DEVELOP"],
-    telemetryBadge: "SYSTEM · 60 FPS",
+    stageLabel: "Frontend",
+    pipeline: ["UI", "CODE"],
+    telemetryBadge: "NEXT.JS",
     ctaLabel: "Explore web projects",
     href: "/projects#web-experiences",
   },
@@ -1162,58 +1162,34 @@ export function CapabilitiesSection({
             <span>03 / CAPABILITIES</span>
           </div>
           <p className="text-[12px] tracking-[-0.01em] text-white/50">
-            Analytical thinking. Creative practice.
+            Data, ML &amp; web development.
           </p>
         </header>
 
         {/* Hero Editorial Statement */}
         <div
           data-reveal
-          className="mx-auto mt-12 max-w-3xl text-center sm:mt-20"
+          className="mx-auto mt-12 max-w-3xl text-center sm:mt-16"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.03] px-3.5 py-1.5 backdrop-blur-md">
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-[#ff5a26] shadow-[0_0_10px_#ff5a26]"
-              aria-hidden="true"
-            />
-            <span className="text-[11.5px] font-medium tracking-[0.04em] text-white/75">
-              A connected practice
-            </span>
-          </div>
-
           <h2
             id="capabilities-heading"
-            className="mt-6 text-[34px] font-semibold leading-[1.06] tracking-[-0.04em] text-white sm:text-[54px] lg:text-[64px]"
+            style={{
+              fontFamily: "var(--heading-display, var(--font-broale), var(--font-geist-sans), Arial, sans-serif)",
+              fontWeight: 400,
+              fontSynthesisWeight: "none",
+            }}
+            className="text-[clamp(1.9rem,4.1vw,4.3rem)] leading-[1.1] tracking-[-0.015em] text-white"
           >
-            <span className="block text-[#f5f5f7]">
-              Understand the complex.
-            </span>
-            <span className="mt-1 inline-flex flex-wrap items-center justify-center gap-x-2.5 text-[#7e7e85] sm:gap-x-3">
-              <span>Make it</span>
-              <span
-                className="inline-flex h-[0.68em] w-[0.68em] items-center justify-center text-[#ff5a26] drop-shadow-[0_0_20px_rgba(255,90,38,0.45)]"
-                aria-hidden="true"
-              >
-                <svg viewBox="0 0 32 32" fill="none" className="h-full w-full">
-                  <g
-                    stroke="currentColor"
-                    strokeWidth="3.6"
-                    strokeLinecap="round"
-                  >
-                    <line x1="16" y1="3.5" x2="16" y2="28.5" />
-                    <line x1="5.2" y1="9.75" x2="26.8" y2="22.25" />
-                    <line x1="26.8" y1="9.75" x2="5.2" y2="22.25" />
-                  </g>
-                </svg>
-              </span>
-              <span>meaningful.</span>
+            <span className="block text-[#f5f5f7]">My core fields</span>
+            <span className="mt-1 block text-[#7e7e85]">
+              and what I work on.
             </span>
           </h2>
 
-          <p className="mx-auto mt-6 max-w-xl text-[15px] leading-[1.65] tracking-[-0.008em] text-white/55 sm:text-[16.5px]">
-            Finding the story in data. Exploring what models can do.
-            <br className="hidden sm:inline" /> Bringing ideas to life through
-            thoughtful interfaces.
+          <p className="mx-auto mt-5 max-w-xl text-[15px] leading-[1.65] tracking-[-0.008em] text-white/55 sm:text-[16.5px]">
+            Most of my work sits across three areas: cleaning and analysing
+            datasets, training machine learning models, and building responsive
+            web interfaces.
           </p>
         </div>
 
@@ -1233,17 +1209,8 @@ export function CapabilitiesSection({
         {/* Bottom Editorial Closure Bar */}
         <footer
           data-reveal
-          className="mt-12 flex flex-col items-start justify-between gap-6 border-t border-white/[0.09] pt-7 sm:mt-16 sm:flex-row sm:items-center"
+          className="mt-12 flex justify-start border-t border-white/[0.09] pt-7 sm:mt-16 sm:justify-end"
         >
-          <div>
-            <p className="text-[15.5px] font-medium tracking-[-0.015em] text-white/95">
-              Different disciplines.
-            </p>
-            <p className="mt-0.5 text-[14.5px] tracking-[-0.01em] text-white/45">
-              The same curiosity.
-            </p>
-          </div>
-
           <Link
             href="/projects"
             onClick={handleSeeWorkClick}

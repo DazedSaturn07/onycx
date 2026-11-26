@@ -107,20 +107,20 @@ export default function GitHubContributions() {
   return (
     <section ref={sectionRef} id="activity" className="portfolio-section portfolio-github" aria-labelledby="activity-heading">
       <div className="portfolio-heading">
-        <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">04 / Open source</p>
-        <div data-reveal data-reveal-side="right">
-          <h2 id="activity-heading">Work, day<br /><em>by day.</em></h2>
-          <span>A look behind the finished work. A year of building, learning, and contributing on GitHub.</span>
+        <p className="portfolio-section-kicker" data-reveal data-reveal-side="left">04 / GitHub</p>
+        <div data-reveal>
+          <h2 id="activity-heading">My GitHub<br /><em>streak.</em></h2>
+          <span>Commits, code pushes, and project updates from the past 12 months.</span>
         </div>
       </div>
       <div className="github-activity-panel" data-reveal data-reveal-side="left">
         <div className="github-activity-topline">
-          <a className="github-activity-user" href={profile.github} target="_blank" rel="noopener noreferrer"><GithubIcon size={21} /><span>{profile.githubUsername}<small>THE BUILD LOG</small></span></a>
+          <a className="github-activity-user" href={profile.github} target="_blank" rel="noopener noreferrer"><GithubIcon size={21} /><span>{profile.githubUsername}<small>GITHUB</small></span></a>
           <span className={`github-activity-status${hasError ? " is-unavailable" : ""}`}><i aria-hidden="true" />{hasError ? "Temporarily unavailable" : data ? "Public GitHub activity" : "Connecting to GitHub"}</span>
         </div>
         <div className="github-activity-body">
           <div className="github-activity-summary">
-            <span className="github-stat-label">A year in contributions</span>
+            <span className="github-stat-label">Last 12 months</span>
             <strong className="github-stat-total">{data ? activity.total.toLocaleString() : "—"}<span aria-hidden="true">↗</span></strong>
             <span className="github-stat-description">Contributions in the displayed year</span>
             <dl className="github-activity-stats">
@@ -129,7 +129,7 @@ export default function GitHubContributions() {
             </dl>
           </div>
           <div className="github-activity-calendar">
-            <div className="github-calendar-caption"><span>Consistency, one day at a time.</span><span>LAST 12 MONTHS</span></div>
+            <div className="github-calendar-caption"><span>Daily activity</span><span>LAST 12 MONTHS</span></div>
             {data ? (
               <div className="github-calendar-layout">
                 <div className="github-calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Wed</span><span>Fri</span></div>
@@ -161,14 +161,14 @@ export default function GitHubContributions() {
               </div>
             )}
             <div className="github-calendar-bottom">
-              <span className="github-calendar-detail" aria-live="polite">{selected ? `${selected.count} contributions · ${formatDate(selected.date)}` : "Each square is a day of the journey."}</span>
+              <span className="github-calendar-detail" aria-live="polite">{selected ? `${selected.count} contributions · ${formatDate(selected.date)}` : "Hover or select a day to check contributions."}</span>
               <div className="github-calendar-legend" aria-label="Contribution intensity from less to more"><span>Less</span>{[0, 1, 2, 3, 4].map((level) => <i key={level} className={`level-${level}`} />)}<span>More</span></div>
             </div>
           </div>
         </div>
         <div className="github-activity-footer">
           <span>Daily totals reflect GitHub profile contributions, not commit-only counts.<span className="github-activity-source"> · Public contribution history</span></span>
-          <a href={profile.github} target="_blank" rel="noopener noreferrer">Explore GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
+          <a href={profile.github} target="_blank" rel="noopener noreferrer">Open GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
         </div>
       </div>
     </section>

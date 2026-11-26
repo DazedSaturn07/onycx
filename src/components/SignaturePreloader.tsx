@@ -19,11 +19,9 @@ export default function SignaturePreloader({ onReveal, onComplete }: Props) {
     let cancelled = false;
     let complete = false;
     let exiting = false;
-    const animation = gsap.timeline({ paused: true, delay: .3 });
+    const animation = gsap.timeline({ paused: true });
     let exit: gsap.core.Tween | undefined;
-    let focusFrame = 0;
     let prepareFrame = 0;
-    const previousFocus = document.activeElement as HTMLElement | null;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const dismiss = () => {
@@ -31,68 +29,75 @@ export default function SignaturePreloader({ onReveal, onComplete }: Props) {
       complete = true;
       clearTimeout(safetyTimer);
       try { sessionStorage.setItem(INTRO_KEY, "seen"); } catch { /* Storage can be disabled. */ }
+      if (element.contains(document.activeElement)) {
+        (document.activeElement as HTMLElement | null)?.blur();
+      }
       setVisible(false);
       onComplete();
-      if (element.contains(document.activeElement)) focusFrame = requestAnimationFrame(() => {
-        (previousFocus?.isConnected && previousFocus !== document.body ? previousFocus : document.querySelector<HTMLElement>(".shatter-wordmark"))?.focus({ preventScroll: true });
-      });
     };
+
     const reveal = () => {
       if (cancelled || complete || exiting) return;
       exiting = true;
       animation.kill();
       onReveal();
       if (reducedMotion) dismiss();
-      else exit = gsap.to(element, { opacity: 0, duration: .85, ease: "power2.inOut", onComplete: dismiss });
+      else exit = gsap.to(element, { opacity: 0, duration: .75, ease: "power2.inOut", onComplete: dismiss });
     };
+
     finish.current = reveal;
-    const safetyTimer = setTimeout(reveal, 6500);
+    const safetyTimer = setTimeout(reveal, 5500);
 
     let seen = false;
     try { seen = sessionStorage.getItem(INTRO_KEY) === "seen"; } catch { /* Still works without storage. */ }
-    // Direct links and motion preferences keep visitors close to their destination.
     if (seen || reducedMotion || getComputedStyle(element).visibility === "hidden" || (window.location.hash && window.location.hash !== "#top")) {
       onReveal();
       dismiss();
-      return () => { cancelled = true; cancelAnimationFrame(focusFrame); animation.kill(); };
+      return () => { cancelled = true; clearTimeout(safetyTimer); animation.kill(); };
     }
 
-    const skip = element.querySelector<HTMLButtonElement>("button");
-    focusFrame = requestAnimationFrame(() => skip?.focus({ preventScroll: true }));
+    const ink = element.querySelector<HTMLElement>("[data-signature-ink]");
+    if (ink) {
+      gsap.set(ink, { clipPath: "inset(0 100% 0 0)" });
+      animation.to(ink, {
+        clipPath: "inset(0 0% 0 0)",
+        duration: 1.65,
+        ease: "power2.inOut",
+      });
+      animation.to({}, { duration: .4 });
+    }
 
     const prepare = () => {
-      // Keep below-the-fold imagery lazy; only wake lightweight, deferred page data here.
       prepareFrame = requestAnimationFrame(() => {
         if (!cancelled && !exiting) window.dispatchEvent(new Event("portfolio:prepare"));
       });
-      return document.fonts.ready;
+      const fontFamily = ink ? getComputedStyle(ink).fontFamily : "";
+      const loadSignatureFont = fontFamily && document.fonts?.load
+        ? document.fonts.load(`400 48px ${fontFamily}`).catch(() => undefined)
+        : Promise.resolve();
+      const ready = Promise.all([loadSignatureFont, document.fonts?.ready ?? Promise.resolve()]);
+      return Promise.race([
+        ready,
+        new Promise((resolve) => setTimeout(resolve, 450)),
+      ]);
     };
 
-    const strokes = [...element.querySelectorAll<SVGPathElement>("[data-signature-stroke]")];
-    gsap.set(strokes, { strokeDashoffset: 1 });
-    strokes.forEach((stroke, index) => {
-      if (index === 8) animation.to({}, { duration: .18 });
-      animation.set(stroke, { opacity: 1 });
-      animation.to(stroke, {
-        strokeDashoffset: 0,
-        autoRound: false,
-        duration: index === 0 ? .62 : index === 8 ? .45 : .15,
-        ease: "none",
-      });
+    const written = new Promise<void>((resolve) => {
+      if (!ink) resolve();
+      else animation.eventCallback("onComplete", resolve);
     });
-    animation.to(".intro-signature-rule", { scaleX: 1, duration: .45, ease: "power2.out" });
-    animation.call(() => { element.dataset.signatureWritten = "true"; });
-    animation.to({}, { duration: .35 });
-    const written = new Promise<void>((resolve) => animation.eventCallback("onComplete", resolve));
-    animation.play();
-    void Promise.allSettled([prepare(), written]).then(() => {
+
+    void prepare().then(() => {
+      if (cancelled) return;
+      if (ink) animation.play();
+      return written;
+    }).then(() => {
       if (!cancelled) reveal();
     });
 
     return () => {
       cancelled = true;
       clearTimeout(safetyTimer);
-      cancelAnimationFrame(focusFrame);
       cancelAnimationFrame(prepareFrame);
       animation.kill();
       exit?.kill();
@@ -102,22 +107,29 @@ export default function SignaturePreloader({ onReveal, onComplete }: Props) {
   if (!visible) return null;
 
   return (
-    <div ref={overlay} id="signature-intro" className="signature-preloader" role="dialog" aria-modal="true" aria-label="Welcome to Prashant Yadav's portfolio" data-lenis-prevent onKeyDown={(event) => {
-      if (event.key === "Escape") finish.current();
-      if (event.key === "Tab" && !event.ctrlKey && !event.metaKey) {
-        event.preventDefault();
-        overlay.current?.querySelector<HTMLButtonElement>("button")?.focus();
-      }
-    }}>
-      <span className="intro-edition" aria-hidden="true">PY / PORTFOLIO 2026</span>
+    <div
+      ref={overlay}
+      id="signature-intro"
+      className="signature-preloader"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Welcome to Prashant Yadav's portfolio"
+      tabIndex={-1}
+      data-lenis-prevent
+      onKeyDown={(event) => {
+        if (event.key === "Escape") finish.current();
+        if (event.key === "Tab" && !event.ctrlKey && !event.metaKey) {
+          event.preventDefault();
+          overlay.current?.querySelector<HTMLButtonElement>(".intro-skip")?.focus();
+        }
+      }}
+    >
       <div className="intro-center">
-        <p className="intro-eyebrow">A personal touch.</p>
         <SignatureMark />
-        <div className="intro-signature-rule" aria-hidden="true" />
-        <p className="intro-caption" role="status">Thoughtfully made. Ready to explore.</p>
       </div>
-      <span className="intro-location" aria-hidden="true">Crafted in India.</span>
-      <button type="button" className="intro-skip" onClick={() => finish.current()}>Skip intro <span aria-hidden="true">↗</span></button>
+      <button type="button" className="intro-skip" onClick={() => finish.current()}>
+        Skip intro <span aria-hidden="true">↗</span>
+      </button>
     </div>
   );
 }

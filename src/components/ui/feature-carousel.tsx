@@ -222,10 +222,10 @@ export function FeatureCarousel() {
         role="region"
         aria-label="Featured projects"
         aria-roledescription="carousel"
-        className="w-full max-w-7xl mx-auto md:p-8"
+        className="w-full max-w-7xl 2xl:max-w-[1560px] min-[1920px]:max-w-[1660px] mx-auto md:p-8"
       >
         <div
-          className="relative overflow-hidden rounded-[1.75rem] md:rounded-[3.5rem] flex flex-col md:flex-row min-h-[600px] border border-white/20 bg-[#0b0e17]/45 backdrop-blur-md md:backdrop-blur-xl backdrop-saturate-150"
+          className="relative overflow-hidden rounded-[1.75rem] md:rounded-[3.5rem] flex flex-col md:flex-row min-h-[600px] 2xl:min-h-[700px] min-[1920px]:min-h-[780px] border border-white/20 bg-[#0b0e17]/45 backdrop-blur-md md:backdrop-blur-xl backdrop-saturate-150"
           style={{
             boxShadow:
               "inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 32px 80px rgba(4, 6, 12, 0.45)",
@@ -247,7 +247,7 @@ export function FeatureCarousel() {
               backgroundSize: "160px 160px",
             }}
           />
-          <div className="w-full md:w-[45%] lg:w-[38%] h-[250px] sm:h-[270px] md:h-auto md:min-h-[580px] relative z-30 flex flex-col overflow-hidden px-4 sm:px-6 md:px-12 lg:pl-16 pt-3 pb-16 bg-white/[0.03] md:border-r md:border-white/15">
+          <div className="w-full md:w-[45%] lg:w-[38%] 2xl:w-[35%] h-[250px] sm:h-[270px] md:h-auto md:min-h-[580px] 2xl:min-h-[700px] min-[1920px]:min-h-[780px] relative z-30 flex flex-col overflow-hidden px-4 sm:px-6 md:px-12 lg:pl-16 pt-3 pb-16 bg-white/[0.03] md:border-r md:border-white/15">
             <div
               role="group"
               aria-label="Choose a project"
@@ -352,8 +352,8 @@ export function FeatureCarousel() {
             </div>
           </div>
 
-          <div className="flex-1 min-h-[450px] sm:min-h-[480px] md:min-h-[600px] relative z-20 flex items-center justify-center pt-10 pb-8 md:py-16 px-3.5 sm:px-6 md:px-10 lg:px-12 overflow-hidden border-t md:border-t-0 border-white/15">
-            <div className="relative w-full max-w-[650px] min-h-[395px] sm:min-h-[420px] md:min-h-0 aspect-auto md:aspect-[3/2] flex items-center justify-center">
+          <div className="flex-1 min-h-[450px] sm:min-h-[480px] md:min-h-[600px] 2xl:min-h-[700px] min-[1920px]:min-h-[780px] relative z-20 flex items-center justify-center pt-10 pb-8 md:py-16 px-3.5 sm:px-6 md:px-10 lg:px-12 overflow-hidden border-t md:border-t-0 border-white/15">
+            <div className="relative w-full max-w-[650px] 2xl:max-w-[820px] min-[1920px]:max-w-[900px] min-h-[395px] sm:min-h-[420px] md:min-h-0 aspect-auto md:aspect-[3/2] flex items-center justify-center">
               {FEATURES.map((feature, index) => {
                 const diff = getCardStatus(index);
                 const absDiff = Math.abs(diff);
@@ -408,7 +408,7 @@ export function FeatureCarousel() {
                           initial={{ opacity: 0, y: 14 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 8 }}
-                          className="pointer-events-none relative z-10 flex h-full flex-col justify-between p-5 sm:p-7 md:p-9"
+                          className="pointer-events-none relative z-10 flex h-full flex-col justify-between p-5 sm:p-7 md:p-9 2xl:p-11"
                         >
                           {/* Top Row: Elevated Metallic Icon Medallion & Category Header */}
                           <div className="flex items-start justify-between gap-4">
@@ -435,10 +435,10 @@ export function FeatureCarousel() {
 
                           {/* Center Body: Bold Headline & Clamped Copy */}
                           <div className="my-auto py-3 sm:py-4">
-                            <h3 className="text-[24px] font-semibold leading-[1.13] tracking-[-0.03em] text-white sm:text-[30px] md:text-[34px]">
+                            <h3 className="text-[24px] font-semibold leading-[1.13] tracking-[-0.03em] text-white sm:text-[30px] md:text-[34px] 2xl:text-[40px] min-[1920px]:text-[44px]">
                               {feature.label}
                             </h3>
-                            <p className="mt-2.5 sm:mt-3 line-clamp-3 max-w-[96%] text-[14px] font-normal leading-[1.56] tracking-[-0.006em] text-white/[0.78] sm:text-[15.5px]">
+                            <p className="mt-2.5 sm:mt-3 line-clamp-3 max-w-[96%] text-[14px] font-normal leading-[1.56] tracking-[-0.006em] text-white/[0.78] sm:text-[15.5px] 2xl:text-[17.5px] 2xl:leading-[1.6] min-[1920px]:text-[19px]">
                               {feature.description}
                             </p>
                           </div>

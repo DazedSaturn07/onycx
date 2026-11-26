@@ -1,7 +1,7 @@
 import { profile } from "@/data/portfolio";
 import { checkPublicApiRequest } from "@/lib/api-security";
 
-export const revalidate = 3600;
+export const revalidate = 900;
 
 export async function GET(request: Request) {
   const denied = checkPublicApiRequest(request);
@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   try {
     const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 3600 },
+      next: { revalidate: 900 },
       signal: AbortSignal.timeout(6000),
       redirect: "error",
     });
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     });
     if (!contributions.length || contributions.length > 800 || contributions.length !== payload.contributions.length) throw new Error("Invalid activity");
     return Response.json({ contributions }, {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", Vary: "Origin, Sec-Fetch-Site" },
+      headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600", Vary: "Origin, Sec-Fetch-Site" },
     });
   } catch {
     return Response.json({ error: "GitHub contribution data is temporarily unavailable." }, { status: 502, headers: { "Cache-Control": "no-store" } });

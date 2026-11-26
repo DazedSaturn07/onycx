@@ -15,38 +15,38 @@ export default function ProjectsHero() {
         palette={{ calm: "#8eb7c9", mid: "#bb9f75", hot: "#f1dac0" }}
       />
       <div className="projects-hero-topline project-hero-reveal">
-        <span>Selected projects / 2026</span>
+        <span>Projects / 2026</span>
         <span>Prashant Yadav</span>
       </div>
       <div className="projects-hero-intro project-hero-reveal">
-        <p className="portfolio-section-kicker">The work, in perspective</p>
+        <p className="portfolio-section-kicker">Project archive</p>
         <h1 id="project-index-title">
-          Questions explored.
+          My work,
           <br />
-          <em>Ideas brought to life.</em>
+          <em>all in one place.</em>
         </h1>
         <p>
-          Data analytics is my main focus. Alongside it, I explore machine
-          learning and build digital experiences with AI-assisted development.
+          Data analytics is my main focus. Alongside it, I work on machine
+          learning models and build websites with AI-assisted workflows.
         </p>
       </div>
       <div className="projects-hero-word" aria-hidden="true">
         WORK
       </div>
       <div className="projects-hero-side-note project-hero-reveal">
-        <span>Two ways of thinking.</span>
-        <p>One curiosity.</p>
-        <span>Evidence &amp; imagination.</span>
+        <span>Fields</span>
+        <p>Data · ML · Web</p>
+        <span>14 GitHub projects + 6 live sites</span>
       </div>
       <div className="projects-hero-footer project-hero-reveal">
         <a href="#analytics">
-          Explore the work <ArrowDown size={15} aria-hidden="true" />
+          Jump to projects <ArrowDown size={15} aria-hidden="true" />
         </a>
         <nav aria-label="Project disciplines">
           <a href="#analytics">Analytics</a>
           <a href="#supply-chain">Supply chain</a>
           <a href="#machine-learning">Machine learning</a>
-          <a href="#web-experiences">Web experiences</a>
+          <a href="#web-experiences">Websites</a>
         </nav>
       </div>
     </section>

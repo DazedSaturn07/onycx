@@ -16,104 +16,104 @@ const webCatalog: PortfolioProject[] = [
   {
     id: "scotia-delights",
     outcome:
-      "A published bakery storefront with product discovery, gifting information and a direct enquiry path.",
+      "A published e-commerce storefront for handcrafted laddoos and roasted makhana with product browsing, flavour discovery and direct ordering.",
     title: "Scotia Delights",
     category: "Commerce / Food",
     summary:
-      "A premium bakery and hamper storefront shaped around product discovery, gifting clarity, and a fast mobile buying path.",
+      "An online shop for ScotiaDelights' small-batch Indian snacks — date laddoos, dry-fruit laddoos, coconut laddoos and roasted makhana — with product cards, ingredient details and delivery across India.",
     focus:
-      "Commerce storytelling, responsive product presentation, and a direct path from browsing to enquiry.",
+      "Product-led storytelling, flavour browsing, mobile-first buying path and an approachable brand voice for artisan food.",
     role: "Web design & frontend",
     year: "2026",
     tech: ["Next.js", "TypeScript", "Motion"],
     liveUrl: "https://www.scotiadelights.in/",
-    image: "/images/Scotia.avif",
+    image: "/images/scotia.webp",
   },
   {
-    id: "luxar",
+    id: "aurora-vault",
     outcome:
-      "An image-led product presentation with a coherent luxury visual system and paced scroll interactions.",
-    title: "Luxar",
-    category: "Luxury / Editorial",
+      "A cinematic dark-theme portfolio template with a scroll-driven frame-sequence hero, seven immersive scenes and 60 fps motion throughout.",
+    title: "Aurora Vault",
+    category: "3D / Interactive",
     summary:
-      "A high-contrast interior product experience with cinematic pacing, editorial type, and image-led storytelling.",
+      "A premium portfolio template featuring a cosmic hooded-figure hero with frame-sequence scroll animation, featured-work showcase, career timeline, tech stack section and a vertical left-rail navigation.",
     focus:
-      "A luxury visual system that keeps the product—not the interface—at the centre of the experience.",
-    role: "Art direction & interaction",
+      "Scroll-choreographed storytelling, frame-led visual pacing, editorial serif typography and reduced-motion accessibility fallbacks.",
+    role: "Interactive direction & frontend",
     year: "2026",
-    tech: ["Next.js", "TypeScript", "GSAP"],
-    liveUrl: "https://luxar.vercel.app/",
-    image: "/images/Luxe.avif",
+    tech: ["Next.js", "TypeScript", "GSAP", "Motion"],
+    liveUrl: "https://orb-port.netlify.app/",
+    image: "/images/3d-portfolio.webp",
   },
   {
     id: "clean-ai",
     outcome:
-      "A published product-marketing interface that explains the offer, features and next steps.",
+      "A published SaaS product site for CleanIQ — an AI dataset cleaner for CSV and TSV files — with feature walkthrough, pricing tiers and a docs entry point.",
     title: "Clean AI",
     category: "AI / SaaS",
     summary:
-      "A technical product site that turns an abstract AI offer into a clear, credible, and navigable product story.",
+      "A product-marketing site for CleanIQ that explains its AI-powered data profiling, quality scoring, interactive audit and one-click export workflow for analysis-ready datasets.",
     focus:
-      "Feature hierarchy, developer-facing clarity, and a concise route to product understanding.",
+      "Feature hierarchy, pricing clarity, trust-building social proof and a direct path from landing to free trial.",
     role: "Product narrative & UI",
     year: "2026",
     tech: ["Next.js", "React", "TypeScript"],
     liveUrl: "https://clean-ai-psi.vercel.app/",
-    image: "/images/CleanAi.avif",
+    image: "/images/CleanAi.webp",
   },
   {
     id: "rs-staging",
     outcome:
-      "A published service portfolio connecting spatial work, responsive galleries and contact information.",
+      "A published home-staging studio site for The Staging Studio in Hoboken, NJ & NYC, with service pages, a styled-room collection and a contact path.",
     title: "RS Staging",
-    category: "Architecture / Services",
+    category: "Interiors / Services",
     summary:
-      "A restrained staging portfolio built around spatial imagery, clear services, and low-friction contact paths.",
+      "A warm, editorial website for a home-staging and interior-styling studio that showcases staged living rooms, bedrooms, kitchens and dining spaces with before-and-after storytelling and a 'Let's talk' enquiry flow.",
     focus:
-      "Responsive galleries, service clarity, and visual pacing for a high-consideration business.",
+      "Spatial imagery pacing, service breakdown (home staging, occupied styling, interior direction) and a soft, approachable brand feel.",
     role: "Portfolio design & build",
     year: "2025",
     tech: ["React", "Responsive media", "Netlify"],
     liveUrl: "https://rsstaging.netlify.app/",
-    image: "/images/RSStaging.avif",
+    image: "/images/RSStaging.webp",
   },
   {
     id: "hortic",
     outcome:
-      "A published horticulture website with a clear industry offer and responsive information hierarchy.",
+      "A published landscape and horticulture company site with service pages for design, arbor care, lawn care and lighting, plus a process walkthrough.",
     title: "Hortic",
-    category: "Industry / Environment",
+    category: "Landscape / Services",
     summary:
-      "A modern horticulture presence balancing practical industry communication with a fresh visual identity.",
+      "A modern website for a South Florida horticulture business covering landscape design, arbor care, custom lawn care and landscape lighting, with a garden-edit gallery and a step-by-step process section.",
     focus:
-      "Information architecture, responsive composition, and a credible technical-organic brand language.",
+      "Service clarity, nature-forward visual identity, responsive composition and a direct enquiry path for homeowners.",
     role: "Brand system & web",
     year: "2025",
     tech: ["React", "TypeScript", "Tailwind CSS"],
     liveUrl: "https://hortic.netlify.app/",
-    image: "/images/Hortic.avif",
+    image: "/images/hortic.webp",
   },
   {
     id: "interior-design-la",
     outcome:
-      "A published studio portfolio built around project imagery and responsive gallery presentation.",
+      "A published 3D interior-design studio site for a Beverly Hills visualization practice covering rendering, kitchen design, bathroom visualization and VR walkthroughs.",
     title: "Interior Design LA",
     category: "Studio / Portfolio",
     summary:
-      "A visual-first studio site with immersive project imagery, refined contrast, and an editorial portfolio rhythm.",
+      "A visual-first studio site for a Beverly Hills 3D interior-design practice, showcasing rendering expertise across light, material and form with a six-section expertise breakdown and a client-stories gallery.",
     focus:
-      "High-resolution image delivery, mobile galleries, and a presentation system suited to spatial work.",
+      "Full-bleed imagery, cinematic scroll pacing, expertise storytelling (3D rendering, kitchen layout, architectural visualization) and a 'Let's talk' contact path.",
     role: "Visual design & frontend",
     year: "2025",
     tech: ["React", "CSS Grid", "Motion"],
     liveUrl: "https://interiordesignla.netlify.app/",
-    image: "/images/3d_DesignLA.avif",
+    image: "/images/3d-DesignLA.webp",
   },
 ];
 
 export const projects = [
   "scotia-delights",
-  "luxar",
+  "aurora-vault",
   "hortic",
   "interior-design-la",
   "rs-staging",
@@ -123,14 +123,14 @@ export const projects = [
 export const capabilityGroups = [
   {
     index: "01",
-    title: "Data intelligence",
-    copy: "Turning raw data into decision-ready analysis, repeatable reporting, and business-facing evidence.",
+    title: "Data analysis & BI",
+    copy: "Cleaning raw datasets, writing SQL and Python queries, and building reports that answer real business questions.",
     skills: ["Python", "Pandas", "SQL", "Power BI", "Excel", "Data modelling"],
   },
   {
     index: "02",
-    title: "Applied machine learning",
-    copy: "Building and evaluating practical predictive workflows with a clear link between model output and action.",
+    title: "Machine learning",
+    copy: "Exploring data, engineering features, and training scikit-learn and TensorFlow models that hold up on test data.",
     skills: [
       "Scikit-learn",
       "TensorFlow",
@@ -141,8 +141,8 @@ export const capabilityGroups = [
   },
   {
     index: "03",
-    title: "Creative engineering",
-    copy: "Designing responsive interfaces where typography, interaction, performance, and implementation work as one system.",
+    title: "Web development",
+    copy: "Building responsive websites and interactive interfaces with Next.js, TypeScript, and clean motion.",
     skills: [
       "Next.js",
       "React",
@@ -223,7 +223,7 @@ export const certificates = [
 export const profile = {
   name: "Prashant Yadav",
   githubUsername: "DazedSaturn07",
-  role: "Data analyst & creative developer",
+  role: "Data analyst & web developer",
   location: "India · open to remote and relocation",
   linkedin: "https://www.linkedin.com/in/onycx/",
   instagram: "https://www.instagram.com/0nycx.dev/",

@@ -26,6 +26,10 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   allowedDevOrigins: resolveAllowedDevOrigins(),
+  images: {
+    formats: ["image/avif", "image/webp"],
+    qualities: [75, 85],
+  },
   turbopack: {
     root: process.cwd(),
   },

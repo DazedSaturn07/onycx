@@ -50,15 +50,15 @@ export default function ProjectsPage() {
             >
               01 / Core discipline
             </p>
-            <div data-reveal data-reveal-side="right">
+            <div data-reveal>
               <h2 id="analytics-projects-title">
-                Data &<br />
-                <em>business insight.</em>
+                Data<br />
+                <em>analytics.</em>
               </h2>
               <span>
                 Service operations, marketplace performance, lending processes
-                and customer studies. Each project presents a concrete outcome
-                and a source-grounded interactive dashboard.
+                and customer studies. Each project includes the outcome and an
+                interactive dashboard backed by the source dataset.
               </span>
             </div>
           </div>
@@ -79,13 +79,13 @@ export default function ProjectsPage() {
               data-reveal
               data-reveal-side="left"
             >
-              02 / Supply chain & operations
+              02 / Supply chain &amp; operations
             </p>
-            <div data-reveal data-reveal-side="right">
+            <div data-reveal>
               <h2 id="supply-chain-title">
-                Flows, capacity
+                Supply chain
                 <br />
-                <em>and reliability.</em>
+                <em>and operations.</em>
               </h2>
               <span>
                 Freight-network planning and airline operations, with complete
@@ -113,11 +113,11 @@ export default function ProjectsPage() {
             >
               03 / Applied machine learning
             </p>
-            <div data-reveal data-reveal-side="right">
+            <div data-reveal>
               <h2 id="machine-learning-title">
-                Models with
+                Machine
                 <br />
-                <em>a purpose.</em>
+                <em>learning.</em>
               </h2>
               <span>
                 Time-aware forecasting, capacity-constrained churn ranking and
@@ -145,11 +145,11 @@ export default function ProjectsPage() {
             >
               04 / Product engineering
             </p>
-            <div data-reveal data-reveal-side="right">
+            <div data-reveal>
               <h2 id="ai-software-title">
-                Useful ideas,
+                AI and software
                 <br />
-                <em>made tangible.</em>
+                <em>builds.</em>
               </h2>
               <span>
                 AI-assisted software work is labelled clearly and kept distinct
@@ -176,11 +176,11 @@ export default function ProjectsPage() {
             >
               05 / Interface work
             </p>
-            <div data-reveal data-reveal-side="right">
+            <div data-reveal>
               <h2 id="web-experiences-title">
-                Digital
+                Websites
                 <br />
-                <em>experiences.</em>
+                <em>and interfaces.</em>
               </h2>
               <span>
                 Selected storefronts, studios, and product interfaces. Each

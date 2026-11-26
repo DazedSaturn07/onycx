@@ -16,6 +16,7 @@ const chillax = localFont({
   weight: "200 700",
   variable: "--font-body",
   display: "swap",
+  preload: false,
   fallback: ["Arial"],
 });
 const orbitron = localFont({
@@ -36,16 +37,16 @@ const axel = localFont({
   fallback: ["Arial"],
 });
 const gavency = localFont({
-  src: [
-    { path: "../../fonts/gavency/Gavency-Condensed-demo.woff2", weight: "400", style: "normal" },
-    { path: "../../fonts/gavency/Gavency-Italic-demo.woff2", weight: "400", style: "italic" },
-  ],
+  src: "../../fonts/gavency/Gavency-Condensed-demo.woff2",
+  weight: "400",
+  style: "normal",
   variable: "--font-serif",
   display: "swap",
+  preload: false,
   fallback: ["Georgia"],
 });
 const signature = localFont({
-  src: "../../fonts/a-auto-signature-font/AAutoSignature-1GD9j.ttf",
+  src: "../../fonts/santeria-signature/Santeria Signature.ttf",
   weight: "400",
   variable: "--font-signature",
   display: "swap",
@@ -60,16 +61,25 @@ const dune = localFont({
   preload: false,
   fallback: ["Arial", "sans-serif"],
 });
+const broale = localFont({
+  src: "../../fonts/broale/BroaleDemoRegular-XG6qG.ttf",
+  weight: "400",
+  variable: "--font-broale",
+  display: "swap",
+  preload: false,
+  fallback: ["Arial", "sans-serif"],
+});
 const boska = localFont({
   src: "../../fonts/boska/Boska-Black.woff2",
   weight: "900",
   variable: "--font-accent",
   display: "swap",
+  preload: false,
   fallback: ["Georgia"],
 });
 
-const title = "Prashant Yadav — Data Analyst & Creative Developer";
-const description = "Prashant Yadav turns complex data and ambitious ideas into clear analytics, practical machine learning, and polished digital experiences.";
+const title = "Prashant Yadav — Data Analyst & Web Developer";
+const description = "Portfolio of Prashant Yadav — data analytics, machine learning projects, and web development.";
 
 export const viewport: Viewport = {
   themeColor: "#171819",
@@ -84,7 +94,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   authors: [{ name: "Prashant Yadav" }],
   creator: "Prashant Yadav",
-  keywords: ["Prashant Yadav", "Prashant Kumar Yadav", "Data Analyst", "Python", "SQL", "Power BI", "Machine Learning", "Next.js", "Creative Developer"],
+  keywords: ["Prashant Yadav", "Prashant Kumar Yadav", "Data Analyst", "Python", "SQL", "Power BI", "Machine Learning", "Next.js", "Web Developer"],
   openGraph: {
     type: "website",
     url: siteUrl,
@@ -105,12 +115,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     "@type": "Person",
     name: "Prashant Yadav",
     url: siteUrl,
-    jobTitle: "Data Analyst and Creative Developer",
+    jobTitle: "Data Analyst and Web Developer",
     sameAs: ["https://www.linkedin.com/in/onycx/", "https://www.instagram.com/0nycx.dev/", "https://github.com/DazedSaturn07"],
   };
 
   return (
-    <html lang="en" className={`${dune.variable} ${axel.variable} ${orbitron.variable} ${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${broale.variable} ${dune.variable} ${axel.variable} ${orbitron.variable} ${chillax.variable} ${gavency.variable} ${signature.variable} ${boska.variable} ${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <SmoothScrolling>
           <a className="skip-to-content" href="#main-content">Skip to content</a>

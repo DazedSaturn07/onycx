@@ -104,9 +104,8 @@ button { color: inherit; font: inherit; }
 .shatter-nav { position: fixed; z-index: 100; top: 1.2rem; left: 50%; display: flex; width: min(1000px, calc(100% - 2rem)); min-height: 4.2rem; align-items: center; justify-content: space-between; gap: 1.2rem; padding: .45rem .65rem .45rem 1.3rem; border: 1px solid rgba(255,255,255,.24); border-radius: 999px; background: linear-gradient(115deg,rgba(255,255,255,.11),rgba(255,255,255,.025) 45%,rgba(255,255,255,.065)),rgba(10,13,13,.8); box-shadow: inset 0 1px 1px rgba(255,255,255,.3),inset 0 -1px 1px rgba(255,255,255,.07),0 8px 24px rgba(0,0,0,.18); backdrop-filter: blur(14px) saturate(1.35); -webkit-backdrop-filter: blur(14px) saturate(1.35); transform: translateX(-50%); transition: top .45s var(--ease), width .45s var(--ease), padding .45s var(--ease), border-color .3s, background-color .3s, box-shadow .3s; }
 .shatter-nav::before { position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(ellipse at 12% 0,rgba(255,255,255,.19),transparent 42%),linear-gradient(170deg,transparent 52%,rgba(255,255,255,.045) 54%,transparent 65%); content: ""; pointer-events: none; }
 .shatter-nav > a, .shatter-nav > button, .shatter-nav-links { position: relative; z-index: 1; }
-.shatter-wordmark { display: inline-flex; min-width: 3rem; align-items: center; color: #fff; font: 700 1.3rem/1 var(--display); letter-spacing: -.09em; outline: none; }
-.shatter-wordmark:focus-visible { outline: 2px solid var(--site-accent); outline-offset: 6px; }
-.shatter-wordmark span { align-self: flex-start; margin: -.05rem 0 0 .3rem; color: #b3aa99; font: 700 .53rem/1 var(--mono); letter-spacing: .03em; }
+.shatter-wordmark { display: inline-flex; min-width: 3rem; align-items: center; border: 0; color: #fff; font: 700 1.3rem/1 var(--display); letter-spacing: -.09em; outline: none; }
+.shatter-wordmark:focus-visible { outline: 1px solid rgba(255,255,255,.55); outline-offset: 6px; border-radius: 6px; }
 .shatter-nav-links { display: flex; align-items: center; justify-content: center; gap: clamp(.75rem, 1.8vw, 1.75rem); }
 .shatter-nav-links a, .shatter-contact-link { color: rgba(255,255,255,.75); font: 650 .67rem/1 var(--mono); letter-spacing: .035em; transition: color .2s ease; }
 .shatter-nav-links a:hover, .shatter-contact-link:hover { color: #fff; }
@@ -232,7 +231,7 @@ button { color: inherit; font: inherit; }
 .github-calendar-layout { display: grid; grid-template-columns: 1.7rem minmax(0,1fr); gap: .5rem; }
 .github-calendar-weekdays { display: flex; flex-direction: column; justify-content: space-evenly; padding-top: 1.6rem; padding-bottom: 1rem; color: #868d7f; font: 400 .5rem/1 var(--mono); }
 .github-calendar-scroll { min-width: 0; overflow-x: auto; overflow-y: hidden; padding: .1rem .2rem .9rem; scrollbar-width: thin; scrollbar-color: #4b5144 transparent; }
-.github-calendar { width: 100%; min-width: 610px; }
+.github-calendar { width: 100%; min-width: 540px; }
 .github-calendar-months, .github-calendar-grid { display: grid; grid-template-columns: repeat(var(--calendar-weeks),minmax(0,1fr)); gap: 3px; }
 .github-calendar-months { min-height: 1rem; align-items: end; margin-bottom: .6rem; }
 .github-calendar-months span { color: #90978a; font: 400 .51rem/1 var(--mono); white-space: nowrap; }
@@ -424,31 +423,24 @@ button { color: inherit; font: inherit; }
 /* The first-visit intro is removed after opening; no continuous rendering loop. */
 .portfolio-shell[data-intro-phase="loading"] { opacity: 0; animation: intro-content-fallback 9s step-end forwards; }
 .portfolio-shell[data-intro-phase="opening"] { opacity: 1; transition: opacity .85s cubic-bezier(.33,0,.2,1); }
-.signature-preloader { position: fixed; z-index: 300; inset: 0; display: grid; place-items: center; overflow: hidden; padding: 2rem; background: #000; animation: intro-overlay-fallback 9s step-end forwards; }
+.signature-preloader { position: fixed; z-index: 300; inset: 0; display: grid; place-items: center; overflow: hidden; padding: 2rem; background: radial-gradient(ellipse at 50% 48%, rgba(28, 28, 34, .34) 0%, rgba(10, 10, 13, .55) 48%, #000 85%), #000; animation: intro-overlay-fallback 9s step-end forwards; }
+.signature-preloader:focus { outline: none; }
 @keyframes intro-overlay-fallback { from { visibility: visible; } to { visibility: hidden; } }
 @keyframes intro-content-fallback { from { opacity: 0; } to { opacity: 1; } }
-.signature-preloader::before { position: absolute; inset: 0; background: url('/grain.svg') repeat; opacity: .3; content: ""; pointer-events: none; }
-.intro-center { position: relative; display: flex; width: min(100%,40rem); flex-direction: column; align-items: center; }
-.intro-edition, .intro-location, .intro-skip { position: absolute; color: #9c9c91; font: 400 .6rem/1.5 var(--body); letter-spacing: .06em; }
-.intro-edition { top: 2rem; left: 2rem; }
-.intro-location { bottom: 2rem; left: 2rem; }
-.intro-skip { right: 2rem; bottom: 1.6rem; display: inline-flex; min-height: 2.75rem; align-items: center; gap: .6rem; padding: .5rem .75rem; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.03); cursor: pointer; }
-.intro-skip:focus-visible { outline-color: #a0785c; outline-offset: 4px; }
-.intro-eyebrow { margin: 0 0 2.3rem; color: #aaa69a; font: 400 .66rem/1.5 var(--body); letter-spacing: .18em; text-transform: uppercase; }
-.intro-signature { display: block; width: 100%; height: auto; overflow: visible; transform: rotate(-4deg); }
-.intro-signature [data-signature-stroke] { opacity: 0; }
-.intro-signature-rule { width: 9rem; height: 1px; margin: 1.6rem 0 1.4rem; background: var(--sunset); opacity: .45; transform: scaleX(0); transform-origin: left; }
-.intro-caption { margin: 0; color: #777b71; font: 400 .65rem/1.6 var(--body); letter-spacing: .01em; }
+.signature-preloader::before { position: absolute; inset: 0; background: url('/grain.svg') repeat; background-size: 160px 160px; opacity: .42; content: ""; pointer-events: none; }
+.intro-center { position: relative; z-index: 1; display: flex; max-width: 100%; align-items: center; justify-content: center; }
+.intro-signature { position: relative; width: max-content; max-width: 100%; margin: 0; font: 400 clamp(2.85rem, 13.5vw, 11.5rem)/1.12 var(--signature); white-space: nowrap; transform: rotate(-3deg); user-select: none; }
+.intro-signature-ink { display: block; padding: .22em .25em .3em; color: #fff; text-shadow: 0 0 32px rgba(255,255,255,.14); clip-path: inset(0 100% 0 0); will-change: clip-path; }
+.intro-skip { position: absolute; z-index: 2; right: 2rem; bottom: 1.6rem; display: inline-flex; min-height: 2.75rem; align-items: center; gap: .6rem; padding: .5rem .75rem; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.03); color: #d8d8d4; font: 400 .62rem/1.5 var(--body); letter-spacing: .06em; cursor: pointer; transition: border-color .2s ease, background-color .2s ease, color .2s ease; }
+.intro-skip:hover { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.08); color: #fff; }
+.intro-skip:focus-visible { outline: 1px solid rgba(255,255,255,.72); outline-offset: 4px; }
 @media (max-width: 760px) {
-  .signature-preloader { padding: 1.6rem; }
-  .intro-edition { top: 1.5rem; left: 1.5rem; }
-  .intro-location { bottom: 1.7rem; left: 1.5rem; font-size: .56rem; }
+  .signature-preloader { padding: 1.25rem; }
   .intro-skip { right: 1.5rem; bottom: 1.2rem; }
-  .intro-eyebrow { margin-bottom: 2rem; font-size: .6rem; }
-  .intro-caption { font-size: .58rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .portfolio-shell[data-intro-phase] { opacity: 1; transition: none; }
+  .intro-signature-ink { clip-path: none !important; }
 }
 @media (min-width: 761px) and (max-width: 1100px) {
   .github-activity-summary { padding: 1.6rem; }
@@ -742,7 +734,7 @@ button { color: inherit; font: inherit; }
 .portfolio-signature-stage { position: sticky; top: 0; display: flex; width: min(100%,1500px); height: 100svh; min-height: 480px; flex-direction: column; align-items: center; justify-content: center; gap: clamp(1rem,3vw,2.5rem); margin-inline: auto; padding: 5rem var(--page-gutter); text-align: center; }
 .portfolio-signature-kicker { margin: 0; color: #97958c; font: 550 .62rem/1.4 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
 .portfolio-signature-name { position: relative; width: max-content; max-width: 100%; margin: 0; font: 400 clamp(3rem,16vw,20rem)/1 var(--signature); white-space: nowrap; transform: rotate(-4deg); }
-.portfolio-signature-name > span { display: block; padding: .1em .12em .2em; }
+.portfolio-signature-name > span { display: block; padding: .2em .24em .28em; }
 @media (min-width: 1800px) {
   .portfolio-signature-name { font-size: clamp(3rem, 12vw, 15rem); }
 }

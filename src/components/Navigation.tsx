@@ -104,9 +104,8 @@ function RouteNavigation() {
 
   return (
     <><header hidden={!inHero} ref={header} className={`shatter-nav${scrolled ? " is-scrolled" : ""}${hasHero && inHero ? " is-in-hero" : ""}`}>
-      <Link className="shatter-wordmark" href="/" aria-label="Prashant Yadav — home" onClick={() => setMenuOpen(false)}>
-        <Image src="/Logo.png" alt="Prashant Yadav Logo" width={48} height={48} style={{ height: "1.5rem", width: "auto", objectFit: "contain" }} priority />
-        <span>©26</span>
+      <Link className="shatter-wordmark" href="/" aria-label="ONYCX — home" onClick={() => setMenuOpen(false)}>
+        <Image src="/Logo.png" alt="ONYCX" width={48} height={48} style={{ height: "1.5rem", width: "auto", objectFit: "contain" }} priority />
       </Link>
       <nav className="shatter-nav-links" aria-label="Primary navigation">
         {navItems.map(([label, href]) => {

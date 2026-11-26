@@ -28,7 +28,6 @@ export default function CertificateCarousel() {
     const surface = stage.current;
     if (!section || !surface) return;
     const media = gsap.matchMedia();
-    // The ring-to-drum geometry follows Dyvoult's Works Wheel.
     media.add("(min-width: 800px) and (min-height: 620px) and (prefers-reduced-motion: no-preference)", () => {
       section.dataset.motion = "true";
       const model = { turn: 0 };
@@ -137,8 +136,8 @@ export default function CertificateCarousel() {
         }
       }}>
         <div className="certificate-wheel-top">
-          <div><p className="portfolio-section-kicker">05 / Credentials</p><h2 id="credentials-heading">Learning in <span>motion.</span></h2></div>
-          <a href="#contact">Continue to contact <ArrowUpRight size={17} aria-hidden="true" /></a>
+          <div><p className="portfolio-section-kicker">05 / Credentials</p><h2 id="credentials-heading">My<br /><span>certifications.</span></h2></div>
+          <a href="#contact">Contact <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
         <div ref={stage} className="certificate-wheel-stage" role="region" aria-label="Scroll-driven certification collection">
           <div ref={axis} className="certificate-wheel-axis">
@@ -148,7 +147,7 @@ export default function CertificateCarousel() {
               </a>
             ))}
           </div>
-          <div ref={center} className="certificate-wheel-center">Always curious.<br /><span>Always learning.</span><small>Scroll to turn <ArrowDown size={13} aria-hidden="true" /></small></div>
+          <div ref={center} className="certificate-wheel-center">My<br /><span>certificates.</span><small>Scroll to turn <ArrowDown size={13} aria-hidden="true" /></small></div>
           <div ref={detail} className="certificate-wheel-detail">
             <span>{String(active + 1).padStart(2, "0")} / {String(certificates.length).padStart(2, "0")}</span>
             <h3>{certificates[active].title}</h3><p>{certificates[active].issuer} · {certificates[active].year}</p>
@@ -164,7 +163,7 @@ export default function CertificateCarousel() {
         }}>
           {certificates.map((certificate, index) => <li key={certificate.title}><a href={certificate.url} target="_blank" rel="noopener noreferrer"><div className="certificate-mobile-art"><Image src={certificate.image} alt={`${certificate.title} certificate`} fill sizes="(max-width: 799px) 80vw, 600px" /></div><span>{String(index + 1).padStart(2, "0")} / {certificate.issuer} · {certificate.year}</span><h3>{certificate.title}</h3><span className="certificate-mobile-link">View credential <ArrowUpRight size={16} aria-hidden="true" /></span></a></li>)}
         </ol>
-        <div className="certificate-wheel-bottom"><p>Courses, curiosity &amp; continued practice.</p><div className="certificate-wheel-controls"><button type="button" aria-label="Previous certificate" disabled={active === 0} onClick={() => navigate(activeIndex.current - 1)}><ArrowLeft size={18} aria-hidden="true" /></button><p aria-live="polite" aria-atomic="true"><span>{String(active + 1).padStart(2, "0")}</span> / {String(certificates.length).padStart(2, "0")}</p><button type="button" aria-label="Next certificate" disabled={active === certificates.length - 1} onClick={() => navigate(activeIndex.current + 1)}><ArrowRight size={18} aria-hidden="true" /></button></div></div>
+        <div className="certificate-wheel-bottom"><p>Verified courses from IBM, Coursera, Udemy &amp; Infosys.</p><div className="certificate-wheel-controls"><button type="button" aria-label="Previous certificate" disabled={active === 0} onClick={() => navigate(activeIndex.current - 1)}><ArrowLeft size={18} aria-hidden="true" /></button><p aria-live="polite" aria-atomic="true"><span>{String(active + 1).padStart(2, "0")}</span> / {String(certificates.length).padStart(2, "0")}</p><button type="button" aria-label="Next certificate" disabled={active === certificates.length - 1} onClick={() => navigate(activeIndex.current + 1)}><ArrowRight size={18} aria-hidden="true" /></button></div></div>
       </div>
     </section>
   );
