@@ -31,17 +31,17 @@ export const FlowSection: React.FC<FlowSectionProps> = ({
     id={id}
     data-flow-section
     aria-label={ariaLabel}
-    className={cx('relative w-full flex items-center justify-center px-3 py-2 md:px-8 md:py-5', className)}
+    className={cx('relative w-full flex items-center justify-center px-3 py-2 md:px-6 lg:px-8 lg:py-5', className)}
   >
     <div
       data-flow-inner
       className={cx(
-        'flow-art-container relative flex flex-col justify-between overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.5)] w-full max-w-[1120px] mx-auto',
+        'flow-art-container relative flex flex-col justify-between overflow-hidden rounded-[1.35rem] md:rounded-[1.5rem] border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.5)] w-full max-w-[1120px] mx-auto',
         'bg-background',
       )}
       style={{ transformOrigin: 'bottom left', ...style }}
     >
-      <div className="flex flex-col flex-1 gap-2 p-3 md:gap-3.5 md:p-6 lg:p-8">
+      <div className="flex flex-col flex-1 gap-2 p-4 sm:p-5 md:gap-3 md:p-6 lg:gap-3.5 lg:p-8">
         {children}
       </div>
     </div>
@@ -74,9 +74,26 @@ const FlowArt: React.FC<FlowArtProps> = ({
   const [dragging, setDragging] = useState(false);
 
   const goTo = useCallback(
-    (index: number) => {
+    (index: number, ensureInView = false) => {
       if (totalCards <= 1) return;
       setActive(Math.max(0, Math.min(totalCards - 1, index)));
+      if (ensureInView) {
+        requestAnimationFrame(() => {
+          const el = containerRef.current;
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          const topPad = 24;
+          const bottomPad = 16;
+          if (rect.top < topPad || rect.bottom > window.innerHeight - bottomPad) {
+            const targetY = Math.max(0, window.scrollY + rect.top - topPad);
+            if (document.documentElement.classList.contains('lenis')) {
+              window.dispatchEvent(new CustomEvent('portfolio:scroll-to', { detail: targetY }));
+            } else {
+              window.scrollTo({ top: targetY, behavior: 'smooth' });
+            }
+          }
+        });
+      }
     },
     [totalCards],
   );
@@ -90,7 +107,7 @@ const FlowArt: React.FC<FlowArtProps> = ({
       const media = gsap.matchMedia();
 
       media.add(
-        '(min-width: 768px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)',
+        '(min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)',
         () => {
           const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-flow-section]'));
           const lastSection = sections[sections.length - 1];
@@ -174,11 +191,11 @@ const FlowArt: React.FC<FlowArtProps> = ({
     };
   }, [totalCards]);
 
-  // Update mobile card stack positions without touching desktop layout or triggers.
+  // Update mobile and tablet card stack positions without touching desktop layout or triggers.
   useEffect(() => {
     const root = containerRef.current;
     if (!root) return;
-    const mq = window.matchMedia('(max-width: 767px)');
+    const mq = window.matchMedia('(max-width: 1023px)');
 
     const applyMobileStack = () => {
       const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-flow-section]'));
@@ -227,7 +244,7 @@ const FlowArt: React.FC<FlowArtProps> = ({
   };
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (totalCards <= 1 || !window.matchMedia('(max-width: 767px)').matches) return;
+    if (totalCards <= 1 || !window.matchMedia('(max-width: 1023px)').matches) return;
     const touch = event.touches[0];
     touchState.current = { startX: touch.clientX, startY: touch.clientY, dx: 0, axis: null };
   };
@@ -307,7 +324,7 @@ const FlowArt: React.FC<FlowArtProps> = ({
         <div className="flow-art-controls" aria-label={`${ariaLabel} card controls`}>
           <button
             type="button"
-            onClick={() => goTo(active - 1)}
+            onClick={() => goTo(active - 1, true)}
             disabled={active === 0}
             aria-label="Previous project card"
           >
@@ -319,7 +336,7 @@ const FlowArt: React.FC<FlowArtProps> = ({
           </div>
           <button
             type="button"
-            onClick={() => goTo(active + 1)}
+            onClick={() => goTo(active + 1, true)}
             disabled={active === totalCards - 1}
             aria-label="Next project card"
           >

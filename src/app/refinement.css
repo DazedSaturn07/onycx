@@ -161,34 +161,47 @@ html:has(.portfolio-home), html:has(.project-index) { background: #000; scrollba
 .project-index .project-catalog-section .portfolio-heading,.project-index .project-web-section .portfolio-heading { position: relative; z-index: 20; gap: .45rem; margin-bottom: clamp(1rem,1.8vw,1.5rem); }
 .project-index .portfolio-heading h2 { font-size: clamp(1.9rem,3.6vw,3.8rem); line-height: 1.06; }
 .project-index .portfolio-heading > div > span { max-width: 46rem; margin-top: .55rem; font-size: clamp(.85rem,.95vw,.98rem); line-height: 1.5; }
-.project-index .flow-art-container { width: 100%; max-width: 1120px; min-height: clamp(340px,43svh,450px); border-color: #ffffff26; border-radius: 1.5rem; box-shadow: 0 0 60px #0008; }
-.project-index .flow-art-container h2 { font-family: var(--font-geist-sans),Arial,sans-serif; font-weight: 700; line-height: .96; font-size: clamp(1.75rem,3.3vw,3.2rem); letter-spacing: -.045em; overflow-wrap: anywhere; }
+.project-index .flow-art-container { width: 100%; max-width: 1120px; border-color: #ffffff26; border-radius: 1.5rem; box-shadow: 0 0 60px #0008; }
+.project-index .flow-art-container h2 { font-family: var(--font-geist-sans),Arial,sans-serif; font-weight: 700; line-height: .98; letter-spacing: -.04em; overflow-wrap: anywhere; }
 .project-index .flow-art-container .project-outcome-grid { gap: .65rem 1.25rem; margin-bottom: .75rem; padding-block: .55rem; }
 .project-index .flow-art-container .project-outcome-grid strong { font-size: clamp(.92rem,1.65vw,1.45rem); line-height: 1.2; }
 .project-index .project-web-section .flow-art-container .project-outcome-grid strong { font-size: clamp(.88rem,1.1vw,1.05rem); line-height: 1.45; }
-.project-index [data-flow-section] { min-height: clamp(340px,42svh,450px); padding-block: clamp(.7rem,1.3vw,1.25rem); padding-inline: 0; }
+.project-index [data-flow-section] { padding-block: clamp(.7rem,1.3vw,1.25rem); padding-inline: 0; }
+@media (min-width: 1024px) {
+  .project-index .flow-art-container { min-height: clamp(340px,43svh,450px); }
+  .project-index .flow-art-container h2 { font-size: clamp(1.75rem,3.3vw,3.2rem); line-height: .96; letter-spacing: -.045em; }
+  .project-index [data-flow-section] { min-height: clamp(340px,42svh,450px); }
+}
 .flow-art-controls { display: none; }
-@media (max-width: 767px) {
-  .project-index [data-flow-root].is-deck .flow-art-deck { display: grid; grid-template-columns: minmax(0,1fr); align-items: stretch; padding-bottom: .5rem; touch-action: pan-y; user-select: none; }
+@media (max-width: 1023px) {
+  .project-index .project-catalog-section,.project-index .project-web-section { padding-block: 2.75rem; }
+  .project-index .project-catalog-section .portfolio-heading,.project-index .project-web-section .portfolio-heading { margin-bottom: 1rem; }
+  .project-index .flow-art-container .project-outcome-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: .45rem .9rem; margin-bottom: .55rem; padding-block: .5rem; }
+  .project-index .flow-art-container .project-outcome-grid span { margin-bottom: .2rem; font-size: .6rem; line-height: 1.35; }
+  .project-index .flow-art-container .project-outcome-grid strong { font-size: clamp(.98rem,3.8vw,1.35rem); line-height: 1.2; }
+  .project-index .project-web-section .flow-art-container .project-outcome-grid { grid-template-columns: minmax(0,1fr); margin-bottom: .5rem; padding-block: .48rem; }
+  .project-index .project-web-section .flow-art-container .project-outcome-grid strong { font-size: clamp(.8rem,2.9vw,.95rem); line-height: 1.4; }
+  .project-index .flow-art-container .project-evidence-note { margin-top: .5rem; font-size: .68rem; line-height: 1.45; }
+  .project-index [data-flow-root].is-deck .flow-art-deck { display: grid; grid-template-columns: minmax(0,1fr); align-items: stretch; padding-bottom: .65rem; touch-action: pan-y; user-select: none; }
   .project-index [data-flow-root].is-deck [data-flow-section] { grid-area: 1 / 1; min-height: 0; padding: 0; transition: transform .36s cubic-bezier(.22,1,.36,1),opacity .28s ease; will-change: transform,opacity; }
   .project-index [data-flow-root].is-deck [data-flow-section][data-stack-pos="0"],
   .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):first-child { z-index: 30; opacity: 1; transform: translate3d(var(--flow-drag-x,0px),0,0) rotate(calc(var(--flow-drag-rot,0) * 1deg)); pointer-events: auto; }
   .project-index [data-flow-root].is-deck.is-dragging [data-flow-section][data-stack-pos="0"] { transition: none; }
   .project-index [data-flow-root].is-deck [data-flow-section][data-stack-pos="1"],
-  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(2) { z-index: 20; opacity: .72; transform: translate3d(0,10px,0) scale(.96); pointer-events: none; }
+  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(2) { z-index: 20; opacity: .72; transform: translate3d(0,8px,0) scale(.96); pointer-events: none; }
   .project-index [data-flow-root].is-deck [data-flow-section][data-stack-pos="2"],
-  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(3) { z-index: 10; opacity: .38; transform: translate3d(0,20px,0) scale(.92); pointer-events: none; }
+  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(3) { z-index: 10; opacity: .38; transform: translate3d(0,16px,0) scale(.92); pointer-events: none; }
   .project-index [data-flow-root].is-deck [data-flow-section][data-stack-pos="past"] { z-index: 0; opacity: 0; transform: translate3d(-108%,0,0) scale(.94); pointer-events: none; }
   .project-index [data-flow-root].is-deck [data-flow-section][data-stack-pos="far"],
-  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(n + 4) { z-index: 1; opacity: 0; visibility: hidden; transform: translate3d(0,24px,0) scale(.9); pointer-events: none; }
-  .flow-art-controls { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: min(100%,18rem); margin: .6rem auto 0; padding: .3rem .4rem; border: 1px solid rgba(255,255,255,.15); border-radius: 999px; background: rgba(14,14,17,.92); }
+  .project-index [data-flow-root].is-deck [data-flow-section]:not([data-stack-pos]):nth-child(n + 4) { z-index: 1; opacity: 0; visibility: hidden; transform: translate3d(0,20px,0) scale(.9); pointer-events: none; }
+  .flow-art-controls { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: min(100%,18rem); margin: .7rem auto 0; padding: .35rem .4rem; border: 1px solid rgba(255,255,255,.15); border-radius: 999px; background: rgba(14,14,17,.92); }
   .flow-art-controls button { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; background: rgba(255,255,255,.06); color: #f5f4f0; cursor: pointer; transition: opacity .2s ease,background-color .2s ease; }
   .flow-art-controls button:disabled { opacity: .28; cursor: default; }
   .flow-art-counter { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
   .flow-art-counter span { color: #f5f4f0; font: 500 .7rem/1.2 var(--mono); font-variant-numeric: tabular-nums; }
-  .flow-art-counter small { margin-top: .18rem; color: #8c8e8a; font: 400 .56rem/1 var(--body); }
+  .flow-art-counter small { margin-top: .16rem; color: #8c8e8a; font: 400 .56rem/1 var(--body); }
 }
-@media (prefers-reduced-motion: reduce) and (max-width: 767px) {
+@media (prefers-reduced-motion: reduce) and (max-width: 1023px) {
   .project-index [data-flow-root].is-deck [data-flow-section] { transition: none; }
 }
 
@@ -247,9 +260,8 @@ html:has(.portfolio-home), html:has(.project-index) { background: #000; scrollba
   .projects-hero-footer { align-items: start; flex-direction: column; gap: .25rem; font-size: .62rem; }
   .projects-hero-footer nav { flex-wrap: wrap; gap: .85rem; }
   .projects-hero-footer nav a { min-height: 36px; }
-  .project-index [data-flow-section] { min-height: 0; padding-block: .5rem; }
+  .project-index [data-flow-section] { min-height: 0; padding-block: 0; }
   .project-index .flow-art-container { min-height: 0; border-radius: 1.15rem; }
-  .project-index .flow-art-container .flex.flex-col.flex-1 { gap: 2px; padding: .65rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .portfolio-signature-ink { clip-path: none !important; }
